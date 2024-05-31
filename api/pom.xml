@@ -4,16 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
-    <groupId>com.ruoyi</groupId>
-    <artifactId>ruoyi</artifactId>
+    <groupId>com.betta</groupId>
+    <artifactId>betta</artifactId>
     <version>3.8.7</version>
 
-    <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
-    <description>若依管理系统</description>
+    <name>betta</name>
     
     <properties>
-        <ruoyi.version>3.8.7</ruoyi.version>
+        <betta.version>3.8.7</betta.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
@@ -139,43 +137,43 @@
 
             <!-- 定时任务-->
             <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-quartz</artifactId>
-                <version>${ruoyi.version}</version>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-quartz</artifactId>
+                <version>${betta.version}</version>
             </dependency>
 
             <!-- 代码生成-->
             <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-generator</artifactId>
-                <version>${ruoyi.version}</version>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-generator</artifactId>
+                <version>${betta.version}</version>
             </dependency>
 
             <!-- 核心模块-->
             <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-framework</artifactId>
-                <version>${ruoyi.version}</version>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-framework</artifactId>
+                <version>${betta.version}</version>
             </dependency>
 
             <!-- 系统模块-->
             <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-system</artifactId>
-                <version>${ruoyi.version}</version>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-system</artifactId>
+                <version>${betta.version}</version>
             </dependency>
 
             <!-- 通用工具-->
             <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-common</artifactId>
-                <version>${ruoyi.version}</version>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-common</artifactId>
+                <version>${betta.version}</version>
             </dependency>
 
             <!-- 英语模块-->
             <dependency>
                 <groupId>com.betta</groupId>
-                <artifactId>eng</artifactId>
+                <artifactId>betta-eng</artifactId>
                 <version>1.0.0</version>
             </dependency>
 
@@ -183,13 +181,13 @@
     </dependencyManagement>
 
     <modules>
-        <module>ruoyi-admin</module>
-        <module>ruoyi-framework</module>
-        <module>ruoyi-system</module>
-        <module>ruoyi-quartz</module>
-        <module>ruoyi-generator</module>
-        <module>ruoyi-common</module>
-        <module>eng</module>
+        <module>betta-admin</module>
+        <module>betta-framework</module>
+        <module>betta-system</module>
+        <module>betta-quartz</module>
+        <module>betta-generator</module>
+        <module>betta-common</module>
+        <module>betta-eng</module>
     </modules>
     <packaging>pom</packaging>
 
