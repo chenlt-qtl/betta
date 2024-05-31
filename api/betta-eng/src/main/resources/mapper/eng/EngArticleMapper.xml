@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.eng.mapper.EngArticleMapper">
+    
+    <resultMap type="EngArticle" id="EngArticleResult">
+        <result property="id"    column="id"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="picture"    column="picture"    />
+        <result property="mp3"    column="mp3"    />
+        <result property="title"    column="title"    />
+        <result property="comment"    column="comment"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectEngArticleVo">
+        select id, group_id, picture, mp3, title, comment, status, create_time, create_by, update_time, update_by from eng_article
+    </sql>
+
+    <select id="selectEngArticleList" parameterType="EngArticle" resultMap="EngArticleResult">
+        select a.*,b.name as groupName from eng_article a left join eng_article_group b on a.group_id=b.id
+        <where>  
+            <if test="groupId != null "> and a.group_id = #{groupId}</if>
+            <if test="title != null  and title != ''"> and a.title like concat('%', #{title}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectEngArticleById" parameterType="Long" resultMap="EngArticleResult">
+        <include refid="selectEngArticleVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEngArticle" parameterType="EngArticle" useGeneratedKeys="true" keyProperty="id">
+        insert into eng_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">group_id,</if>
+            <if test="picture != null">picture,</if>
+            <if test="mp3 != null">mp3,</if>
+            <if test="title != null">title,</if>
+            <if test="comment != null">comment,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">#{groupId},</if>
+            <if test="picture != null">#{picture},</if>
+            <if test="mp3 != null">#{mp3},</if>
+            <if test="title != null">#{title},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEngArticle" parameterType="EngArticle">
+        update eng_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="picture != null">picture = #{picture},</if>
+            <if test="mp3 != null">mp3 = #{mp3},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="comment != null">comment = #{comment},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEngArticleById" parameterType="Long">
+        delete from eng_article where id = #{id}
+    </delete>
+
+    <delete id="deleteEngArticleByIds" parameterType="String">
+        delete from eng_article where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

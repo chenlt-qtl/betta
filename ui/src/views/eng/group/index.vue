@@ -63,10 +63,8 @@
 
     <el-table v-loading="loading" :data="groupList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
       <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="手工注释" align="center" prop="comment" />
-      <el-table-column label="${comment}" align="center" prop="status" />
+      <el-table-column label="注释" align="center" prop="comment" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -101,7 +99,7 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
-        <el-form-item label="手工注释" prop="comment">
+        <el-form-item label="注释" prop="comment">
           <el-input v-model="form.comment" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
