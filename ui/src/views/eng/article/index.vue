@@ -70,9 +70,9 @@
         </template>
       </el-table-column>
       <el-table-column label="音频" align="center" prop="mp3" >
-         <template slot-scope="scope">
-          <svg-icon icon-class="button" />
-        </template>
+         <el-button type="text">
+          <svg-icon icon-class="sound" />
+        </el-button>
       </el-table-column>
       <el-table-column label="标题" align="center" prop="title" />
       <el-table-column label="注释" align="center" prop="comment" />
