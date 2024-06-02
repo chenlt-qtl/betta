@@ -24,6 +24,8 @@ public class EngArticle extends BaseEntity
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private Long groupId;
 
+    private String groupName;
+
     /** 图片位置 */
     @Excel(name = "图片位置")
     private String picture;

@@ -18,6 +18,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
     </resultMap>
 
+    <resultMap id="EngArticleEngSentenceResult" type="EngArticle" extends="EngArticleResult">
+        <collection property="engSentenceList" notNullColumn="sub_id" javaType="java.util.List" resultMap="EngSentenceResult" />
+    </resultMap>
+
+    <resultMap type="EngSentence" id="EngSentenceResult">
+        <result property="id"    column="sub_id"    />
+        <result property="articleId"    column="sub_article_id"    />
+        <result property="content"    column="sub_content"    />
+        <result property="acceptation"    column="sub_acceptation"    />
+        <result property="idx"    column="sub_idx"    />
+        <result property="picture"    column="sub_picture"    />
+        <result property="mp3"    column="sub_mp3"    />
+        <result property="mp3Time"    column="sub_mp3_time"    />
+        <result property="status"    column="sub_status"    />
+        <result property="createTime"    column="sub_create_time"    />
+        <result property="createBy"    column="sub_create_by"    />
+        <result property="updateTime"    column="sub_update_time"    />
+        <result property="updateBy"    column="sub_update_by"    />
+    </resultMap>
+
     <sql id="selectEngArticleVo">
         select id, group_id, picture, mp3, title, comment, status, create_time, create_by, update_time, update_by from eng_article
     </sql>
@@ -30,9 +50,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectEngArticleById" parameterType="Long" resultMap="EngArticleResult">
-        <include refid="selectEngArticleVo"/>
-        where id = #{id}
+    <select id="selectEngArticleById" parameterType="Long" resultMap="EngArticleEngSentenceResult">
+        select a.id, a.group_id, a.picture, a.mp3, a.title, a.comment, a.status, a.create_time, a.create_by, a.update_time, a.update_by,
+ b.id as sub_id, b.article_id as sub_article_id, b.content as sub_content, b.acceptation as sub_acceptation, b.idx as sub_idx, b.picture as sub_picture, b.mp3 as sub_mp3, b.mp3_time as sub_mp3_time, b.status as sub_status, b.create_time as sub_create_time, b.create_by as sub_create_by, b.update_time as sub_update_time, b.update_by as sub_update_by
+        from eng_article a
+        left join eng_sentence b on b.article_id = a.id
+        where a.id = #{id}
     </select>
         
     <insert id="insertEngArticle" parameterType="EngArticle" useGeneratedKeys="true" keyProperty="id">
@@ -90,4 +113,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <delete id="deleteEngSentenceByArticleIds" parameterType="String">
+        delete from eng_sentence where article_id in 
+        <foreach item="articleId" collection="array" open="(" separator="," close=")">
+            #{articleId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteEngSentenceByArticleId" parameterType="Long">
+        delete from eng_sentence where article_id = #{articleId}
+    </delete>
+
+    <insert id="batchEngSentence">
+        insert into eng_sentence( id, article_id, content, acceptation, idx, picture, mp3, mp3_time, status, create_time, create_by, update_time, update_by) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.articleId}, #{item.content}, #{item.acceptation}, #{item.idx}, #{item.picture}, #{item.mp3}, #{item.mp3Time}, #{item.status}, #{item.createTime}, #{item.createBy}, #{item.updateTime}, #{item.updateBy})
+        </foreach>
+    </insert>
 </mapper>
