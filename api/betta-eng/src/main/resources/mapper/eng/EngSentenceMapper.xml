@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.eng.mapper.EngSentenceMapper">
+    
+    <resultMap type="EngSentence" id="EngSentenceResult">
+        <result property="id"    column="id"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="content"    column="content"    />
+        <result property="acceptation"    column="acceptation"    />
+        <result property="idx"    column="idx"    />
+        <result property="picture"    column="picture"    />
+        <result property="mp3"    column="mp3"    />
+        <result property="mp3Time"    column="mp3_time"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectEngSentenceVo">
+        select id, article_id, content, acceptation, idx, picture, mp3, mp3_time, status, create_time, create_by, update_time, update_by from eng_sentence
+    </sql>
+
+    <select id="selectEngSentenceList" parameterType="EngSentence" resultMap="EngSentenceResult">
+        <include refid="selectEngSentenceVo"/>
+        <where>  
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="acceptation != null  and acceptation != ''"> and acceptation = #{acceptation}</if>
+        </where>
+    </select>
+    
+    <select id="selectEngSentenceById" parameterType="Long" resultMap="EngSentenceResult">
+        <include refid="selectEngSentenceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEngSentence" parameterType="EngSentence" useGeneratedKeys="true" keyProperty="id">
+        insert into eng_sentence
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">article_id,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="acceptation != null">acceptation,</if>
+            <if test="idx != null">idx,</if>
+            <if test="picture != null">picture,</if>
+            <if test="mp3 != null">mp3,</if>
+            <if test="mp3Time != null">mp3_time,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">#{articleId},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="acceptation != null">#{acceptation},</if>
+            <if test="idx != null">#{idx},</if>
+            <if test="picture != null">#{picture},</if>
+            <if test="mp3 != null">#{mp3},</if>
+            <if test="mp3Time != null">#{mp3Time},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEngSentence" parameterType="EngSentence">
+        update eng_sentence
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="acceptation != null">acceptation = #{acceptation},</if>
+            <if test="idx != null">idx = #{idx},</if>
+            <if test="picture != null">picture = #{picture},</if>
+            <if test="mp3 != null">mp3 = #{mp3},</if>
+            <if test="mp3Time != null">mp3_time = #{mp3Time},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEngSentenceById" parameterType="Long">
+        delete from eng_sentence where id = #{id}
+    </delete>
+
+    <delete id="deleteEngSentenceByIds" parameterType="String">
+        delete from eng_sentence where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

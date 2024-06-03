@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="标题" prop="title">
-        <el-input
-          v-model="queryParams.title"
-          placeholder="请输入标题"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -23,7 +15,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['eng:article:add']"
+          v-hasPermi="['eng:sentence:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -34,7 +26,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['eng:article:edit']"
+          v-hasPermi="['eng:sentence:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -45,7 +37,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['eng:article:remove']"
+          v-hasPermi="['eng:sentence:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -55,15 +47,18 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['eng:article:export']"
+          v-hasPermi="['eng:sentence:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="articleList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="sentenceList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="分组" align="center" prop="groupName" />
+      <el-table-column label="文章" align="center" prop="articleName" />
+      <el-table-column label="句子内容" align="center" prop="content" />
+      <el-table-column label="解释" align="center" prop="acceptation" />
+      <el-table-column label="序号" align="center" prop="idx" />
       <el-table-column label="图片" align="center" prop="picture" width="100">
         <template slot-scope="scope">
           <image-preview :src="scope.row.picture" :width="50" :height="50"/>
@@ -74,30 +69,22 @@
           <svg-icon icon-class="sound" />
         </el-button>
       </el-table-column>
-      <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column label="注释" align="center" prop="comment" />
+      <el-table-column label="MP3开始结束时间" align="center" prop="mp3Time" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-view"
-            @click="handleViewArticle(scope.row)"
-            v-hasPermi="['eng:article:edit']"
-          >查看</el-button>
-          <el-button
-            size="mini"
-            type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['eng:article:edit']"
+            v-hasPermi="['eng:sentence:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['eng:article:remove']"
+            v-hasPermi="['eng:sentence:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -111,30 +98,36 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改英语文章对话框 -->
+    <!-- 添加或修改文章句子对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="分组" prop="groupId">
-          <el-select v-model="form.groupId">
+        <el-form-item label="文章ID" prop="articleId">
+          <el-select v-model="form.articleId" placeholder="请选择文章ID">
             <el-option
-              v-for="group in groupList"
-              :key="group.id"
-              :label="group.name"
-              :value="group.id"
-            />
+              v-for="dict in dict.type.sys_user_sex"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="句子内容" prop="content">
+          <el-input v-model="form.content" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="解释" prop="acceptation">
+          <el-input v-model="form.acceptation" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="序号" prop="idx">
+          <el-input v-model="form.idx" placeholder="请输入序号" />
         </el-form-item>
         <el-form-item label="图片" prop="picture">
           <image-upload v-model="form.picture"/>
         </el-form-item>
         <el-form-item label="音频" prop="mp3">
-          <file-upload :fileType='["mp3"]'  v-model="form.mp3"/>
+          <file-upload :fileType="['mp3']" v-model="form.mp3"/>
         </el-form-item>
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" placeholder="请输入标题" />
-        </el-form-item>
-        <el-form-item label="手工注释" prop="comment">
-          <el-input v-model="form.comment" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="MP3开始结束时间" prop="mp3Time">
+          <el-input v-model="form.mp3Time" placeholder="请输入MP3开始结束时间" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -146,19 +139,16 @@
 </template>
 
 <script>
-import { listArticle, getArticle, delArticle, addArticle, updateArticle } from "@/api/eng/article";
-import { listGroup } from "@/api/eng/group";
+import { listSentence, getSentence, delSentence, addSentence, updateSentence } from "@/api/eng/sentence";
 
 export default {
-  name: "Article",
+  name: "Sentence",
   data() {
     return {
       // 遮罩层
       loading: true,
       // 选中数组
       ids: [],
-      // 子表选中数据
-      checkedEngSentence: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -167,10 +157,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 英语文章表格数据
-      articleList: [],
       // 文章句子表格数据
-      engSentenceList: [],
+      sentenceList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -179,35 +167,37 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        groupId: null,
-        title: null,
+        articleId: null,
+        content: null,
+        acceptation: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-      },
-      groupList:[]
+        articleId: [
+          { required: true, message: "文章ID不能为空", trigger: "change" }
+        ],
+        content: [
+          { required: true, message: "句子内容不能为空", trigger: "blur" }
+        ],
+        idx: [
+          { required: true, message: "序号不能为空", trigger: "blur" }
+        ],
+      }
     };
   },
   created() {
     this.getList();
-    this.getGroupList();
   },
   methods: {
-    /** 查询英语文章列表 */
+    /** 查询文章句子列表 */
     getList() {
       this.loading = true;
-      listArticle(this.queryParams).then(response => {
-        this.articleList = response.rows;
+      listSentence(this.queryParams).then(response => {
+        this.sentenceList = response.rows;
         this.total = response.total;
         this.loading = false;
-      });
-    },
-     getGroupList() {
-      this.loading = true;
-      listGroup({pageNum: 1, pageSize: 1000}).then(response => {
-        this.groupList = response.rows;
       });
     },
     // 取消按钮
@@ -219,24 +209,20 @@ export default {
     reset() {
       this.form = {
         id: null,
-        groupId: null,
+        articleId: null,
+        content: null,
+        acceptation: null,
+        idx: null,
         picture: null,
         mp3: null,
-        title: null,
-        comment: null,
+        mp3Time: null,
         status: null,
         createTime: null,
         createBy: null,
         updateTime: null,
         updateBy: null
       };
-      this.engSentenceList = [];
       this.resetForm("form");
-    },
-    /** 查看文章操作 */
-    handleViewArticle: function(row) {
-      const articleId = row.id;
-      this.$router.push("/eng/article-detail/" + articleId);
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -258,32 +244,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加英语文章";
+      this.title = "添加文章句子";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getArticle(id).then(response => {
+      getSentence(id).then(response => {
         this.form = response.data;
-        this.engSentenceList = response.data.engSentenceList;
         this.open = true;
-        this.title = "修改英语文章";
+        this.title = "修改文章句子";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          this.form.engSentenceList = this.engSentenceList;
           if (this.form.id != null) {
-            updateArticle(this.form).then(response => {
+            updateSentence(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addArticle(this.form).then(response => {
+            addSentence(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -295,50 +279,18 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除英语文章编号为"' + ids + '"的数据项？').then(function() {
-        return delArticle(ids);
+      this.$modal.confirm('是否确认删除文章句子编号为"' + ids + '"的数据项？').then(function() {
+        return delSentence(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-	/** 文章句子序号 */
-    rowEngSentenceIndex({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
-    /** 文章句子添加按钮操作 */
-    handleAddEngSentence() {
-      let obj = {};
-      obj.content = "";
-      obj.acceptation = "";
-      obj.idx = "";
-      obj.picture = "";
-      obj.mp3 = "";
-      obj.mp3Time = "";
-      obj.status = "";
-      this.engSentenceList.push(obj);
-    },
-    /** 文章句子删除按钮操作 */
-    handleDeleteEngSentence() {
-      if (this.checkedEngSentence.length == 0) {
-        this.$modal.msgError("请先选择要删除的文章句子数据");
-      } else {
-        const engSentenceList = this.engSentenceList;
-        const checkedEngSentence = this.checkedEngSentence;
-        this.engSentenceList = engSentenceList.filter(function(item) {
-          return checkedEngSentence.indexOf(item.index) == -1
-        });
-      }
-    },
-    /** 复选框选中数据 */
-    handleEngSentenceSelectionChange(selection) {
-      this.checkedEngSentence = selection.map(item => item.index)
-    },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('eng/article/export', {
+      this.download('eng/sentence/export', {
         ...this.queryParams
-      }, `article_${new Date().getTime()}.xlsx`)
+      }, `sentence_${new Date().getTime()}.xlsx`)
     }
   }
 };

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.eng.mapper.EngWordMapper">
+    
+    <resultMap type="EngWord" id="EngWordResult">
+        <result property="id"    column="id"    />
+        <result property="wordName"    column="word_name"    />
+        <result property="phAm"    column="ph_am"    />
+        <result property="acceptation"    column="acceptation"    />
+        <result property="exchange"    column="exchange"    />
+        <result property="parts"    column="parts"    />
+        <result property="phAnMp3"    column="ph_an_mp3"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectEngWordVo">
+        select id, word_name, ph_am, acceptation, exchange, parts, ph_an_mp3, status, create_time, create_by, update_time, update_by from eng_word
+    </sql>
+
+    <select id="selectEngWordList" parameterType="EngWord" resultMap="EngWordResult">
+        <include refid="selectEngWordVo"/>
+        <where>  
+            <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
+            <if test="acceptation != null  and acceptation != ''"> and acceptation like concat('%', #{acceptation}, '%')</if>
+            <if test="exchange != null  and exchange != ''"> and exchange like concat('%', #{exchange}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectWordListByArticleId" resultMap="EngWordResult">
+        select a.* from eng_word a right join eng_article_word_rel b on a.id = b.word_id
+        where b.article_id = #{articleId}
+    </select>
+    
+    <select id="selectEngWordById" parameterType="Long" resultMap="EngWordResult">
+        <include refid="selectEngWordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEngWord" parameterType="EngWord" useGeneratedKeys="true" keyProperty="id">
+        insert into eng_word
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wordName != null and wordName != ''">word_name,</if>
+            <if test="phAm != null">ph_am,</if>
+            <if test="acceptation != null">acceptation,</if>
+            <if test="exchange != null">exchange,</if>
+            <if test="parts != null">parts,</if>
+            <if test="phAnMp3 != null">ph_an_mp3,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="wordName != null and wordName != ''">#{wordName},</if>
+            <if test="phAm != null">#{phAm},</if>
+            <if test="acceptation != null">#{acceptation},</if>
+            <if test="exchange != null">#{exchange},</if>
+            <if test="parts != null">#{parts},</if>
+            <if test="phAnMp3 != null">#{phAnMp3},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEngWord" parameterType="EngWord">
+        update eng_word
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="wordName != null and wordName != ''">word_name = #{wordName},</if>
+            <if test="phAm != null">ph_am = #{phAm},</if>
+            <if test="acceptation != null">acceptation = #{acceptation},</if>
+            <if test="exchange != null">exchange = #{exchange},</if>
+            <if test="parts != null">parts = #{parts},</if>
+            <if test="phAnMp3 != null">ph_an_mp3 = #{phAnMp3},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEngWordById" parameterType="Long">
+        delete from eng_word where id = #{id}
+    </delete>
+
+    <delete id="deleteEngWordByIds" parameterType="String">
+        delete from eng_word where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

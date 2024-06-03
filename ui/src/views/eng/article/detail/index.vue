@@ -1,0 +1,478 @@
+<template>
+  <div class="app-container">
+    <el-form ref="form" :model="article" label-width="80px">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="分组：">{{ article.groupName }}</el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="标题：">{{ article.title }}</el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="图片：">
+            <img
+              v-if="article.picture"
+              style="width: 200px"
+              :src="baseUrl + article.picture"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="音频：">
+            <el-button
+              v-if="article.mp3"
+              type="text"
+              @click="() => play(article.mp3)"
+            >
+              <svg-icon icon-class="sound" />
+            </el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="描述：">{{
+            article.comment
+          }}</el-form-item> </el-col
+        >o
+      </el-row>
+      <el-divider content-position="center">文章句子信息</el-divider>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAddSentence"
+            >添加</el-button
+          >
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            @click="handleDeleteSentence"
+            >删除</el-button
+          >
+        </el-col>
+      </el-row>
+      <el-table
+        v-loading="loading"
+        :data="sentenceList"
+        @selection-change="handleSentenceSelectionChange"
+      >
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="句子内容" align="center" prop="content" />
+        <el-table-column label="解释" align="center" prop="acceptation" />
+        <el-table-column label="序号" align="center" prop="idx" />
+        <el-table-column label="图片" align="center" prop="picture" width="100">
+          <template v-if="scope.row.picture" slot-scope="scope">
+            <image-preview :src="scope.row.picture" :width="50" :height="50" />
+          </template>
+        </el-table-column>
+        <el-table-column label="音频" align="center" prop="mp3">
+          <template v-if="scope.row.mp3" slot-scope="scope">
+            <el-button type="text">
+              <svg-icon icon-class="sound" />
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="MP3开始结束时间"
+          align="center"
+          prop="mp3Time"
+        />
+        <el-table-column
+          label="操作"
+          align="center"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdateSentence(scope.row)"
+              v-hasPermi="['eng:sentence:edit']"
+              >修改</el-button
+            >
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdateWord(scope.row)"
+              v-hasPermi="['eng:word:edit']"
+              >生词</el-button
+            >
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDeleteSentence(scope.row)"
+              v-hasPermi="['eng:sentence:remove']"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="sentenceTotal > 0"
+        :total="sentenceTotal"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getSentenceList"
+      />
+      <el-divider content-position="center">单词信息</el-divider>
+      <el-table v-loading="loading" :data="wordList">
+        <el-table-column label="单词" align="center" prop="wordName" />
+        <el-table-column label="音标" align="center" prop="phAm" />
+        <el-table-column label="解释" align="center" prop="acceptation" />
+        <el-table-column label="注释" align="center" prop="exchange" />
+        <el-table-column label="音频" align="center" prop="phAnMp3" />
+      </el-table>
+      <!-- 添加或修改文章句子对话框 -->
+      <el-dialog
+        :title="title"
+        :visible.sync="openSentence"
+        width="500px"
+        append-to-body
+      >
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="sentenceRules"
+          label-width="80px"
+        >
+          <el-form-item label="句子内容" prop="content">
+            <el-input
+              v-model="form.content"
+              type="textarea"
+              placeholder="请输入内容"
+            />
+          </el-form-item>
+          <el-form-item label="解释" prop="acceptation">
+            <el-input
+              v-model="form.acceptation"
+              type="textarea"
+              placeholder="请输入内容"
+            />
+          </el-form-item>
+          <el-form-item label="序号" prop="idx">
+            <el-input v-model="form.idx" placeholder="请输入序号" />
+          </el-form-item>
+          <el-form-item label="图片" prop="picture">
+            <image-upload v-model="form.picture" />
+          </el-form-item>
+          <el-form-item label="音频" prop="mp3">
+            <file-upload :fileType="['mp3']" v-model="form.mp3" />
+          </el-form-item>
+          <el-form-item label="MP3时间" prop="mp3Time">
+            <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 添加或修改单词对话框 -->
+      <el-dialog
+        :title="title"
+        :visible.sync="openWord"
+        width="500px"
+        append-to-body
+      >
+        <div
+          style="display: inline-block"
+          v-for="({ text, isWord, style }, index) of splitWordList"
+          :key="index"
+        >
+          <el-button
+            v-if="isWord"
+            size="mini"
+            type="text"
+            :style="style"
+            @click="handleClickWord(text)"
+            >{{ text }}</el-button
+          >
+          <div :style="style" v-if="!isWord">{{ text }}</div>
+        </div>
+
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitWord">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </el-dialog>
+    </el-form>
+  </div>
+</template>
+
+<script>
+import { getArticle } from "@/api/eng/article";
+
+import {
+  listSentence,
+  getSentence,
+  delSentence,
+  addSentence,
+  updateSentence,
+} from "@/api/eng/sentence";
+
+import { listWordByArticle, addWordByArticle } from "@/api/eng/word";
+import { brReg, splipSentences } from "@/utils/wordUtils";
+
+let player = new Audio();
+
+export default {
+  name: "Article",
+  data() {
+    return {
+      articleId: 0,
+      article: {},
+      baseUrl: process.env.VUE_APP_BASE_API,
+      // 遮罩层
+      loading: true,
+      // 选中数组
+      sentenceIds: [],
+      // 子表选中数据
+      checkedEngSentence: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 总条数
+      sentenceTotal: 0,
+      // 英语文章表格数据
+      sentenceList: [],
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      openSentence: false,
+      openWord: false,
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        articleId: null,
+      },
+      form: {},
+      // 表单校验
+      sentenceRules: {},
+      wordList: [],
+      //句子对应的生词
+      sentenceWordList: [],
+      //句子切割后的单词
+      splitWordList: [],
+    };
+  },
+  created() {
+    this.articleId = this.$route.params && this.$route.params.articleId;
+    if (this.articleId) {
+      this.getArticle();
+      this.getSentenceList();
+      this.getWordList();
+    }
+  },
+  methods: {
+    /** 查询英语文章 */
+    getArticle() {
+      this.loading = true;
+      getArticle(this.articleId).then(({ data }) => {
+        this.article = data;
+        this.loading = false;
+      });
+    },
+    /** 查询英语句子列表 */
+    getSentenceList() {
+      this.loading = true;
+      const newQueryParams = {
+        ...this.queryParams,
+        articleId: this.articleId,
+      };
+      this.queryParams = newQueryParams;
+      listSentence(newQueryParams).then((response) => {
+        this.sentenceList = response.rows;
+        this.sentenceTotal = response.total;
+        this.loading = false;
+      });
+    },
+    /** 查询单词列表 */
+    getWordList() {
+      this.loading = true;
+      listWordByArticle({
+        pageNum: 1,
+        pageSize: 1000,
+        articleId: this.articleId,
+      }).then((response) => {
+        this.wordList = response.rows;
+        this.sentenceWordList = response.rows.map((word) => word.name);
+        this.loading = false;
+      });
+    },
+    /**播放MP3 */
+    play(url) {
+      //加载mp3
+      player.src = this.baseUrl + url;
+      player.load();
+      player.pause();
+      player.play();
+    },
+    // 取消按钮
+    cancel() {
+      this.openSentence = false;
+      this.openWord = false;
+      this.resetSentence();
+    },
+    // 表单重置
+    resetSentence() {
+      this.form = {
+        id: null,
+        articleId: this.articleId,
+        content: null,
+        acceptation: null,
+        idx: null,
+        picture: null,
+        mp3: null,
+        mp3Time: null,
+        status: null,
+      };
+      this.resetForm("form");
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getSentenceList();
+    },
+    /** 重置按钮操作 */
+    resetSentenceQuery() {
+      this.resetSentence("queryForm");
+      this.handleQuery();
+    },
+    // 多选框选中数据
+    handleSentenceSelectionChange(selection) {
+      this.sentenceIds = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.resetSentence();
+      this.openSentence = true;
+      this.title = "添加英语文章";
+    },
+    /** 修改按钮操作 */
+    handleUpdateSentence(row) {
+      this.resetSentence();
+      const id = row.id || this.sentenceIds;
+      getSentence(id).then((response) => {
+        this.form = response.data;
+        this.openSentence = true;
+        this.title = "修改句子";
+      });
+    },
+    //修改生词时
+    handleUpdateWord(row) {
+      this.form = row;
+      this.splitWordList = this.getSplitWordList();
+      this.openWord = true;
+      this.title = "修改生词";
+    },
+    //根据句子获取单词
+    getSplitWordList() {
+      const content = this.form.content;
+      const allWords = splipSentences(content.split(brReg))[0].allWords;
+      allWords.forEach((element) => {
+        if (this.sentenceWordList.find((word) => word == element.text)) {
+          element.style = {
+            padding: "5px",
+            margin: "0 5px",
+            backgroundColor: "rgba(241, 196, 15, 0.3)",
+            borderColor: "rgba(211, 84, 0, 0.5)",
+          };
+        } else if (element.isWord) {
+          element.style = {
+            display: "inline-block",
+            padding: "5px",
+            margin: "0 5px",
+          };
+        }
+      });
+      return allWords;
+    },
+    /**点击单词时 */
+    handleClickWord(text) {
+      var index = this.sentenceWordList.indexOf(text.toLowerCase());
+      const newWordList = [...this.sentenceWordList];
+      if (index > -1) {
+        newWordList.splice(index, 1);
+      } else {
+        newWordList.push(text.toLowerCase());
+      }
+      this.sentenceWordList = newWordList;
+      this.splitWordList = this.getSplitWordList();
+    },
+    /** 提交句子按钮 */
+    submitForm() {
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateSentence(this.form).then((response) => {
+              this.$modal.msgSuccess("修改成功");
+              this.openSentence = false;
+              this.getSentenceList();
+            });
+          } else {
+            addSentence(this.form).then((response) => {
+              this.$modal.msgSuccess("新增成功");
+              this.openSentence = false;
+              this.getSentenceList();
+            });
+          }
+        }
+      });
+    },
+    //提交生词
+    submitWord() {
+      addWordByArticle(this.articleId, this.sentenceWordList).then(() => {
+        this.$modal.msgSuccess("修改成功");
+        this.openWord = false;
+        this.getWordList();
+      });
+    },
+    /** 删除按钮操作 */
+    handleDeleteSentence(row) {
+      const sentenceIds = row.id || this.sentenceIds;
+      this.$modal
+        .confirm("是否确认删除选中的句子？")
+        .then(function () {
+          return delSentence(sentenceIds);
+        })
+        .then(() => {
+          this.getSentenceList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
+    },
+    /** 文章句子序号 */
+    rowEngSentenceIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** 文章句子添加按钮操作 */
+    handleAddSentence() {
+      this.resetSentence();
+      this.openSentence = true;
+      this.title = "添加文章句子";
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      this.download(
+        "eng/article/export",
+        {
+          ...this.queryParams,
+        },
+        `article_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
+};
+</script>

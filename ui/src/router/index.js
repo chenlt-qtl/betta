@@ -161,7 +161,21 @@ export const dynamicRoutes = [
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }
     ]
-  }
+  },
+  {
+    path: '/eng/article-detail',
+    component: Layout,
+    hidden: true,
+    permissions: ['eng:article:edit'],
+    children: [
+      {
+        path: ':articleId(\\d+)',
+        component: () => import('@/views/eng/article/detail'),
+        name: 'ArticleDetail',
+        meta: { title: '文章明细', activeMenu: '/eng/article' }
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

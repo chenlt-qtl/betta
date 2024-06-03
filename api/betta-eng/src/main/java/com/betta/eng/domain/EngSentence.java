@@ -1,14 +1,14 @@
 package com.betta.eng.domain;
 
+import lombok.Data;
 import com.betta.common.annotation.Excel;
 import com.betta.common.core.domain.BaseEntity;
-import lombok.Data;
 
 /**
  * 文章句子对象 eng_sentence
  * 
  * @author ruoyi
- * @date 2024-05-31
+ * @date 2024-06-02
  */
 @Data
 public class EngSentence extends BaseEntity
@@ -47,6 +47,6 @@ public class EngSentence extends BaseEntity
     private String mp3Time;
 
     /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String status;
+
 }
