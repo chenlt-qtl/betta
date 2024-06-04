@@ -32,7 +32,7 @@
           <el-form-item label="描述：">{{
             article.comment
           }}</el-form-item> </el-col
-        >o
+        >
       </el-row>
       <el-divider content-position="center">文章句子信息</el-divider>
       <el-row :gutter="10" class="mb8">

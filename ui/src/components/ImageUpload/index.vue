@@ -55,7 +55,7 @@ export default {
     // 图片数量限制
     limit: {
       type: Number,
-      default: 5,
+      default: 1,
     },
     // 大小限制(MB)
     fileSize: {
@@ -72,11 +72,11 @@ export default {
       type: Boolean,
       default: true,
     },
-    // //上传的文件类型
-    // uploadType: {
-    //   type: String,
-    //   default: "upload",
-    // }
+    //上传的文件类型
+    uploadType: {
+      type: String,
+      default: "upload",
+    }
   },
   data() {
     return {
@@ -86,7 +86,7 @@ export default {
       dialogVisible: false,
       hideUpload: false,
       baseUrl: process.env.VUE_APP_BASE_API,
-      uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload/", // 上传的图片服务器地址
+      uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload/" + this.uploadType, // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),
       },

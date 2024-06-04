@@ -124,11 +124,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="图片" prop="picture" >
-          <image-upload v-model="form.picture"/>
+        <el-form-item label="图片" prop="picture">
+          <image-upload v-model="form.picture" uploadType="article"/>
         </el-form-item>
         <el-form-item label="音频" prop="mp3">
-          <file-upload :fileType='["mp3"]'  v-model="form.mp3"/>
+          <file-upload :fileType='["mp3"]'  v-model="form.mp3" uploadType="article"/>
         </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题" />

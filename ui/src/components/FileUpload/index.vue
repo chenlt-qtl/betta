@@ -68,7 +68,7 @@ export default {
     // 数量限制
     limit: {
       type: Number,
-      default: 5,
+      default: 1,
     },
     // 大小限制(MB)
     fileSize: {
@@ -86,17 +86,18 @@ export default {
       default: true,
     },
     //文件类型
-    // uploadType: {
-    //   type: String,
-    //   default: "upload",
-    // }
+    uploadType: {
+      type: String,
+      default: "upload",
+    },
   },
   data() {
     return {
       number: 0,
       uploadList: [],
       baseUrl: process.env.VUE_APP_BASE_API,
-      uploadFileUrl: process.env.VUE_APP_BASE_API + "/common/upload/", // 上传文件服务器地址
+      uploadFileUrl:
+        process.env.VUE_APP_BASE_API + "/common/upload/" + this.uploadType, // 上传文件服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),
       },
