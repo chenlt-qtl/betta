@@ -42,6 +42,15 @@ public interface IEngWordService
      */
     public int insertEngWord(EngWord engWord);
 
+    EngWord getWord(String wordName);
+
+    /**
+     * 增加文章对应的生词
+     *
+     * @param articleId
+     */
+    public void addByArticle(List<String> wordNames, Long articleId);
+
     /**
      * 修改单词
      * 
@@ -51,18 +60,9 @@ public interface IEngWordService
     public int updateEngWord(EngWord engWord);
 
     /**
-     * 批量删除单词
-     * 
-     * @param ids 需要删除的单词主键集合
-     * @return 结果
-     */
-    public int deleteEngWordByIds(Long[] ids);
-
-    /**
      * 删除单词信息
-     * 
+     *
      * @param id 单词主键
-     * @return 结果
      */
-    public int deleteEngWordById(Long id);
+    public void deleteEngWordById(Long id);
 }

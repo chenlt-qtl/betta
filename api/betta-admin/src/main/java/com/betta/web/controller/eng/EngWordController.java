@@ -1,25 +1,20 @@
 package com.betta.web.controller.eng;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.betta.common.annotation.Log;
 import com.betta.common.core.controller.BaseController;
 import com.betta.common.core.domain.AjaxResult;
+import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
+import com.betta.common.utils.poi.ExcelUtil;
 import com.betta.eng.domain.EngWord;
 import com.betta.eng.service.IEngWordService;
-import com.betta.common.utils.poi.ExcelUtil;
-import com.betta.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 单词Controller
@@ -94,16 +89,18 @@ public class EngWordController extends BaseController
 
     /**
      * 新增文章对应的单词
-     * @param engWords
+     * @param map
      * @param articleId
      * @return
      */
     @PreAuthorize("@ss.hasPermi('eng:word:add')")
     @Log(title = "单词", businessType = BusinessType.INSERT)
     @PostMapping("/{articleId}")
-    public AjaxResult addByArticle(@RequestBody List<EngWord> engWords,@PathVariable Long articleId)
+    public AjaxResult addByArticle(@RequestBody Map map, @PathVariable Long articleId)
     {
-        return null;
+        List<String> words = (List<String>) map.get("words");
+        engWordService.addByArticle(words,articleId);
+        return AjaxResult.success();
     }
 
 
@@ -123,9 +120,10 @@ public class EngWordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:word:remove')")
     @Log(title = "单词", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+	@DeleteMapping("/{id}")
+    public AjaxResult remove(@PathVariable Long id)
     {
-        return toAjax(engWordService.deleteEngWordByIds(ids));
+        engWordService.deleteEngWordById(id);
+        return AjaxResult.success();
     }
 }

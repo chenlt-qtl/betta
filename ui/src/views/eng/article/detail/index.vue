@@ -71,7 +71,7 @@
         </el-table-column>
         <el-table-column label="音频" align="center" prop="mp3">
           <template v-if="scope.row.mp3" slot-scope="scope">
-            <el-button type="text">
+            <el-button type="text" @click="() => play(scope.row.mp3)">
               <svg-icon icon-class="sound" />
             </el-button>
           </template>
@@ -125,9 +125,20 @@
       <el-table v-loading="loading" :data="wordList">
         <el-table-column label="单词" align="center" prop="wordName" />
         <el-table-column label="音标" align="center" prop="phAm" />
-        <el-table-column label="解释" align="center" prop="acceptation" />
+        <el-table-column
+          label="解释"
+          align="center"
+          prop="acceptation"
+          :formatter="acceptationFormatter"
+        />
         <el-table-column label="注释" align="center" prop="exchange" />
-        <el-table-column label="音频" align="center" prop="phAnMp3" />
+        <el-table-column label="音频" align="center" prop="phAnMp3">
+          <template v-if="scope.row.phAnMp3" slot-scope="scope">
+            <el-button type="text" @click="() => play(scope.row.phAnMp3)">
+              <svg-icon icon-class="sound" />
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 添加或修改文章句子对话框 -->
       <el-dialog
@@ -199,7 +210,7 @@
         </div>
 
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitWord">确 定</el-button>
+          <el-button type="primary" @click="queryParams">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </el-dialog>
@@ -305,7 +316,7 @@ export default {
         articleId: this.articleId,
       }).then((response) => {
         this.wordList = response.rows;
-        this.sentenceWordList = response.rows.map((word) => word.name);
+        this.sentenceWordList = response.rows.map((word) => word.wordName);
         this.loading = false;
       });
     },
@@ -379,6 +390,9 @@ export default {
     },
     //根据句子获取单词
     getSplitWordList() {
+      console.log("=========this.sentenceWordList===========================");
+      console.log(this.sentenceWordList);
+      console.log("====================================");
       const content = this.form.content;
       const allWords = splipSentences(content.split(brReg))[0].allWords;
       allWords.forEach((element) => {
@@ -397,6 +411,9 @@ export default {
           };
         }
       });
+      console.log("===========allWords=========================");
+      console.log(allWords);
+      console.log("====================================");
       return allWords;
     },
     /**点击单词时 */
@@ -432,7 +449,7 @@ export default {
       });
     },
     //提交生词
-    submitWord() {
+    queryParams() {
       addWordByArticle(this.articleId, this.sentenceWordList).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.openWord = false;
@@ -472,6 +489,11 @@ export default {
         },
         `article_${new Date().getTime()}.xlsx`
       );
+    },
+    acceptationFormatter(row, column) {
+      const acceptation = row.acceptation;
+      const strs = acceptation.split("|");
+      return strs[0] + (strs.length > 1 ? "..." : "");
     },
   },
 };

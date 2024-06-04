@@ -4,6 +4,8 @@ import lombok.Data;
 import com.betta.common.annotation.Excel;
 import com.betta.common.core.domain.BaseEntity;
 
+import java.util.List;
+
 /**
  * 单词对象 eng_word
  * 
@@ -43,5 +45,15 @@ public class EngWord extends BaseEntity
 
     /** $column.columnComment */
     private String status;
+
+    /**
+     * 爱词霸例句
+     */
+    private List<EngIcibaSentence> icibaSentenceList;
+
+    /**
+     * 自定义例句
+     */
+    private List<EngSentence> sentenceList;
 
 }

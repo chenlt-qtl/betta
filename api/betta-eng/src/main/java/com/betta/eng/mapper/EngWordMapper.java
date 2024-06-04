@@ -27,6 +27,8 @@ public interface EngWordMapper
      */
     public List<EngWord> selectEngWordList(EngWord engWord);
 
+    public List<EngWord> selectEngWordByWordName(String wordName);
+
     /**
      * 根据article查询对应的单词
      * @param articleId

@@ -32,9 +32,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectEngWordByWordName" resultMap="EngWordResult">
+        <include refid="selectEngWordVo"/>
+        where word_name = #{wordName}
+    </select>
+
     <select id="selectWordListByArticleId" resultMap="EngWordResult">
-        select a.* from eng_word a right join eng_article_word_rel b on a.id = b.word_id
-        where b.article_id = #{articleId}
+        select a.* from eng_word a , eng_article_word_rel b where a.id = b.word_id
+        and b.article_id = #{articleId}
     </select>
     
     <select id="selectEngWordById" parameterType="Long" resultMap="EngWordResult">

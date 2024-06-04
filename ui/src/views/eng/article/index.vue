@@ -124,7 +124,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="图片" prop="picture">
+        <el-form-item label="图片" prop="picture" >
           <image-upload v-model="form.picture"/>
         </el-form-item>
         <el-form-item label="音频" prop="mp3">
