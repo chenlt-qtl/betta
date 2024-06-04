@@ -20,6 +20,8 @@ public class EngWord extends BaseEntity
     /** $column.columnComment */
     private Long id;
 
+    private Long relId;
+
     /** 单词内容 */
     @Excel(name = "单词内容")
     private String wordName;

@@ -42,6 +42,18 @@ public class EngWordController extends BaseController
     }
 
     /**
+     * 查询单词列表
+     */
+    @PreAuthorize("@ss.hasPermi('eng:word:list')")
+    @GetMapping("/new")
+    public TableDataInfo listNew(EngWord engWord)
+    {
+        startPage();
+        List<EngWord> list = engWordService.selectNewList(engWord);
+        return getDataTable(list);
+    }
+
+    /**
      * 根据article查询
      */
     @PreAuthorize("@ss.hasPermi('eng:word:list')")
@@ -54,26 +66,13 @@ public class EngWordController extends BaseController
     }
 
     /**
-     * 导出单词列表
-     */
-    @PreAuthorize("@ss.hasPermi('eng:word:export')")
-    @Log(title = "单词", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, EngWord engWord)
-    {
-        List<EngWord> list = engWordService.selectEngWordList(engWord);
-        ExcelUtil<EngWord> util = new ExcelUtil<EngWord>(EngWord.class);
-        util.exportExcel(response, list, "单词数据");
-    }
-
-    /**
      * 获取单词详细信息
      */
     @PreAuthorize("@ss.hasPermi('eng:word:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    @GetMapping
+    public AjaxResult getInfo(String wordName)
     {
-        return success(engWordService.selectEngWordById(id));
+        return success(engWordService.getWord(wordName));
     }
 
     /**

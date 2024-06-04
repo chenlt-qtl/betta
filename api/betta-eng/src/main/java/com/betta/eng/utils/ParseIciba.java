@@ -126,8 +126,8 @@ public class ParseIciba {
         List<EngIcibaSentence> isList = new ArrayList();
         for (Sent sent : sents) {
             EngIcibaSentence is = new EngIcibaSentence();
-            is.setOrig(URLEncoder.encode(sent.getOrig(), "utf-8"));
-            is.setTrans(URLEncoder.encode(sent.getTrans(), "utf-8"));
+            is.setOrig(sent.getOrig());
+            is.setTrans(sent.getTrans());
             isList.add(is);
         }
 

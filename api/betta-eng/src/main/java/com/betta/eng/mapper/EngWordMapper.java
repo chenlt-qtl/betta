@@ -67,4 +67,11 @@ public interface EngWordMapper
      * @return 结果
      */
     public int deleteEngWordByIds(Long[] ids);
+
+    /**
+     * 查找有关联的单词
+     * @param engWord
+     * @return
+     */
+    List<EngWord> selectRelList(EngWord engWord);
 }

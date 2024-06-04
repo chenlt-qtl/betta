@@ -9,6 +9,15 @@ export function listWord(query) {
   })
 }
 
+// 查询生词
+export function listNew(query) {
+  return request({
+    url: '/eng/word/new',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询单词列表
 export function listWordByArticle(query) {
   return request({
@@ -19,9 +28,9 @@ export function listWordByArticle(query) {
 }
 
 // 查询单词详细
-export function getWord(id) {
+export function getWord({wordName}) {
   return request({
-    url: '/eng/word/' + id,
+    url: '/eng/word?wordName=' + wordName,
     method: 'get'
   })
 }

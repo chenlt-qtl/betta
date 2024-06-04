@@ -1,19 +1,17 @@
 package com.betta.eng.service.impl;
 
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Objects;
 
 import com.betta.common.utils.DateUtils;
-import com.betta.eng.domain.EngArticleWordRel;
-import com.betta.eng.domain.EngIcibaSentence;
-import com.betta.eng.service.IEngArticleWordRelService;
-import com.betta.eng.service.IEngIcibaSentenceService;
+import com.betta.common.utils.SecurityUtils;
+import com.betta.eng.domain.*;
+import com.betta.eng.service.*;
 import com.betta.eng.utils.ParseIciba;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.betta.eng.mapper.EngWordMapper;
-import com.betta.eng.domain.EngWord;
-import com.betta.eng.service.IEngWordService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -29,6 +27,9 @@ public class EngWordServiceImpl implements IEngWordService {
 
     @Autowired
     private IEngArticleWordRelService articleWordRelService;
+
+    @Autowired
+    private IEngSentenceService sentenceService;
 
     @Autowired
     private IEngIcibaSentenceService icibaSentenceService;
@@ -75,10 +76,17 @@ public class EngWordServiceImpl implements IEngWordService {
     @Override
     public EngWord getWord(String wordName) {
         String lowerCase = wordName.toLowerCase();//转小写
+        //查询单词
         List<EngWord> list = engWordMapper.selectEngWordByWordName(lowerCase);
         EngWord word = null;
         if (!list.isEmpty()) {
             word = list.get(0);//已存在数据库中
+
+            //查询爱词霸例句
+            EngIcibaSentence icibaSentence = new EngIcibaSentence();
+            icibaSentence.setWordId(word.getId());
+            List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
+            word.setIcibaSentenceList(icibaSentences);
         } else {//查API
             word = ParseIciba.getWordFromIciba(lowerCase);
             if (!Objects.isNull(word)) {
@@ -90,6 +98,22 @@ public class EngWordServiceImpl implements IEngWordService {
                     }
                 }
             }
+        }
+
+        //查询自定义例句
+        EngSentence sentence = new EngSentence();
+        sentence.setCreateBy(SecurityUtils.getUsername());
+        sentence.setContent(wordName);
+        List<EngSentence> sentences = sentenceService.selectEngSentenceList(sentence);
+        word.setSentenceList(sentences);
+
+        //查询是否已关联
+        EngArticleWordRel engArticleWordRel = new EngArticleWordRel();
+        engArticleWordRel.setWordId(word.getId());
+        engArticleWordRel.setCreateBy(SecurityUtils.getUsername());
+        List<EngArticleWordRel> engArticleWordRels = articleWordRelService.selectEngArticleWordRelList(engArticleWordRel);
+        if(!engArticleWordRels.isEmpty()) {
+            word.setRelId(engArticleWordRels.get(0).getId());
         }
         return word;
     }
@@ -141,5 +165,11 @@ public class EngWordServiceImpl implements IEngWordService {
     public void deleteEngWordById(Long id) {
         icibaSentenceService.deleteByWordId(id);
         engWordMapper.deleteEngWordById(id);
+    }
+
+    @Override
+    public List<EngWord> selectNewList(EngWord engWord) {
+        engWord.setCreateBy(SecurityUtils.getUsername());//当前用户的数据
+        return engWordMapper.selectRelList(engWord);
     }
 }

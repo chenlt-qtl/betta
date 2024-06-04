@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="EngWord" id="EngWordResult">
         <result property="id"    column="id"    />
+        <result property="relId"    column="rel_id"    />
         <result property="wordName"    column="word_name"    />
         <result property="phAm"    column="ph_am"    />
         <result property="acceptation"    column="acceptation"    />
@@ -38,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectWordListByArticleId" resultMap="EngWordResult">
-        select a.* from eng_word a , eng_article_word_rel b where a.id = b.word_id
+        select a.*,b.id as rel_id from eng_word a , eng_article_word_rel b where a.id = b.word_id
         and b.article_id = #{articleId}
     </select>
     
@@ -105,4 +106,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
+    <select id="selectRelList" parameterType="EngWord" resultMap="EngWordResult">
+        <include refid="selectEngWordVo"/>
+        <where>
+            and exists (select 1 from eng_article_word_rel  where
+            eng_article_word_rel.create_by=#{createBy} and eng_word.id=eng_article_word_rel.word_id)
+            <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
+            <if test="acceptation != null  and acceptation != ''"> and acceptation like concat('%', #{acceptation}, '%')</if>
+            <if test="exchange != null  and exchange != ''"> and exchange like concat('%', #{exchange}, '%')</if>
+        </where>
+    </select>
 </mapper>

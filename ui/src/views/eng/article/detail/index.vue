@@ -29,10 +29,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="描述：">{{
-            article.comment
-          }}</el-form-item> </el-col
-        >
+          <el-form-item label="描述：">{{ article.comment }}</el-form-item>
+        </el-col>
       </el-row>
       <el-divider content-position="center">文章句子信息</el-divider>
       <el-row :gutter="10" class="mb8">
@@ -71,7 +69,7 @@
         </el-table-column>
         <el-table-column label="音频" align="center" prop="mp3">
           <template v-if="scope.row.mp3" slot-scope="scope">
-            <el-button type="text" @click="() => play(scope.row.mp3)">
+            <el-button type="text" @click="() => play(scope.row.mp3,scope.row.mp3Time)">
               <svg-icon icon-class="sound" />
             </el-button>
           </template>
@@ -139,6 +137,21 @@
             </el-button>
           </template>
         </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDeleteRel(scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 添加或修改文章句子对话框 -->
       <el-dialog
@@ -178,6 +191,14 @@
           </el-form-item>
           <el-form-item label="MP3时间" prop="mp3Time">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
+            格式: 开始时间,持续时间  例: 5,8
+            <el-button
+              v-if="form.mp3"
+              type="text"
+              @click="() => play(form.mp3,form.mp3Time)"
+            >
+              <svg-icon icon-class="sound" />
+            </el-button>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -210,7 +231,7 @@
         </div>
 
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="queryParams">确 定</el-button>
+          <el-button type="primary" @click="submitWord">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </el-dialog>
@@ -230,9 +251,9 @@ import {
 } from "@/api/eng/sentence";
 
 import { listWordByArticle, addWordByArticle } from "@/api/eng/word";
+import { delArticleWordRel } from "@/api/eng/articleWordRel";
 import { brReg, splipSentences } from "@/utils/wordUtils";
-
-let player = new Audio();
+import { play } from "@/utils/audio";
 
 export default {
   name: "Article",
@@ -293,6 +314,21 @@ export default {
         this.loading = false;
       });
     },
+    handleDeleteRel(row) {
+      this.$modal
+        .confirm("是否确认删除选中的单词？")
+        .then(function () {
+          return delArticleWordRel(row.relId);
+        })
+        .then(() => {
+          this.getWordList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
+    },
+    play(url,mp3Time) {
+      play(url,mp3Time);
+    },
     /** 查询英语句子列表 */
     getSentenceList() {
       this.loading = true;
@@ -319,14 +355,6 @@ export default {
         this.sentenceWordList = response.rows.map((word) => word.wordName);
         this.loading = false;
       });
-    },
-    /**播放MP3 */
-    play(url) {
-      //加载mp3
-      player.src = this.baseUrl + url;
-      player.load();
-      player.pause();
-      player.play();
     },
     // 取消按钮
     cancel() {
@@ -390,9 +418,6 @@ export default {
     },
     //根据句子获取单词
     getSplitWordList() {
-      console.log("=========this.sentenceWordList===========================");
-      console.log(this.sentenceWordList);
-      console.log("====================================");
       const content = this.form.content;
       const allWords = splipSentences(content.split(brReg))[0].allWords;
       allWords.forEach((element) => {
@@ -411,9 +436,6 @@ export default {
           };
         }
       });
-      console.log("===========allWords=========================");
-      console.log(allWords);
-      console.log("====================================");
       return allWords;
     },
     /**点击单词时 */
@@ -449,7 +471,7 @@ export default {
       });
     },
     //提交生词
-    queryParams() {
+    submitWord() {
       addWordByArticle(this.articleId, this.sentenceWordList).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.openWord = false;
