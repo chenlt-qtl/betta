@@ -2,6 +2,7 @@ package com.betta.eng.service.impl;
 
 import java.util.List;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.exception.ServiceException;
 import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngArticleGroup;
@@ -43,6 +44,7 @@ public class EngArticleGroupServiceImpl implements IEngArticleGroupService {
      * @return 英语文章分组
      */
     @Override
+    @CreateByScope("")
     public List<EngArticleGroup> selectEngArticleGroupList(EngArticleGroup engArticleGroup) {
         return engArticleGroupMapper.selectEngArticleGroupList(engArticleGroup);
     }

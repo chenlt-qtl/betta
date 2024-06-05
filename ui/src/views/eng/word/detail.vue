@@ -123,7 +123,7 @@
   margin: 0 20px 5px 0;
 }
 
-.word-detail .el-button--medium {
+.word-detail .el-button--text {
   font-size: 22px;
   position: relative;
 }

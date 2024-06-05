@@ -1,5 +1,6 @@
 package com.betta.eng.service.impl;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngSentence;
@@ -49,6 +50,7 @@ public class EngArticleServiceImpl implements IEngArticleService {
      * @return 英语文章
      */
     @Override
+    @CreateByScope("a")
     public List<EngArticle> selectEngArticleList(EngArticle engArticle) {
         return engArticleMapper.selectEngArticleList(engArticle);
     }

@@ -25,6 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="wordId != null "> and word_id = #{wordId}</if>
             <if test="orig != null  and orig != ''"> and orig = #{orig}</if>
+            <!-- 数据范围过滤 -->
+            ${params.createByScope}
         </where>
     </select>
     

@@ -1,6 +1,8 @@
 package com.betta.eng.service.impl;
 
 import java.util.List;
+
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.eng.service.IEngSentenceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ public class EngSentenceServiceImpl implements IEngSentenceService
      * @return 文章句子
      */
     @Override
+    @CreateByScope("")
     public List<EngSentence> selectEngSentenceList(EngSentence engSentence)
     {
         return engSentenceMapper.selectEngSentenceList(engSentence);

@@ -1,6 +1,8 @@
 package com.betta.eng.service.impl;
 
 import java.util.List;
+
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class EngIcibaSentenceServiceImpl implements IEngIcibaSentenceService
      * @return 爱词霸例句
      */
     @Override
+    @CreateByScope("")
     public List<EngIcibaSentence> selectEngIcibaSentenceList(EngIcibaSentence engIcibaSentence)
     {
         return engIcibaSentenceMapper.selectEngIcibaSentenceList(engIcibaSentence);

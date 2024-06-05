@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.Objects;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.eng.domain.*;
@@ -52,6 +53,7 @@ public class EngWordServiceImpl implements IEngWordService {
      * @return 单词
      */
     @Override
+    @CreateByScope("")
     public List<EngWord> selectEngWordList(EngWord engWord) {
         return engWordMapper.selectEngWordList(engWord);
     }
