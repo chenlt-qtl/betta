@@ -75,7 +75,7 @@ export default {
     //上传的文件类型
     uploadType: {
       type: String,
-      default: "upload",
+      default: "",
     }
   },
   data() {

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import logoImg from '@/assets/logo/logo.png'
+import logoImg from '@/assets/logo/logo.svg'
 import variables from '@/assets/styles/variables.scss'
 
 export default {
@@ -66,7 +66,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
+      width: 20px;
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
@@ -78,7 +78,7 @@ export default {
       color: #fff;
       font-weight: 600;
       line-height: 50px;
-      font-size: 14px;
+      font-size: 18px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       vertical-align: middle;
     }

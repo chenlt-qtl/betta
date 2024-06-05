@@ -88,7 +88,7 @@ export default {
     //文件类型
     uploadType: {
       type: String,
-      default: "upload",
+      default: "",
     },
   },
   data() {
