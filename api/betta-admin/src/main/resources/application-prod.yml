@@ -9,3 +9,7 @@ spring:
         password: Corn2020!@#
   redis:
     password: 'qwe!@#'
+
+ruoyi:
+  profile: /root/file/betta
+
