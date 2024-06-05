@@ -58,4 +58,6 @@ public interface IEngSentenceService
      * @return 结果
      */
     public int deleteEngSentenceById(Long id);
+
+    int deleteByArticle(Long articleId);
 }

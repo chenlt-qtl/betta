@@ -58,4 +58,6 @@ public interface EngSentenceMapper
      * @return 结果
      */
     public int deleteEngSentenceByIds(Long[] ids);
+
+    int deleteByArticleId(Long articleId);
 }

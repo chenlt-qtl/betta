@@ -26,15 +26,6 @@ export function addArticleWordRel(data) {
   })
 }
 
-// 修改文章单词关系
-export function updateArticleWordRel(data) {
-  return request({
-    url: '/eng/articleWordRel',
-    method: 'put',
-    data: data
-  })
-}
-
 // 删除文章单词关系
 export function delArticleWordRel(id) {
   return request({

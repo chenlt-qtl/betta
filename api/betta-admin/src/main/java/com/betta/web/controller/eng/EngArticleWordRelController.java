@@ -81,17 +81,6 @@ public class EngArticleWordRelController extends BaseController
     }
 
     /**
-     * 修改文章单词关系
-     */
-    @PreAuthorize("@ss.hasPermi('eng:articleWordRel:edit')")
-    @Log(title = "文章单词关系", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody EngArticleWordRel engArticleWordRel)
-    {
-        return toAjax(engArticleWordRelService.updateEngArticleWordRel(engArticleWordRel));
-    }
-
-    /**
      * 删除文章单词关系
      */
     @PreAuthorize("@ss.hasPermi('eng:articleWordRel:remove')")

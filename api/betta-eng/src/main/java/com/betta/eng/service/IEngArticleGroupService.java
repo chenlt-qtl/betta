@@ -52,11 +52,4 @@ public interface IEngArticleGroupService
      */
     public int deleteEngArticleGroupByIds(Long[] ids);
 
-    /**
-     * 删除英语文章分组信息
-     * 
-     * @param id 英语文章分组主键
-     * @return 结果
-     */
-    public int deleteEngArticleGroupById(Long id);
 }

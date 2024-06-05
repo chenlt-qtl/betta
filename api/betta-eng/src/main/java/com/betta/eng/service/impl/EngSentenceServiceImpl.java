@@ -93,4 +93,15 @@ public class EngSentenceServiceImpl implements IEngSentenceService
     {
         return engSentenceMapper.deleteEngSentenceById(id);
     }
+
+    /**
+     * 删除article对应的句子
+     * @param articleId
+     * @return
+     */
+    @Override
+    public int deleteByArticle(Long articleId)
+    {
+        return engSentenceMapper.deleteByArticleId(articleId);
+    }
 }

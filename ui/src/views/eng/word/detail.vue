@@ -44,13 +44,24 @@
             ><svg-icon icon-class="star1" />
           </el-button>
           <el-button v-if="form.relId" type="text" @click="updateRel"
-            ><svg-icon icon-class="star-fill" /> </el-button
-        ></el-descriptions-item>
-        <template v-for="item in form.acceptation.split('|')">
-          <el-descriptions-item label="" :key="item">{{
+            ><svg-icon icon-class="star-fill" />
+          </el-button>
+          <el-button
+            type="text"
+            @click="updateWord"
+            icon="el-icon-edit-outline"
+          >
+          </el-button>
+        </el-descriptions-item>
+        
+        <template v-for="(item,index) in form.acceptation.split('|')">
+          <el-descriptions-item :labelStyle="{width:'64px'}" :label="index==0?'词霸释义:':''" :key="item">{{
             item
           }}</el-descriptions-item>
         </template>
+        <el-descriptions-item :labelStyle="{width:'64px'}" v-if="form.exchange" label="简明注释:">{{
+            form.exchange
+          }}</el-descriptions-item>
       </el-descriptions>
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -80,6 +91,24 @@
         </div>
       </el-card>
     </div>
+    <!-- 修改单词注释 -->
+    <el-dialog
+      title="更新单词"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+    >
+      <el-form ref="form" :model="form" label-width="80px">
+        <div class="word-acceptation">{{ form.acceptation }}</div>
+        <el-form-item label="简明注释" prop="exchange">
+          <el-input v-model="form.exchange" placeholder="请输入简明注释" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <style>
@@ -99,6 +128,11 @@
   position: relative;
 }
 
+.word-acceptation {
+  padding-left: 80px;
+  margin-bottom: 20px;
+}
+
 .ph .slow {
   position: absolute;
   background-color: #f5f6f9;
@@ -109,7 +143,7 @@
 }
 </style>
 <script>
-import { getWord } from "@/api/eng/word";
+import { getWord, updateWord } from "@/api/eng/word";
 import { play } from "@/utils/audio";
 import { delArticleWordRel, addArticleWordRel } from "@/api/eng/articleWordRel";
 export default {
@@ -120,6 +154,7 @@ export default {
       loading: true,
       // 表单参数
       form: {},
+      open: false,
       wordName: this.$route.query && this.$route.query.w,
     };
   },
@@ -128,16 +163,20 @@ export default {
   },
   methods: {
     /** 查询单词列表 */
-    getWord(wordName) {
-      if (wordName) {
+    getWord() {
+      if (this.wordName) {
         this.loading = true;
-        getWord({ wordName }).then((response) => {
+        getWord({ wordName: this.wordName }).then((response) => {
           this.form = response.data;
           this.loading = false;
         });
       } else {
         this.form = {};
       }
+    },
+    /**更新单词 */
+    updateWord() {
+      this.open = true;
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -157,21 +196,35 @@ export default {
       if (relId) {
         //删除
         delArticleWordRel(relId).then(() => {
+          this.$modal.msgSuccess("取消收藏成功");
           this.getWord();
         });
       } else {
         //增加
         addArticleWordRel({ wordId: this.form.id, articleId: 0 }).then(() => {
+          this.$modal.msgSuccess("收藏成功");
           this.getWord();
         });
       }
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+    },
+    /** 提交按钮 */
+    submitForm() {
+      updateWord(this.form).then((response) => {
+        this.$modal.msgSuccess("修改成功");
+        this.open = false;
+        this.getWord();
+      });
     },
   },
   watch: {
     $route(route) {
       const w = (route.query && route.query.w) || "";
       this.wordName = w;
-      this.getWord(w);
+      this.getWord();
     },
   },
 };

@@ -91,22 +91,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    
-    <delete id="deleteEngSentenceByArticleIds" parameterType="String">
-        delete from eng_sentence where article_id in 
-        <foreach item="articleId" collection="array" open="(" separator="," close=")">
-            #{articleId}
-        </foreach>
-    </delete>
 
-    <delete id="deleteEngSentenceByArticleId" parameterType="Long">
-        delete from eng_sentence where article_id = #{articleId}
-    </delete>
-
-    <insert id="batchEngSentence">
-        insert into eng_sentence( id, article_id, content, acceptation, idx, picture, mp3, mp3_time, status, create_time, create_by, update_time, update_by) values
-		<foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.id}, #{item.articleId}, #{item.content}, #{item.acceptation}, #{item.idx}, #{item.picture}, #{item.mp3}, #{item.mp3Time}, #{item.status}, #{item.createTime}, #{item.createBy}, #{item.updateTime}, #{item.updateBy})
-        </foreach>
-    </insert>
 </mapper>

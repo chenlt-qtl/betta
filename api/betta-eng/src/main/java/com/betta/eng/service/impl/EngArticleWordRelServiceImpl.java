@@ -58,19 +58,6 @@ public class EngArticleWordRelServiceImpl implements IEngArticleWordRelService
     }
 
     /**
-     * 修改文章单词关系
-     * 
-     * @param engArticleWordRel 文章单词关系
-     * @return 结果
-     */
-    @Override
-    public int updateEngArticleWordRel(EngArticleWordRel engArticleWordRel)
-    {
-        engArticleWordRel.setUpdateTime(DateUtils.getNowDate());
-        return engArticleWordRelMapper.updateEngArticleWordRel(engArticleWordRel);
-    }
-
-    /**
      * 批量删除文章单词关系
      * 
      * @param ids 需要删除的文章单词关系主键
@@ -92,5 +79,10 @@ public class EngArticleWordRelServiceImpl implements IEngArticleWordRelService
     public int deleteEngArticleWordRelById(Long id)
     {
         return engArticleWordRelMapper.deleteEngArticleWordRelById(id);
+    }
+
+    @Override
+    public int deleteByArticle(Long articleId) {
+        return engArticleWordRelMapper.deleteByArticleId(articleId);
     }
 }

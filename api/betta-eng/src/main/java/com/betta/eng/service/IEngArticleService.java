@@ -43,13 +43,6 @@ public interface IEngArticleService
      */
     public int updateEngArticle(EngArticle engArticle);
 
-    /**
-     * 批量删除英语文章
-     * 
-     * @param ids 需要删除的英语文章主键集合
-     * @return 结果
-     */
-    public int deleteEngArticleByIds(Long[] ids);
 
     /**
      * 删除英语文章信息

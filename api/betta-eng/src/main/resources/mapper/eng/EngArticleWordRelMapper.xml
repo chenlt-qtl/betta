@@ -54,20 +54,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateEngArticleWordRel" parameterType="EngArticleWordRel">
-        update eng_article_word_rel
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="articleId != null">article_id = #{articleId},</if>
-            <if test="wordId != null">word_id = #{wordId},</if>
-            <if test="status != null">status = #{status},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="createBy != null">create_by = #{createBy},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="updateBy != null">update_by = #{updateBy},</if>
-        </trim>
-        where id = #{id}
-    </update>
-
     <delete id="deleteEngArticleWordRelById" parameterType="Long">
         delete from eng_article_word_rel where id = #{id}
     </delete>
@@ -77,5 +63,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteByArticleId" parameterType="Long">
+        delete from eng_article_word_rel where article_id = #{articleId}
     </delete>
 </mapper>

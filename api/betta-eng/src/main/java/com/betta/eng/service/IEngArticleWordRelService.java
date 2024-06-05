@@ -36,14 +36,6 @@ public interface IEngArticleWordRelService
     public int insertEngArticleWordRel(EngArticleWordRel engArticleWordRel);
 
     /**
-     * 修改文章单词关系
-     * 
-     * @param engArticleWordRel 文章单词关系
-     * @return 结果
-     */
-    public int updateEngArticleWordRel(EngArticleWordRel engArticleWordRel);
-
-    /**
      * 批量删除文章单词关系
      * 
      * @param ids 需要删除的文章单词关系主键集合
@@ -58,4 +50,11 @@ public interface IEngArticleWordRelService
      * @return 结果
      */
     public int deleteEngArticleWordRelById(Long id);
+
+    /**
+     * 根据文章删除
+     * @param articleId
+     * @return
+     */
+    public int deleteByArticle(Long articleId);
 }

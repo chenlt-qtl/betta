@@ -5,6 +5,8 @@ import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngSentence;
 import com.betta.eng.mapper.EngArticleMapper;
 import com.betta.eng.service.IEngArticleService;
+import com.betta.eng.service.IEngArticleWordRelService;
+import com.betta.eng.service.IEngSentenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,12 @@ import java.util.List;
 public class EngArticleServiceImpl implements IEngArticleService {
     @Autowired
     private EngArticleMapper engArticleMapper;
+
+    @Autowired
+    private IEngSentenceService sentenceService;
+
+    @Autowired
+    private IEngArticleWordRelService articleWordRel;
 
     /**
      * 查询英语文章
@@ -55,7 +63,6 @@ public class EngArticleServiceImpl implements IEngArticleService {
     @Override
     public int insertEngArticle(EngArticle engArticle) {
         int rows = engArticleMapper.insertEngArticle(engArticle);
-        insertEngSentence(engArticle);
         return rows;
     }
 
@@ -71,18 +78,6 @@ public class EngArticleServiceImpl implements IEngArticleService {
         return engArticleMapper.updateEngArticle(engArticle);
     }
 
-    /**
-     * 批量删除英语文章
-     *
-     * @param ids 需要删除的英语文章主键
-     * @return 结果
-     */
-    @Transactional
-    @Override
-    public int deleteEngArticleByIds(Long[] ids) {
-        engArticleMapper.deleteEngSentenceByArticleIds(ids);
-        return engArticleMapper.deleteEngArticleByIds(ids);
-    }
 
     /**
      * 删除英语文章信息
@@ -93,27 +88,10 @@ public class EngArticleServiceImpl implements IEngArticleService {
     @Transactional
     @Override
     public int deleteEngArticleById(Long id) {
-        engArticleMapper.deleteEngSentenceByArticleId(id);
+        //删除句子
+        sentenceService.deleteByArticle(id);
+        //删除关联
+        articleWordRel.deleteByArticle(id);
         return engArticleMapper.deleteEngArticleById(id);
-    }
-
-    /**
-     * 新增文章句子信息
-     *
-     * @param engArticle 英语文章对象
-     */
-    public void insertEngSentence(EngArticle engArticle) {
-        List<EngSentence> engSentenceList = engArticle.getEngSentenceList();
-        Long id = engArticle.getId();
-        if (StringUtils.isNotNull(engSentenceList)) {
-            List<EngSentence> list = new ArrayList<EngSentence>();
-            for (EngSentence engSentence : engSentenceList) {
-                engSentence.setArticleId(id);
-                list.add(engSentence);
-            }
-            if (list.size() > 0) {
-                engArticleMapper.batchEngSentence(list);
-            }
-        }
     }
 }

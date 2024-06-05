@@ -101,4 +101,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="deleteByArticleId" parameterType="Long">
+        delete from eng_sentence where article_id = #{articleId}
+    </delete>
 </mapper>

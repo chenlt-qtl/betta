@@ -60,28 +60,4 @@ public interface EngArticleMapper
      */
     public int deleteEngArticleByIds(Long[] ids);
 
-    /**
-     * 批量删除文章句子
-     * 
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteEngSentenceByArticleIds(Long[] ids);
-    
-    /**
-     * 批量新增文章句子
-     * 
-     * @param engSentenceList 文章句子列表
-     * @return 结果
-     */
-    public int batchEngSentence(List<EngSentence> engSentenceList);
-    
-
-    /**
-     * 通过英语文章主键删除文章句子信息
-     * 
-     * @param id 英语文章ID
-     * @return 结果
-     */
-    public int deleteEngSentenceByArticleId(Long id);
 }

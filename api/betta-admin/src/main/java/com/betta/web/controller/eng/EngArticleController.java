@@ -96,9 +96,9 @@ public class EngArticleController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:article:remove')")
     @Log(title = "英语文章", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+	@DeleteMapping("/{id}")
+    public AjaxResult remove(@PathVariable Long id)
     {
-        return toAjax(engArticleService.deleteEngArticleByIds(ids));
+        return toAjax(engArticleService.deleteEngArticleById(id));
     }
 }
