@@ -1,34 +1,22 @@
 <template>
-  <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      label-width="68px"
-      @submit.native.prevent
+  <div class="app-container word-detail">
+    <el-input
+      style="width: 50%; margin-right: 10px"
+      v-model="wordName"
+      placeholder="请输入单词"
+      clearable
+      @keyup.enter.native="handleQuery"
+    />
+    <el-button
+      type="primary"
+      icon="el-icon-search"
+      size="mini"
+      @click="handleQuery"
+      >搜索</el-button
     >
-      <el-form-item label="单词" prop="wordName">
-        <el-input
-          v-model="queryParams.wordName"
-          placeholder="请输入单词"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
-      </el-form-item>
-    </el-form>
+    <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+      >重置</el-button
+    >
     <el-divider content-position="center"></el-divider>
     <div v-if="form.id">
       <el-descriptions
@@ -79,12 +67,13 @@
           <span>自定义例句</span>
         </div>
         <div v-for="item in form.sentenceList" :key="item.id">
-          {{ item.content }}<el-button
-              style="margin-left: 10px"
-              type="text"
-              @click="() => play(item.mp3)"
-              ><svg-icon icon-class="sound" /> </el-button
-            ><br /><br />
+          {{ item.content
+          }}<el-button
+            style="margin-left: 10px"
+            type="text"
+            @click="() => play(item.mp3)"
+            ><svg-icon icon-class="sound" /> </el-button
+          ><br /><br />
           <span v-if="item.acceptation"
             >{{ item.acceptation }}<br /><br /><br /><br
           /></span>
@@ -105,7 +94,7 @@
   margin: 0 20px 5px 0;
 }
 
-.el-button--medium {
+.word-detail .el-button--medium {
   font-size: 22px;
   position: relative;
 }
@@ -120,7 +109,7 @@
 }
 </style>
 <script>
-import { getWord, delWord, addWord } from "@/api/eng/word";
+import { getWord } from "@/api/eng/word";
 import { play } from "@/utils/audio";
 import { delArticleWordRel, addArticleWordRel } from "@/api/eng/articleWordRel";
 export default {
@@ -131,25 +120,18 @@ export default {
       loading: true,
       // 表单参数
       form: {},
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        wordName: null,
-        acceptation: null,
-        exchange: null,
-      },
+      wordName: this.$route.query && this.$route.query.w,
     };
   },
   created() {
-    this.getWord();
+    this.getWord(this.wordName);
   },
   methods: {
     /** 查询单词列表 */
-    getWord() {
-      if (this.queryParams.wordName) {
+    getWord(wordName) {
+      if (wordName) {
         this.loading = true;
-        getWord(this.queryParams).then((response) => {
+        getWord({ wordName }).then((response) => {
           this.form = response.data;
           this.loading = false;
         });
@@ -159,11 +141,11 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.getWord();
+      this.$router.push("/eng/word?w=" + this.wordName);
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      this.wordName = "";
       this.handleQuery();
     },
     play(url, time, rate) {
@@ -179,10 +161,17 @@ export default {
         });
       } else {
         //增加
-        addArticleWordRel({wordId:this.form.id,articleId:0}).then(() => {
+        addArticleWordRel({ wordId: this.form.id, articleId: 0 }).then(() => {
           this.getWord();
         });
       }
+    },
+  },
+  watch: {
+    $route(route) {
+      const w = (route.query && route.query.w) || "";
+      this.wordName = w;
+      this.getWord(w);
     },
   },
 };

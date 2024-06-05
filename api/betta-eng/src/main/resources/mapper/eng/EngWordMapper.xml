@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWordListByArticleId" resultMap="EngWordResult">
         select a.*,b.id as rel_id from eng_word a , eng_article_word_rel b where a.id = b.word_id
-        and b.article_id = #{articleId}
+        and b.article_id = #{articleId} order by word_name
     </select>
     
     <select id="selectEngWordById" parameterType="Long" resultMap="EngWordResult">

@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="标题" prop="title">
         <el-input
           v-model="queryParams.title"
@@ -10,8 +17,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -24,7 +39,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['eng:article:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -35,7 +51,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['eng:article:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -46,7 +63,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['eng:article:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -56,27 +74,41 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['eng:article:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="articleList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="articleList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="分组" align="center" prop="groupName" />
       <el-table-column label="图片" align="center" prop="picture" width="100">
         <template slot-scope="scope">
-          <image-preview :src="scope.row.picture" :width="50" :height="50"/>
+          <image-preview :src="scope.row.picture" :width="50" :height="50" />
         </template>
       </el-table-column>
-      <el-table-column label="音频" align="center" prop="mp3" >
-         <el-button type="text">
-          <svg-icon icon-class="sound" />
-        </el-button>
+      <el-table-column label="音频" align="center" prop="mp3">
+        <template v-if="scope.row.mp3" slot-scope="scope">
+          <el-button type="text" @click="() => play(scope.row.mp3)">
+            <svg-icon icon-class="sound" />
+          </el-button>
+        </template>
       </el-table-column>
       <el-table-column label="标题" align="center" prop="title" />
       <el-table-column label="注释" align="center" prop="comment" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -84,27 +116,30 @@
             icon="el-icon-view"
             @click="handleViewArticle(scope.row)"
             v-hasPermi="['eng:article:edit']"
-          >查看</el-button>
+            >句子</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['eng:article:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['eng:article:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -125,16 +160,24 @@
           </el-select>
         </el-form-item>
         <el-form-item label="图片" prop="picture">
-          <image-upload v-model="form.picture" uploadType="article"/>
+          <image-upload v-model="form.picture" uploadType="article" />
         </el-form-item>
         <el-form-item label="音频" prop="mp3">
-          <file-upload :fileType='["mp3"]'  v-model="form.mp3" uploadType="article"/>
+          <file-upload
+            :fileType="['mp3']"
+            v-model="form.mp3"
+            uploadType="article"
+          />
         </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题" />
         </el-form-item>
         <el-form-item label="手工注释" prop="comment">
-          <el-input v-model="form.comment" type="textarea" placeholder="请输入内容" />
+          <el-input
+            v-model="form.comment"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -146,8 +189,15 @@
 </template>
 
 <script>
-import { listArticle, getArticle, delArticle, addArticle, updateArticle } from "@/api/eng/article";
+import {
+  listArticle,
+  getArticle,
+  delArticle,
+  addArticle,
+  updateArticle,
+} from "@/api/eng/article";
 import { listGroup } from "@/api/eng/group";
+import { play } from "@/utils/audio";
 
 export default {
   name: "Article",
@@ -185,9 +235,8 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
-      groupList:[]
+      rules: {},
+      groupList: [],
     };
   },
   created() {
@@ -198,17 +247,20 @@ export default {
     /** 查询英语文章列表 */
     getList() {
       this.loading = true;
-      listArticle(this.queryParams).then(response => {
+      listArticle(this.queryParams).then((response) => {
         this.articleList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
     },
-     getGroupList() {
+    getGroupList() {
       this.loading = true;
-      listGroup({pageNum: 1, pageSize: 1000}).then(response => {
+      listGroup({ pageNum: 1, pageSize: 1000 }).then((response) => {
         this.groupList = response.rows;
       });
+    },
+    play(url, time, rate) {
+      play(url, time, rate);
     },
     // 取消按钮
     cancel() {
@@ -228,13 +280,13 @@ export default {
         createTime: null,
         createBy: null,
         updateTime: null,
-        updateBy: null
+        updateBy: null,
       };
       this.engSentenceList = [];
       this.resetForm("form");
     },
     /** 查看文章操作 */
-    handleViewArticle: function(row) {
+    handleViewArticle: function (row) {
       const articleId = row.id;
       this.$router.push("/eng/article-detail/" + articleId);
     },
@@ -250,9 +302,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -263,8 +315,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getArticle(id).then(response => {
+      const id = row.id || this.ids;
+      getArticle(id).then((response) => {
         this.form = response.data;
         this.engSentenceList = response.data.engSentenceList;
         this.open = true;
@@ -273,17 +325,17 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           this.form.engSentenceList = this.engSentenceList;
           if (this.form.id != null) {
-            updateArticle(this.form).then(response => {
+            updateArticle(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addArticle(this.form).then(response => {
+            addArticle(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -295,14 +347,18 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除英语文章编号为"' + ids + '"的数据项？').then(function() {
-        return delArticle(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除英语文章编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delArticle(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
-	/** 文章句子序号 */
+    /** 文章句子序号 */
     rowEngSentenceIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
@@ -325,21 +381,25 @@ export default {
       } else {
         const engSentenceList = this.engSentenceList;
         const checkedEngSentence = this.checkedEngSentence;
-        this.engSentenceList = engSentenceList.filter(function(item) {
-          return checkedEngSentence.indexOf(item.index) == -1
+        this.engSentenceList = engSentenceList.filter(function (item) {
+          return checkedEngSentence.indexOf(item.index) == -1;
         });
       }
     },
     /** 复选框选中数据 */
     handleEngSentenceSelectionChange(selection) {
-      this.checkedEngSentence = selection.map(item => item.index)
+      this.checkedEngSentence = selection.map((item) => item.index);
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('eng/article/export', {
-        ...this.queryParams
-      }, `article_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "eng/article/export",
+        {
+          ...this.queryParams,
+        },
+        `article_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>

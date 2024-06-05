@@ -183,11 +183,11 @@
           <el-form-item label="序号" prop="idx">
             <el-input v-model="form.idx" placeholder="请输入序号" />
           </el-form-item>
-          <el-form-item label="图片" prop="picture">
+          <el-form-item label="图片" prop="picture" uploadType="article">
             <image-upload v-model="form.picture" />
           </el-form-item>
           <el-form-item label="音频" prop="mp3">
-            <file-upload :fileType="['mp3']" v-model="form.mp3" />
+            <file-upload :fileType="['mp3']" v-model="form.mp3" uploadType="article"/>
           </el-form-item>
           <el-form-item label="MP3时间" prop="mp3Time">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
