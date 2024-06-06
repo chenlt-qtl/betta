@@ -65,6 +65,12 @@
             <artifactId>betta-eng</artifactId>
         </dependency>
 
+        <!-- 笔记模块-->
+        <dependency>
+            <groupId>com.betta</groupId>
+            <artifactId>betta-note</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

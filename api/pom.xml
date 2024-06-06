@@ -177,6 +177,13 @@
                 <version>1.0.0</version>
             </dependency>
 
+            <!-- 笔记模块-->
+            <dependency>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-note</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -188,6 +195,7 @@
         <module>betta-generator</module>
         <module>betta-common</module>
         <module>betta-eng</module>
+        <module>betta-note</module>
     </modules>
     <packaging>pom</packaging>
 

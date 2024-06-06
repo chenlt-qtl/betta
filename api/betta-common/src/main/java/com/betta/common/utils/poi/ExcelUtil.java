@@ -74,7 +74,7 @@ import com.betta.common.annotation.Excel;
 import com.betta.common.annotation.Excel.ColumnType;
 import com.betta.common.annotation.Excel.Type;
 import com.betta.common.annotation.Excels;
-import com.betta.common.config.RuoYiConfig;
+import com.betta.common.config.BettaConfig;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.text.Convert;
 import com.betta.common.exception.UtilException;
@@ -1393,7 +1393,7 @@ public class ExcelUtil<T>
      */
     public String getAbsoluteFile(String filename)
     {
-        String downloadPath = RuoYiConfig.getDownloadPath() + filename;
+        String downloadPath = BettaConfig.getDownloadPath() + filename;
         File desc = new File(downloadPath);
         if (!desc.getParentFile().exists())
         {

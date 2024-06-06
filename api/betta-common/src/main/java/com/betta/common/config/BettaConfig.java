@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
  * @author ruoyi
  */
 @Component
-@ConfigurationProperties(prefix = "ruoyi")
+@ConfigurationProperties(prefix = "betta")
 @Data
-public class RuoYiConfig
+public class BettaConfig
 {
     /** 项目名称 */
     private String name;
@@ -39,7 +39,7 @@ public class RuoYiConfig
 
     public void setProfile(String profile)
     {
-        RuoYiConfig.profile = profile;
+        BettaConfig.profile = profile;
     }
 
     public static boolean isAddressEnabled()

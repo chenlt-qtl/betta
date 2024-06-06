@@ -1,6 +1,6 @@
 package com.betta.common.utils.file;
 
-import com.betta.common.config.RuoYiConfig;
+import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.exception.file.FileNameLengthLimitExceededException;
 import com.betta.common.exception.file.FileSizeLimitExceededException;
@@ -35,7 +35,7 @@ public class FileUploadUtils {
     /**
      * 默认上传的地址
      */
-    private static String defaultBaseDir = RuoYiConfig.getProfile();
+    private static String defaultBaseDir = BettaConfig.getProfile();
 
     public static void setDefaultBaseDir(String defaultBaseDir) {
         FileUploadUtils.defaultBaseDir = defaultBaseDir;
@@ -125,7 +125,7 @@ public class FileUploadUtils {
     }
 
     public static final String getPathFileName(String uploadDir, String fileName) throws IOException {
-        int dirLastIndex = RuoYiConfig.getProfile().length() + 1;
+        int dirLastIndex = BettaConfig.getProfile().length() + 1;
         String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
         return Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
     }

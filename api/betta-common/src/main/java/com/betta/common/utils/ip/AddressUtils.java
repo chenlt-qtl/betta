@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.betta.common.config.RuoYiConfig;
+import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.http.HttpUtils;
@@ -31,7 +31,7 @@ public class AddressUtils
         {
             return "内网IP";
         }
-        if (RuoYiConfig.isAddressEnabled())
+        if (BettaConfig.isAddressEnabled())
         {
             try
             {

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.betta.common.config.RuoYiConfig;
+import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.utils.StringUtils;
@@ -48,7 +48,7 @@ public class CommonController {
                 throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
             }
             String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
-            String filePath = RuoYiConfig.getDownloadPath() + fileName;
+            String filePath = BettaConfig.getDownloadPath() + fileName;
 
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             FileUtils.setAttachmentResponseHeader(response, realFileName);
@@ -68,13 +68,13 @@ public class CommonController {
     public AjaxResult uploadFile(MultipartFile file, @PathVariable String type) throws Exception {
         try {
             // 上传文件路径
-            String filePath = RuoYiConfig.getUploadPath();
+            String filePath = BettaConfig.getUploadPath();
             if (StringUtils.equals(UploadFileType.WORD.getType(), type)) {
-                filePath = RuoYiConfig.getWordPath();
+                filePath = BettaConfig.getWordPath();
             } else if (StringUtils.equals(UploadFileType.ARTICLE.getType(), type)) {
-                filePath = RuoYiConfig.getArticlePath();
+                filePath = BettaConfig.getArticlePath();
             } else if (StringUtils.equals(UploadFileType.NOTE.getType(), type)) {
-                filePath = RuoYiConfig.getNotePath();
+                filePath = BettaConfig.getNotePath();
             }
 
             // 上传并返回新文件名称
@@ -98,7 +98,7 @@ public class CommonController {
     public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception {
         try {
             // 上传文件路径
-            String filePath = RuoYiConfig.getUploadPath();
+            String filePath = BettaConfig.getUploadPath();
             List<String> urls = new ArrayList<String>();
             List<String> fileNames = new ArrayList<String>();
             List<String> newFileNames = new ArrayList<String>();
@@ -134,7 +134,7 @@ public class CommonController {
                 throw new Exception(StringUtils.format("资源文件({})非法，不允许下载。 ", resource));
             }
             // 本地资源路径
-            String localPath = RuoYiConfig.getProfile();
+            String localPath = BettaConfig.getProfile();
             // 数据库资源地址
             String downloadPath = localPath + StringUtils.substringAfter(resource, Constants.RESOURCE_PREFIX);
             // 下载名称

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.note.mapper.NoteInfoDeleteMapper">
+    
+    <resultMap type="NoteInfoDelete" id="NoteInfoDeleteResult">
+        <result property="id"    column="id"    />
+        <result property="noteId"    column="note_id"    />
+        <result property="name"    column="name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="tag"    column="tag"    />
+        <result property="source"    column="source"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="text"    column="text"    />
+    </resultMap>
+
+    <sql id="selectNoteInfoDeleteVo">
+        select id, note_id, name, parent_id, tag, source, create_time, create_by, update_time, update_by, text from note_info_delete
+    </sql>
+
+    <select id="selectNoteInfoDeleteList" parameterType="NoteInfoDelete" resultMap="NoteInfoDeleteResult">
+        <include refid="selectNoteInfoDeleteVo"/>
+        <where>  
+            <if test="noteId != null "> and note_id = #{noteId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="tag != null  and tag != ''"> and tag = #{tag}</if>
+            <if test="source != null  and source != ''"> and source = #{source}</if>
+        </where>
+    </select>
+    
+    <select id="selectNoteInfoDeleteById" parameterType="Long" resultMap="NoteInfoDeleteResult">
+        <include refid="selectNoteInfoDeleteVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertNoteInfoDelete" parameterType="NoteInfoDelete" useGeneratedKeys="true" keyProperty="id">
+        insert into note_info_delete
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noteId != null">note_id,</if>
+            <if test="name != null">name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="tag != null">tag,</if>
+            <if test="source != null">source,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="text != null">text,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noteId != null">#{noteId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="tag != null">#{tag},</if>
+            <if test="source != null">#{source},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="text != null">#{text},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNoteInfoDelete" parameterType="NoteInfoDelete">
+        update note_info_delete
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="noteId != null">note_id = #{noteId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="tag != null">tag = #{tag},</if>
+            <if test="source != null">source = #{source},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="text != null">text = #{text},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNoteInfoDeleteById" parameterType="Long">
+        delete from note_info_delete where id = #{id}
+    </delete>
+
+    <delete id="deleteNoteInfoDeleteByIds" parameterType="String">
+        delete from note_info_delete where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

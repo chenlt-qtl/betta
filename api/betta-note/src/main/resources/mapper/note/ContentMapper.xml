@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.note.mapper.ContentMapper">
+    
+    <resultMap type="content" id="contentResult">
+        <result property="id"    column="id"    />
+        <result property="text"    column="text"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectcontentVo">
+        select id, text, create_time, create_by, update_time, update_by from note_content
+    </sql>
+
+    <select id="selectcontentList" parameterType="content" resultMap="contentResult">
+        <include refid="selectcontentVo"/>
+        <where>  
+            <if test="text != null  and text != ''"> and text = #{text}</if>
+        </where>
+    </select>
+    
+    <select id="selectcontentById" parameterType="Long" resultMap="contentResult">
+        <include refid="selectcontentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertcontent" parameterType="content" useGeneratedKeys="true" keyProperty="id">
+        insert into note_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="text != null">text,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="text != null">#{text},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updatecontent" parameterType="content">
+        update note_content
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="text != null">text = #{text},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletecontentById" parameterType="Long">
+        delete from note_content where id = #{id}
+    </delete>
+
+    <delete id="deletecontentByIds" parameterType="String">
+        delete from note_content where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -13,16 +13,12 @@
  */
 package com.betta.eng.utils;
 
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import cn.hutool.json.XML;
-import com.betta.common.config.RuoYiConfig;
+import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.exception.ServiceException;
-import com.betta.common.utils.file.FileUploadUtils;
 import com.betta.common.utils.file.FileUtils;
-import com.betta.common.utils.file.MimeTypeUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngIcibaSentence;
 import com.betta.eng.domain.EngWord;
@@ -32,13 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 描述：
@@ -93,7 +85,7 @@ public class ParseIciba {
         List<String> pron = dict.getPron();//mp3
 
         if (!pron.isEmpty()) {
-            String path = RuoYiConfig.getWordPath() + "/" + wordName.substring(0, 1);
+            String path = BettaConfig.getWordPath() + "/" + wordName.substring(0, 1);
             String mp3Path = FileUtils.writeBytes(pron.get(pron.size() - 1), path, wordName + ".mp3");
             word.setPhAnMp3(mp3Path);
         }
