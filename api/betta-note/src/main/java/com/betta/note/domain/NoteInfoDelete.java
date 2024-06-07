@@ -1,9 +1,9 @@
 package com.betta.note.domain;
 
+import com.betta.common.utils.bean.BeanUtils;
 import lombok.Data;
 import com.betta.common.annotation.Excel;
 import com.betta.common.core.domain.BaseEntity;
-import org.springframework.beans.BeanUtils;
 
 /**
  * 删除历史对象 note_info_delete
@@ -28,27 +28,31 @@ public class NoteInfoDelete extends BaseEntity
     /** $column.columnComment */
     private Long id;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**  */
+    @Excel(name = "")
     private Long noteId;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**  */
+    @Excel(name = "")
     private String name;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**  */
+    @Excel(name = "")
     private Long parentId;
 
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    private Long isLeaf;
+
+    /**  */
+    @Excel(name = "")
     private String tag;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**  */
+    @Excel(name = "")
     private String source;
 
-    /** $column.columnComment */
+    /**  */
     private String text;
 
 }

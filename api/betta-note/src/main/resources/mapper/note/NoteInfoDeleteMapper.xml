@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="noteId"    column="note_id"    />
         <result property="name"    column="name"    />
         <result property="parentId"    column="parent_id"    />
+        <result property="isLeaf"    column="is_leaf"    />
         <result property="tag"    column="tag"    />
         <result property="source"    column="source"    />
         <result property="createTime"    column="create_time"    />
@@ -19,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectNoteInfoDeleteVo">
-        select id, note_id, name, parent_id, tag, source, create_time, create_by, update_time, update_by, text from note_info_delete
+        select id, note_id, name, parent_id, is_leaf, tag, source, create_time, create_by, update_time, update_by, text from note_info_delete
     </sql>
 
     <select id="selectNoteInfoDeleteList" parameterType="NoteInfoDelete" resultMap="NoteInfoDeleteResult">
@@ -28,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="noteId != null "> and note_id = #{noteId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="isLeaf != null "> and is_leaf = #{isLeaf}</if>
             <if test="tag != null  and tag != ''"> and tag = #{tag}</if>
             <if test="source != null  and source != ''"> and source = #{source}</if>
         </where>
@@ -44,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="noteId != null">note_id,</if>
             <if test="name != null">name,</if>
             <if test="parentId != null">parent_id,</if>
+            <if test="isLeaf != null">is_leaf,</if>
             <if test="tag != null">tag,</if>
             <if test="source != null">source,</if>
             <if test="createTime != null">create_time,</if>
@@ -56,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="noteId != null">#{noteId},</if>
             <if test="name != null">#{name},</if>
             <if test="parentId != null">#{parentId},</if>
+            <if test="isLeaf != null">#{isLeaf},</if>
             <if test="tag != null">#{tag},</if>
             <if test="source != null">#{source},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -72,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="noteId != null">note_id = #{noteId},</if>
             <if test="name != null">name = #{name},</if>
             <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="isLeaf != null">is_leaf = #{isLeaf},</if>
             <if test="tag != null">tag = #{tag},</if>
             <if test="source != null">source = #{source},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

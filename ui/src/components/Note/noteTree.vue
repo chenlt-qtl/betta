@@ -1,46 +1,55 @@
 <template>
-  <div>
-    <div class="head-container">
-      <el-input
-        v-model="noteName"
-        placeholder="请输入笔记名称"
-        clearable
-        size="small"
-        prefix-icon="el-icon-search"
-        style="margin-bottom: 20px"
-      />
-    </div>
-    <div class="head-container">
-      <el-tree
-        :data="noteOptions"
-        node-key="id"
-        :props="defaultProps"
-        :filter-node-method="filterNode"
-        ref="tree"
-        highlight-current
-        @node-click="handleNodeClick"
-      >
-        <span class="custom-tree-node" slot-scope="{ node }">
-          <span class="label" :title="node.label">{{ node.label }}</span>
-          <span>
-            <NoteTreeDropdown :note="node" @refreshTree="getNoteTree" />
+  <el-row :gutter="20" class="note-info">
+    <!--部门数据-->
+    <el-col :span="12" :xs="24">
+      <div class="head-container">
+        <el-input
+          v-model="noteName"
+          placeholder="请输入笔记名称"
+          clearable
+          size="small"
+          prefix-icon="el-icon-search"
+          style="margin-bottom: 20px"
+        />
+      </div>
+      <div class="head-container">
+        <el-tree
+          :data="noteOptions"
+          node-key="id"
+          :props="defaultProps"
+          :filter-node-method="filterNode"
+          ref="tree"
+          highlight-current
+          @node-click="handleNodeClick"
+        >
+          <span class="custom-tree-node" slot-scope="{ node }">
+            <span class="label" :title="node.label">{{ node.label }}</span>
+            <span>
+              <NoteTreeDropdown :note="node" @refreshTree="getNoteTree" />
+            </span>
           </span>
-        </span>
-      </el-tree>
-    </div>
-  </div>
+        </el-tree>
+      </div>
+    </el-col>
+
+    <el-col :span="12" :xs="24">
+      <NoteList :parentId="selectNode.id" :parentName="selectNode.label"></NoteList>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
 import { listNoteTree } from "@/api/note/noteInfo";
 import NoteTreeDropdown from "./noteTreeDropdown.vue";
+import NoteList from "./noteList.vue";
 
 export default {
   name: "NoteTree",
-  components: { NoteTreeDropdown },
+  components: { NoteTreeDropdown, NoteList },
   data() {
     return {
       noteName: "",
+      selectNode:{},
       // 遮罩层
       loading: true,
       // 树数据
@@ -75,7 +84,9 @@ export default {
       return data.label.indexOf(value) !== -1;
     },
     // 节点单击事件
-    handleNodeClick(data) {},
+    handleNodeClick(data) {
+        this.selectNode = data;
+    },
   },
 };
 </script>
@@ -91,8 +102,8 @@ export default {
 }
 
 .note-info .label {
-  white-space: nowrap; 
-  overflow: hidden; 
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 

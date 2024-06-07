@@ -2,209 +2,10 @@
   <div class="app-container">
     <el-row :gutter="20" class="note-info">
       <!--部门数据-->
-      <el-col :span="4" :xs="24">
-        <Note/>
-      </el-col>
-
-      <el-col :span="20" :xs="24">
-        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          size="small"
-          :inline="true"
-          v-show="showSearch"
-          label-width="68px"
-        >
-          <el-form-item label="标题" prop="name">
-            <el-input
-              v-model="queryParams.name"
-              placeholder="请输入标题"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="父ID" prop="parentId">
-            <el-input
-              v-model="queryParams.parentId"
-              placeholder="请输入父ID"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="标签" prop="tag">
-            <el-input
-              v-model="queryParams.tag"
-              placeholder="请输入标签"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="来源" prop="source">
-            <el-input
-              v-model="queryParams.source"
-              placeholder="请输入来源"
-              clearable
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              icon="el-icon-search"
-              size="mini"
-              @click="handleQuery"
-              >搜索</el-button
-            >
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-              >重置</el-button
-            >
-          </el-form-item>
-        </el-form>
-
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAdd"
-              v-hasPermi="['note:noteInfo:add']"
-              >新增</el-button
-            >
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="success"
-              plain
-              icon="el-icon-edit"
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['note:noteInfo:edit']"
-              >修改</el-button
-            >
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="danger"
-              plain
-              icon="el-icon-delete"
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['note:noteInfo:remove']"
-              >删除</el-button
-            >
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="warning"
-              plain
-              icon="el-icon-download"
-              size="mini"
-              @click="handleExport"
-              v-hasPermi="['note:noteInfo:export']"
-              >导出</el-button
-            >
-          </el-col>
-          <right-toolbar
-            :showSearch.sync="showSearch"
-            @queryTable="getList"
-          ></right-toolbar>
-        </el-row>
-
-        <el-table
-          v-loading="loading"
-          :data="noteInfoList"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="${comment}" align="center" prop="id" />
-          <el-table-column label="内容ID" align="center" prop="contentId" />
-          <el-table-column label="标题" align="center" prop="name" />
-          <el-table-column label="父ID" align="center" prop="parentId" />
-          <el-table-column label="标签" align="center" prop="tag" />
-          <el-table-column label="来源" align="center" prop="source" />
-          <el-table-column label="${comment}" align="center" prop="parentIds" />
-          <el-table-column
-            label="操作"
-            align="center"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit"
-                @click="handleUpdate(scope.row)"
-                v-hasPermi="['note:noteInfo:edit']"
-                >修改</el-button
-              >
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['note:noteInfo:remove']"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
+      <el-col :span="8" :xs="24">
+        <NoteTree/>
       </el-col>
     </el-row>
-
-    <!-- 添加或修改文件夹对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="内容ID" prop="contentId">
-          <el-input v-model="form.contentId" placeholder="请输入内容ID" />
-        </el-form-item>
-        <el-form-item label="标题" prop="name">
-          <el-input v-model="form.name" placeholder="请输入标题" />
-        </el-form-item>
-        <el-form-item label="父ID" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入父ID" />
-        </el-form-item>
-        <el-form-item label="标签" prop="tag">
-          <el-input v-model="form.tag" placeholder="请输入标签" />
-        </el-form-item>
-        <el-form-item label="来源" prop="source">
-          <el-input v-model="form.source" placeholder="请输入来源" />
-        </el-form-item>
-        <el-form-item label="是否笔记，笔记1，文件夹0" prop="isLeaf">
-          <el-checkbox-group v-model="form.isLeaf">
-            <el-checkbox
-              v-for="dict in dict.type.sys_yes_no"
-              :key="dict.value"
-              :label="dict.value"
-            >
-              {{ dict.label }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="${comment}" prop="parentIds">
-          <el-input
-            v-model="form.parentIds"
-            type="textarea"
-            placeholder="请输入内容"
-          />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -217,11 +18,11 @@ import {
   updateNoteInfo,
   listNoteTree,
 } from "@/api/note/noteInfo";
-import Note from '@/components/Note'
+import NoteTree from '@/components/Note/noteTree'
 
 export default {
   name: "NoteInfo",
-  components: { Note },
+  components: { NoteTree },
   dicts: ["sys_yes_no"],
   data() {
     return {
