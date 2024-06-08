@@ -1,7 +1,9 @@
 <template>
   <div>
     <el-dropdown @command="handleCommand">
-      <svg-icon icon-class="ellipsis-v"/>
+      <span class="el-dropdown-link">
+        <svg-icon icon-class="ellipsis-v" />
+      </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="rename">重命名</el-dropdown-item>
         <el-dropdown-item command="move">移动</el-dropdown-item>
@@ -18,28 +20,10 @@ export default {
   name: "NoteTreeDropdown",
   props: ["note"],
   data() {
-    return {
-      noteName: "",
-      // 树数据
-      noteOptions: undefined,
-      defaultProps: {
-        children: "children",
-        label: "label",
-      },
-    };
+    return {};
   },
-  watch: {
-    // 根据名称筛选部门树
-    noteName(val) {
-      this.$refs.tree.filter(val);
-    },
-  },
+
   methods: {
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
-    },
     handleCommand(command) {
       if (this.note.id) {
         switch (command) {
@@ -72,12 +56,10 @@ export default {
             type: "success",
             message: "删除成功!",
           });
-          this.$emit('refreshTree');
+          this.$store.dispatch("note/getTreeData");
         });
       });
     },
-    // 节点单击事件
-    handleNodeClick(data) {},
   },
 };
 </script>

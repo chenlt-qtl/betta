@@ -43,16 +43,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWordListByArticleId" resultMap="EngWordResult">
         select a.*,b.id as rel_id from eng_word a , eng_article_word_rel b where a.id = b.word_id
         and b.article_id = #{articleId}
-        ${params.createByScope}
         order by word_name
-        <!-- 数据范围过滤 -->
     </select>
     
     <select id="selectEngWordById" parameterType="Long" resultMap="EngWordResult">
         <include refid="selectEngWordVo"/>
         where id = #{id}
-        <!-- 数据范围过滤 -->
-        ${params.createByScope}
     </select>
         
     <insert id="insertEngWord" parameterType="EngWord" useGeneratedKeys="true" keyProperty="id">

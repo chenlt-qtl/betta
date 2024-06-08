@@ -1,11 +1,15 @@
 <template>
   <div>
-    <NoteTree />
+    <el-row>
+      <NoteTree />
+      <NoteContent />
+    </el-row>
   </div>
 </template>
 
 <script>
 import NoteTree from "./noteTree.vue";
+import NoteContent from "./noteContent.vue";
 
 export default {
   data() {
@@ -17,6 +21,7 @@ export default {
 
   components: {
     NoteTree,
+    NoteContent,
   },
 };
 </script>

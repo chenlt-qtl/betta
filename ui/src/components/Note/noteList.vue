@@ -48,7 +48,7 @@
     <el-table
       v-loading="loading"
       :data="noteInfoList"
-      @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
       size="mini"
     >
       <el-table-column
@@ -57,7 +57,11 @@
         width="55"
         align="center"
       />
-      <el-table-column :label="noteName" prop="name" show-overflow-tooltip />
+      <el-table-column
+        :label="selectedTreeNote.label"
+        prop="name"
+        show-overflow-tooltip
+      />
     </el-table>
     <!-- 添加或修改文件夹对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -104,7 +108,6 @@ import {
 
 export default {
   name: "NoteList",
-  props: ["parentName", "parentId"],
   data() {
     return {
       // 遮罩层
@@ -134,20 +137,32 @@ export default {
   created() {
     this.getList();
   },
+  computed: {
+    selectedTreeNote() {
+      return this.$store.state.note.selectedTreeNote;
+    },
+  },
   watch: {
-    parentId: "getList",
+    selectedTreeNote(note) {
+      console.log('==================1watch selectedTreeNote==================');
+      console.log(note);
+      console.log('====================================');
+      this.getList();
+    },
   },
   methods: {
     /** 查询文件夹列表 */
     getList() {
-      if (this.parentId) {
-        this.noteName = this.parentName;
+      console.log('==============2getList======================');
+      console.log(this.selectedTreeNote.id);
+      console.log('====================================');
+      if (this.selectedTreeNote.id) {
         this.loading = true;
         // 查询参数
         const queryParams = {
           pageNum: 1,
           pageSize: 1000,
-          parentId: this.parentId,
+          parentId: this.selectedTreeNote.id,
           isLeaf: true,
         };
         listNoteInfo(queryParams).then((response) => {
@@ -157,7 +172,6 @@ export default {
       } else {
         this.noteInfoList = [];
         this.loading = false;
-        0;
       }
     },
     // 取消按钮
@@ -193,11 +207,9 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+    // 选中数据
+    handleRowClick(selection) {
+      this.$router.push("/n/note?id=" + selection.id);
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -253,7 +265,7 @@ export default {
 };
 </script>
 <style>
-.note-list .el-table__row{
+.note-list .el-table__row {
   cursor: pointer;
 }
 </style>

@@ -11,7 +11,7 @@ spring:
   redis:
     password:
 
-ruoyi:
+betta:
   profile: D:/betta/uploadPath
 server:
   port: 8081
