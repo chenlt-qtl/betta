@@ -67,6 +67,16 @@ export default {
     },
     openedNote(note) {
       const selectNode = this.$refs.tree.getNode(note.parentId);
+      function expandParent(node) {
+        node.expand();
+        node.parent && expandParent(node.parent);
+      }
+
+      //展开
+      if (!selectNode.expanded) {
+        expandParent(selectNode);
+      }
+
       if (selectNode) {
         this.$refs.tree.setCurrentKey(note.parentId);
         this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
@@ -81,9 +91,6 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      console.log("==============data======================");
-      console.log(data);
-      console.log("====================================");
       this.$store.dispatch("note/setSelectedTreeNote", data);
     },
   },

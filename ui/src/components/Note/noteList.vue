@@ -46,6 +46,7 @@
     </el-row>
 
     <el-table
+      ref="table"
       v-loading="loading"
       :data="noteInfoList"
       @row-click="handleRowClick"
@@ -57,11 +58,7 @@
         width="55"
         align="center"
       />
-      <el-table-column
-        :label="label"
-        prop="name"
-        show-overflow-tooltip
-      />
+      <el-table-column :label="label" prop="name" show-overflow-tooltip />
     </el-table>
     <!-- 添加或修改文件夹对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
@@ -132,7 +129,7 @@ export default {
       // 表单校验
       rules: {},
       noteName: "",
-      label:""
+      label: "",
     };
   },
   created() {
@@ -140,16 +137,29 @@ export default {
   },
   computed: {
     selectedTreeNote() {
-      return this.$store.state.note.selectedTreeNote||{};
-    }
+      return this.$store.state.note.selectedTreeNote || {};
+    },
+    openedNote() {
+      return this.$store.state.note.openedNote;
+    },
   },
   watch: {
     selectedTreeNote() {
       this.getList();
-      this.label = this.selectedTreeNote.label
+      this.label = this.selectedTreeNote.label;
+    },
+    noteInfoList() {
+      if (this.openedNote.id) {
+        const row = this.noteInfoList.find((n) => n.id == this.openedNote.id);
+        console.log("=================row===================");
+        console.log(row);
+        console.log("====================================");
+        row && this.$refs.table.setCurrentRow(this.noteInfoList[0]);
+      }
     },
   },
   methods: {
+    selectNote() {},
     /** 查询文件夹列表 */
     getList() {
       const parentId = this.selectedTreeNote.id;
