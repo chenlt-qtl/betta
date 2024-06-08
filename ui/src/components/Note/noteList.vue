@@ -58,7 +58,7 @@
         align="center"
       />
       <el-table-column
-        :label="selectedTreeNote.label"
+        :label="label"
         prop="name"
         show-overflow-tooltip
       />
@@ -132,6 +132,7 @@ export default {
       // 表单校验
       rules: {},
       noteName: "",
+      label:""
     };
   },
   created() {
@@ -139,30 +140,26 @@ export default {
   },
   computed: {
     selectedTreeNote() {
-      return this.$store.state.note.selectedTreeNote;
-    },
+      return this.$store.state.note.selectedTreeNote||{};
+    }
   },
   watch: {
-    selectedTreeNote(note) {
-      console.log('==================1watch selectedTreeNote==================');
-      console.log(note);
-      console.log('====================================');
+    selectedTreeNote() {
       this.getList();
+      this.label = this.selectedTreeNote.label
     },
   },
   methods: {
     /** 查询文件夹列表 */
     getList() {
-      console.log('==============2getList======================');
-      console.log(this.selectedTreeNote.id);
-      console.log('====================================');
-      if (this.selectedTreeNote.id) {
+      const parentId = this.selectedTreeNote.id;
+      if (parentId) {
         this.loading = true;
         // 查询参数
         const queryParams = {
           pageNum: 1,
           pageSize: 1000,
-          parentId: this.selectedTreeNote.id,
+          parentId,
           isLeaf: true,
         };
         listNoteInfo(queryParams).then((response) => {

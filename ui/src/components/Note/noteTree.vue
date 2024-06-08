@@ -45,7 +45,7 @@ export default {
       defaultProps: {
         children: "children",
         label: "label",
-        id:"id"
+        id: "id",
       },
     };
   },
@@ -66,12 +66,11 @@ export default {
       this.$refs.tree.filter(val);
     },
     openedNote(note) {
-      const selectNode = this.$refs.tree.getNode(note.parentId) || {};
-      console.log("============tree watch opennote========================");
-      console.log(note.parentId, selectNode,selectNode.id);
-      console.log("====================================");
-      this.$refs.tree.setCurrentKey(selectNode.id);
-      this.$store.dispatch("note/setSelectedTreeNote", selectNode.data || {});
+      const selectNode = this.$refs.tree.getNode(note.parentId);
+      if (selectNode) {
+        this.$refs.tree.setCurrentKey(note.parentId);
+        this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
+      }
     },
   },
   methods: {

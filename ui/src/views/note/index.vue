@@ -2,10 +2,10 @@
   <div class="app-container">
     <el-row :gutter="20" class="note-info">
       <el-col :span="8" :xs="24">
-        <NoteMenu/>
+        <NoteMenu />
       </el-col>
       <el-col :span="16" :xs="24">
-        <NoteContent/>
+        <NoteContent />
       </el-col>
     </el-row>
   </div>
@@ -34,21 +34,31 @@ export default {
     };
   },
   created() {
-    const noteId = (this.$route.query && this.$route.query.id) || "";
-    this.getNote(noteId);
+    this.getNote();
+  },
+  computed: {
+    treeData() {
+      return this.$store.state.note.treeData;
+    },
+    noteId() {
+      return this.$route.query && this.$route.query.id;
+    },
   },
   watch: {
-    $route(route) {
-      const noteId = (route.query && route.query.id) || "";
-      this.getNote(noteId);
+    noteId() {
+      this.getNote();
+    },
+    treeData(data) {
+      this.getNote();
     },
   },
   methods: {
-    getNote(noteId) {
-      if (noteId) {
-        this.$store.dispatch("note/openNote",noteId);
+    getNote() {
+      //有noteId且加载完tree才加载openNote
+      if (this.noteId && this.treeData && this.treeData.length > 0) {
+        this.$store.dispatch("note/openNote", this.noteId);
       } else {
-        this.$store.dispatch("note/setOpendNote",{});
+        this.$store.dispatch("note/setOpendNote", {});
       }
     },
   },
