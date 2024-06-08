@@ -73,7 +73,7 @@ export default {
       }
 
       //展开
-      if (!selectNode.expanded) {
+      if (selectNode && !selectNode.expanded) {
         expandParent(selectNode);
       }
 

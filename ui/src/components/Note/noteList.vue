@@ -44,9 +44,9 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row>
-
     <el-table
       ref="table"
+      highlight-current-row
       v-loading="loading"
       :data="noteInfoList"
       @row-click="handleRowClick"
@@ -132,9 +132,6 @@ export default {
       label: "",
     };
   },
-  created() {
-    this.getList();
-  },
   computed: {
     selectedTreeNote() {
       return this.$store.state.note.selectedTreeNote || {};
@@ -151,15 +148,11 @@ export default {
     noteInfoList() {
       if (this.openedNote.id) {
         const row = this.noteInfoList.find((n) => n.id == this.openedNote.id);
-        console.log("=================row===================");
-        console.log(row);
-        console.log("====================================");
         row && this.$refs.table.setCurrentRow(this.noteInfoList[0]);
       }
     },
   },
   methods: {
-    selectNote() {},
     /** 查询文件夹列表 */
     getList() {
       const parentId = this.selectedTreeNote.id;
