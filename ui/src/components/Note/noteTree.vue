@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="note-tree">
     <div class="head-container">
       <el-input
         v-model="noteName"
@@ -10,7 +10,7 @@
         style="margin-bottom: 20px"
       />
     </div>
-    <div class="head-container">
+    <div class="tree-container">
       <el-tree
         :data="treeData"
         node-key="id"
@@ -22,7 +22,7 @@
       >
         <span class="custom-tree-node" slot-scope="{ node }">
           <span class="label" :title="node.label">{{ node.label }}</span>
-          <span>
+          <span class="dropdown">
             <NoteTreeDropdown :note="node" />
           </span>
         </span>
@@ -96,28 +96,32 @@ export default {
   },
 };
 </script>
-<style>
-.note-info .custom-tree-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
-  overflow: hidden;
-}
+<style lang="scss" scoped>
+.note-tree {
+  .tree-container {
+    max-height: calc(100vh - 180px);
+    overflow: auto;
 
-.note-info .label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.note-info .custom-tree-node i {
-  display: none;
-}
-
-.custom-tree-node:hover i {
-  display: inline-block;
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      padding-right: 8px;
+      overflow: hidden;
+      .label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dropdown {
+        display: none;
+      }
+      &:hover .dropdown {
+        display: inline-block;
+      }
+    }
+  }
 }
 </style>

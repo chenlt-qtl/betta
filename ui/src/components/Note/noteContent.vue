@@ -1,35 +1,41 @@
 <template>
   <div class="note-content">
+    <OpenedTab></OpenedTab>
     <div class="toolbar">
       <input
         maxLength="100"
         v-model="title"
         @blur="handleBlur"
         @input="handleTitleChange"
-      ></input>
+      />
       <i class="el-icon-time"></i>
+      <i class="el-icon-download"></i>
       <i class="el-icon-star-off orange"></i>
       <i class="el-icon-star-on orange"></i>
       <i style="color: #78e08f" class="el-icon-circle-check icon"></i>
       <i class="el-icon-warning-outline orange icon"></i>
     </div>
-    <MdEditor v-model="text"></MdEditor>
+    <MdEditor v-if="openedNote.id" v-model="text" :propClass="editorClass"></MdEditor>
+    <el-empty v-if="!openedNote.id" description=""></el-empty>
+
   </div>
 </template>
 
 <script>
 import MdEditor from "@/components/MarkDownEditor";
+import OpenedTab from "@/components/Note/noteOpenedTab";
 import { getNoteInfo, addNoteInfo, updateNoteInfo } from "@/api/note/noteInfo";
 import { getContent } from "@/api/note/content";
 
 export default {
   name: "NoteList",
   props: ["note"],
-  components: { MdEditor },
+  components: { MdEditor,OpenedTab },
   data() {
     return {
       title: "",
-      text: "abc",
+      editorClass:{height:"100vh"},
+      text: "",
       // 遮罩层
       loading: true,
       // 选中数组

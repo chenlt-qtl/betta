@@ -56,11 +56,12 @@ const actions = {
     commit,
     state
   }, id) {
-    const openedNotes = state.openedNotes
+    const openedNotes = new Map(state.openedNotes)
     return new Promise((resolve, reject) => {
       getNoteInfo(id).then(res => {
         commit('SET_OPENED_NOTE', res.data)
         openedNotes.set(id, res.data)
+        commit('SET_OPENED_NOTES', openedNotes)
         resolve(res)
       }).catch(error => {
         reject(error)
@@ -71,6 +72,11 @@ const actions = {
     commit
   }, data) {
     commit('SET_SELECTED_TREE_NOTE', data)
+  },
+  setOpenedNotes({
+    commit
+  }, data) {
+    commit('SET_OPENED_NOTES', data)
   },
   setOpendNote({
     commit

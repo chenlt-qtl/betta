@@ -1,96 +1,58 @@
 <template>
   <div class="note-list">
-    <el-form
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      v-show="showSearch"
-      label-width="68px"
-    >
-      <el-input
-        placeholder="请输入标题"
-        clearable
-        @keyup.enter.native="handleQuery"
-      />
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
+    <el-row :gutter="10" class="mb8" type="flex" justify="end">
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
+          v-if="!isCheck"
+          type="text"
+          size="mini"
+          :disabled="noteInfoList.length <= 0"
+          @click="handleCheck"
+          v-hasPermi="['note:noteInfo:remove']"
+          ><svg-icon v-if="!isCheck" icon-class="checkbox"
+        /></el-button>
+        <el-button
+          v-if="isCheck"
+          type="text"
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['note:noteInfo:remove']"
-          >删除</el-button
-        >
+        ></el-button>
+                <el-button
+          v-if="isCheck"
+          type="text"
+          size="mini"
+          @click="()=>this.isCheck=false"
+        >取消</el-button>
       </el-col>
-      <right-toolbar
+      <!-- <right-toolbar
         :showSearch.sync="showSearch"
         @queryTable="getList"
-      ></right-toolbar>
+      ></right-toolbar> -->
     </el-row>
-    <el-table
-      ref="table"
-      highlight-current-row
-      v-loading="loading"
-      :data="noteInfoList"
-      @row-click="handleRowClick"
-      size="mini"
-    >
-      <el-table-column
-        v-if="showSelect"
-        type="selection"
-        width="55"
-        align="center"
-      />
-      <el-table-column :label="label" prop="name" show-overflow-tooltip />
-    </el-table>
-    <!-- 添加或修改文件夹对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="内容ID" prop="contentId">
-          <el-input v-model="form.contentId" placeholder="请输入内容ID" />
-        </el-form-item>
-        <el-form-item label="标题" prop="name">
-          <el-input v-model="form.name" placeholder="请输入标题" />
-        </el-form-item>
-        <el-form-item label="父ID" prop="parentId">
-          <el-input v-model="form.parentId" placeholder="请输入父ID" />
-        </el-form-item>
-        <el-form-item label="标签" prop="tag">
-          <el-input v-model="form.tag" placeholder="请输入标签" />
-        </el-form-item>
-        <el-form-item label="来源" prop="source">
-          <el-input v-model="form.source" placeholder="请输入来源" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="parentIds">
-          <el-input
-            v-model="form.parentIds"
-            type="textarea"
-            placeholder="请输入内容"
-          />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+    <div class="table">
+      <el-table
+        ref="table"
+        highlight-current-row
+        v-loading="loading"
+        :data="noteInfoList"
+        @row-click="handleRowClick"
+        size="mini"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column v-if="isCheck" type="selection" width="28">
+        </el-table-column>
+        <el-table-column
+          v-if="showSelect"
+          type="selection"
+          width="55"
+          align="center"
+        />
+        <el-table-column :label="label" prop="name" show-overflow-tooltip />
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -107,8 +69,10 @@ export default {
   name: "NoteList",
   data() {
     return {
+      //是否是多选模式
+      isCheck: false,
       // 遮罩层
-      loading: true,
+      loading: false,
       // 选中数组
       ids: [],
       showSelect: false,
@@ -146,15 +110,23 @@ export default {
       this.label = this.selectedTreeNote.label;
     },
     noteInfoList() {
-      if (this.openedNote.id) {
-        const row = this.noteInfoList.find((n) => n.id == this.openedNote.id);
-        row && this.$refs.table.setCurrentRow(this.noteInfoList[0]);
-      }
+      this.selectOpenRow();
+    },
+    openedNote() {
+      this.selectOpenRow();
     },
   },
   methods: {
+    selectOpenRow() {
+      if (this.openedNote.id) {
+        const row = this.noteInfoList.find((n) => n.id == this.openedNote.id);
+        row && this.$refs.table.setCurrentRow(row);
+      }
+    },
     /** 查询文件夹列表 */
     getList() {
+      this.isCheck = false;
+      this.multiple = true;
       const parentId = this.selectedTreeNote.id;
       if (parentId) {
         this.loading = true;
@@ -174,78 +146,12 @@ export default {
         this.loading = false;
       }
     },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        contentId: null,
-        name: null,
-        parentId: null,
-        tag: null,
-        source: null,
-        isLeaf: [],
-        createTime: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null,
-        status: null,
-        parentIds: null,
-      };
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
     // 选中数据
     handleRowClick(selection) {
       this.$router.push("/n/note?id=" + selection.id);
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加文件夹";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getNoteInfo(id).then((response) => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改文件夹";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateNoteInfo(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addNoteInfo(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+    handleCheck() {
+      this.isCheck = true;
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -261,11 +167,22 @@ export default {
         })
         .catch(() => {});
     },
+    handleSelectionChange(selection) {
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length != 1;
+      this.multiple = !selection.length;
+    },
   },
 };
 </script>
-<style>
-.note-list .el-table__row {
-  cursor: pointer;
+<style lang="scss" scoped>
+.note-list {
+  .table {
+    max-height: calc(100vh - 250px);
+    overflow: auto;
+    tr {
+      cursor: pointer;
+    }
+  }
 }
 </style>
