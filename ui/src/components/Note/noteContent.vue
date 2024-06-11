@@ -1,23 +1,32 @@
 <template>
   <div class="note-content">
     <OpenedTab></OpenedTab>
-    <div class="toolbar">
+    <div v-if="openedNote.id" class="toolbar">
       <input
         maxLength="100"
         v-model="title"
-        @blur="handleBlur"
-        @input="handleTitleChange"
+        @input="changeTitle"
+        @blur="updateTitle"
       />
       <i class="el-icon-time"></i>
       <i class="el-icon-download"></i>
       <i class="el-icon-star-off orange"></i>
       <i class="el-icon-star-on orange"></i>
-      <i style="color: #78e08f" class="el-icon-circle-check icon"></i>
-      <i class="el-icon-warning-outline orange icon"></i>
+      <i
+        v-if="isSave"
+        style="color: #78e08f"
+        class="el-icon-circle-check icon"
+      ></i>
+      <i v-if="!isSave" class="el-icon-warning-outline orange icon"></i>
     </div>
-    <MdEditor v-if="openedNote.id" v-model="text" :propClass="editorClass"></MdEditor>
+    <MdEditor
+      v-if="openedNote.id"
+      :value="content.text"
+      :propClass="editorClass"
+      @blur="updateText"
+      @change="changeText"
+    ></MdEditor>
     <el-empty v-if="!openedNote.id" description=""></el-empty>
-
   </div>
 </template>
 
@@ -25,22 +34,23 @@
 import MdEditor from "@/components/MarkDownEditor";
 import OpenedTab from "@/components/Note/noteOpenedTab";
 import { getNoteInfo, addNoteInfo, updateNoteInfo } from "@/api/note/noteInfo";
-import { getContent } from "@/api/note/content";
+import { getContent, updateContent } from "@/api/note/content";
 
 export default {
   name: "NoteList",
   props: ["note"],
-  components: { MdEditor,OpenedTab },
+  components: { MdEditor, OpenedTab },
   data() {
     return {
       title: "",
-      editorClass:{height:"100vh"},
-      text: "",
+      editorClass: { height: "100vh" },
       // 遮罩层
       loading: true,
       // 选中数组
       ids: [],
       noteName: "",
+      content: {},
+      isSave: true,
     };
   },
   created() {
@@ -48,6 +58,7 @@ export default {
   },
   watch: {
     openedNote() {
+      this.isSave = true;
       this.getData();
     },
   },
@@ -63,14 +74,44 @@ export default {
       this.title = name;
       if (contentId) {
         getContent(contentId).then((res) => {
-          this.text = res.data.text;
+          this.content = res.data;
         });
       } else {
-        this.text = "";
+        this.content = {};
       }
     },
-    handleBlur() {},
-    handleTitleChange() {},
+    changeTitle() {
+      this.isSave = false;
+    },
+    updateTitle() {
+      if (!this.title) {
+        this.$modal.msgError("标题不能为空");
+        return;
+      }
+      const note = { ...this.openedNote, name: this.title };
+      updateNoteInfo(note).then(() => {
+        this.$modal.msgSuccess("修改成功");
+        this.isSave = true;
+
+        //更新openedNotes
+        const data = new Map(this.$store.state.note.openedNotes);
+        data.set(String(this.openedNote.id), note);
+        this.$store.dispatch("note/setOpenedNotes", data);
+        this.$store.dispatch("note/getListData");
+      });
+    },
+    changeText() {
+      this.isSave = false;
+    },
+    updateText(text) {
+      //如果有改动，才保存
+      if (!this.isSave) {
+        updateContent({ ...this.content, text }).then(() => {
+          this.isSave = true;
+          this.$modal.msgSuccess("修改成功");
+        });
+      }
+    },
     // 表单重置
     reset() {
       this.form = {

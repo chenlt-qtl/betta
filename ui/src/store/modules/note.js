@@ -12,6 +12,8 @@ const state = {
   treeData: new Array(),
   //树选中的节点
   selectedTreeNote: {},
+  //列表数据
+  listNote: [],
   //打开的笔记
   openedNote: {},
   //打开的笔记TAB集合
@@ -32,6 +34,9 @@ const mutations = {
   SET_OPENED_NOTES: (state, notes) => {
     state.openedNotes = notes
   },
+  SET_LIST_NOTE: (state, notes) => {
+    state.listNote = notes
+  },
 }
 
 const actions = {
@@ -41,10 +46,31 @@ const actions = {
   }) {
     return new Promise((resolve, reject) => {
       listNoteTree({
-        parentId: 0,
+        parentId: -1,
         isLeaf: 0
       }).then(res => {
         commit('SET_TREE_DATA', res.data)
+        resolve(res)
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+  // 获取note列表
+  getListData({
+    commit,
+    state
+  }) {
+    const parentId = state.selectedTreeNote.id;
+    const queryParams = {
+      pageNum: 1,
+      pageSize: 1000,
+      parentId,
+      isLeaf: true,
+    };
+    return new Promise((resolve, reject) => {
+      listNoteInfo(queryParams).then(res => {
+        commit('SET_LIST_NOTE', res.rows)
         resolve(res)
       }).catch(error => {
         reject(error)
@@ -69,9 +95,11 @@ const actions = {
     })
   },
   setSelectedTreeNote({
+    dispatch,
     commit
   }, data) {
     commit('SET_SELECTED_TREE_NOTE', data)
+    dispatch('getListData')
   },
   setOpenedNotes({
     commit

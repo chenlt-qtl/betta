@@ -2,7 +2,6 @@
   <div class="open-tab">
     <el-tabs
       :value="`${openedNoteId}`"
-      type="card"
       closable
       @edit="handleTabsEdit"
       @tab-click="handleClick"
@@ -50,7 +49,7 @@ export default {
         openedNotes.delete(targetName);
         this.$store.dispatch("note/setOpenedNotes", openedNotes);
         if(openedNoteId==targetName){
-          this.$store.dispatch("note/setOpendNote", {});
+          this.$router.push("/n/note");
         }
       }
     },
@@ -59,7 +58,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .open-tab {
-  height: 48px;
+  height: 54px;
   padding: 1px;
   overflow: hidden;
   .el-tabs__nav {
