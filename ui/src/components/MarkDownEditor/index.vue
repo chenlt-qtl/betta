@@ -1,41 +1,43 @@
 <template>
-  <div>
-    <div id="editorSection"></div>
-  </div>
+  <editor
+    ref="editorRef"
+    :options="editorOptions"
+    height="500px"
+    previewStyle="vertical"
+    @blur="onEditorBlur"
+    @keyup="onInput"
+  />
 </template>
 
 
 <script>
-import Editor from "@toast-ui/editor";
+import { Editor } from "@toast-ui/vue-editor";
 import "@toast-ui/editor/dist/toastui-editor.css"; // Editor's Style
 import "codemirror/lib/codemirror.css";
 
-let editor;
-
 export default {
-  name: "markDownEditor",
   props: ["value"],
-  mounted() {
-    editor = new Editor({
-      el: document.querySelector("#editorSection"),
-      language: "zh-CN",
-      initialEditType: "markdown",
-      previewStyle: "vertical",
-      initialValue:this.content
-    });
+  components: {
+    editor: Editor,
   },
   watch: {
-    value: value=>{
-        editor.setMarkdown(value)
+    value() {
+      this.$refs.editorRef.invoke("setMarkdown", this.value, false);
     },
   },
-  beforeDestroy() {
-    this.tuieditor = null;
-    delete this.tuieditor;
+  data() {
+    return {
+      editorOptions: {},
+    };
   },
   methods: {
-    initialize() {},
+    onEditorBlur() {
+      this.$emit("blur", this.$refs.editorRef.invoke("getMarkdown"));
+    },
+    onInput(){
+      this.$emit("change");
+    },
   },
 };
 </script>
- 
+

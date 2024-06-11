@@ -122,6 +122,12 @@ public class NoteInfoServiceImpl implements INoteInfoService {
     @CreateByScope("")
     public List<TreeSelect> selectNoteTreeList(NoteInfo noteInfo) {
         List<TreeSelect> notes = noteInfoMapper.selectTreeSelect(noteInfo);
+        //增加根节点
+        TreeSelect root = new TreeSelect();
+        root.setId(0L);
+        root.setLabel("文件夹");
+        root.setParentId(-1L);
+        notes.add(root);
         return TreeUtil.wrapTreeDataToTreeList(notes, noteInfo.getParentId());
     }
 

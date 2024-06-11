@@ -6,7 +6,7 @@
           v-if="!isCheck"
           type="text"
           size="mini"
-          :disabled="noteInfoList.length <= 0"
+          :disabled="listNote.length <= 0"
           @click="handleCheck"
           v-hasPermi="['note:noteInfo:remove']"
           ><svg-icon v-if="!isCheck" icon-class="checkbox"
@@ -20,12 +20,13 @@
           @click="handleDelete"
           v-hasPermi="['note:noteInfo:remove']"
         ></el-button>
-                <el-button
+        <el-button
           v-if="isCheck"
           type="text"
           size="mini"
-          @click="()=>this.isCheck=false"
-        >取消</el-button>
+          @click="() => (this.isCheck = false)"
+          >取消</el-button
+        >
       </el-col>
       <!-- <right-toolbar
         :showSearch.sync="showSearch"
@@ -37,7 +38,7 @@
         ref="table"
         highlight-current-row
         v-loading="loading"
-        :data="noteInfoList"
+        :data="listNote"
         @row-click="handleRowClick"
         size="mini"
         @selection-change="handleSelectionChange"
@@ -82,8 +83,6 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
-      // 文件夹表格数据
-      noteInfoList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -100,50 +99,26 @@ export default {
     selectedTreeNote() {
       return this.$store.state.note.selectedTreeNote || {};
     },
+    listNote() {
+      return this.$store.state.note.listNote;
+    },
     openedNote() {
       return this.$store.state.note.openedNote;
     },
   },
   watch: {
     selectedTreeNote() {
-      this.getList();
       this.label = this.selectedTreeNote.label;
     },
-    noteInfoList() {
-      this.selectOpenRow();
-    },
-    openedNote() {
+    listNote() {
       this.selectOpenRow();
     },
   },
   methods: {
     selectOpenRow() {
       if (this.openedNote.id) {
-        const row = this.noteInfoList.find((n) => n.id == this.openedNote.id);
+        const row = this.listNote.find((n) => n.id == this.openedNote.id);
         row && this.$refs.table.setCurrentRow(row);
-      }
-    },
-    /** 查询文件夹列表 */
-    getList() {
-      this.isCheck = false;
-      this.multiple = true;
-      const parentId = this.selectedTreeNote.id;
-      if (parentId) {
-        this.loading = true;
-        // 查询参数
-        const queryParams = {
-          pageNum: 1,
-          pageSize: 1000,
-          parentId,
-          isLeaf: true,
-        };
-        listNoteInfo(queryParams).then((response) => {
-          this.noteInfoList = response.rows;
-          this.loading = false;
-        });
-      } else {
-        this.noteInfoList = [];
-        this.loading = false;
       }
     },
     // 选中数据
@@ -162,7 +137,7 @@ export default {
           return delNoteInfo(ids);
         })
         .then(() => {
-          this.getList();
+          this.$store.dispatch("note/getListData");
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});
