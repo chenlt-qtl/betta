@@ -1,6 +1,8 @@
 package com.betta.web.controller.system;
 
 import java.util.List;
+
+import com.betta.common.utils.file.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +53,9 @@ public class SysNoticeController extends BaseController
     @GetMapping(value = "/{noticeId}")
     public AjaxResult getInfo(@PathVariable Long noticeId)
     {
-        return success(noticeService.selectNoticeById(noticeId));
+        SysNotice sysNotice = noticeService.selectNoticeById(noticeId);
+        sysNotice.setNoticeContent(ImageUtils.dbToWeb(sysNotice.getNoticeContent(),"html"));
+        return success(sysNotice);
     }
 
     /**
@@ -62,7 +66,7 @@ public class SysNoticeController extends BaseController
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysNotice notice)
     {
-        notice.setCreateBy(getUsername());
+        notice.setNoticeContent(ImageUtils.webToDb(notice.getNoticeContent(),"html"));
         return toAjax(noticeService.insertNotice(notice));
     }
 
@@ -74,7 +78,7 @@ public class SysNoticeController extends BaseController
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysNotice notice)
     {
-        notice.setUpdateBy(getUsername());
+        notice.setNoticeContent(ImageUtils.webToDb(notice.getNoticeContent(),"html"));
         return toAjax(noticeService.updateNotice(notice));
     }
 

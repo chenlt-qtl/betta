@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dropdown @command="handleCommand">
+    <el-dropdown @command="handleCommand" trigger="click">
       <span class="el-dropdown-link">
         <svg-icon icon-class="ellipsis-v" />
       </span>
@@ -10,36 +10,76 @@
         <el-dropdown-item divided command="del">删除</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    <el-dialog
+      title="请输入文件夹名称"
+      :visible.sync="openRename"
+      width="500px"
+      append-to-body
+    >
+      <el-form ref="form" :model="form" :rules="rules">
+        <el-form-item label="" prop="name">
+          <el-input v-model="form.name" placeholder="请输入文件夹名称" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="rename">确 定</el-button>
+        <el-button @click="() => (this.openRename = false)">取 消</el-button>
+      </div>
+    </el-dialog>
+    <NoteMoveDialogVue ref="moveDialog"></NoteMoveDialogVue>
   </div>
 </template>
 
 <script>
-import { delNoteInfo } from "@/api/note/noteInfo";
+import { delNoteInfo, updateName } from "@/api/note/noteInfo";
+import NoteMoveDialogVue from "./noteMoveDialog.vue";
 
 export default {
   name: "NoteTreeDropdown",
+  components: { NoteMoveDialogVue },
   props: ["note"],
   data() {
-    return {};
+    return {
+      openRename: false,
+      form: {},
+      rules: {
+        name: [{ required: true, message: "名称不能为空", trigger: "change" }],
+      },
+    };
   },
-
+  computed: {
+    selectedTreeNote() {
+      return this.$store.state.note.selectedTreeNote;
+    },
+  },
   methods: {
     handleCommand(command) {
       if (this.note.id) {
+        const { id, label, parentId } = this.note;
         switch (command) {
           case "del":
             this.delNote();
             break;
           case "rename":
-            this.rename();
+            this.form = { id, name: label, parentId };
+            this.openRename = true;
             break;
           case "move":
-            this.move();
+            this.$refs.moveDialog.openDialog({ ids: id, parentId });
             break;
           default:
             break;
         }
       }
+    },
+    rename() {
+      const note = { id: this.selectedTreeNote.id, name: this.form.name };
+      updateName(note).then(() => {
+        this.$modal.msgSuccess("修改成功");
+        this.openRename = false;
+        //刷新树
+        this.$store.dispatch("note/getTreeData");
+      });
     },
     delNote() {
       this.$confirm(

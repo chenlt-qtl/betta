@@ -31,11 +31,11 @@ public interface INoteInfoService
 
     /**
      * 新增文件夹
-     * 
+     *
      * @param noteInfo 文件夹
      * @return 结果
      */
-    public int insertNoteInfo(NoteInfo noteInfo);
+    public Long insertNoteInfo(NoteInfo noteInfo);
 
     /**
      * 修改文件夹
@@ -55,4 +55,6 @@ public interface INoteInfoService
 
 
     List<TreeSelect> selectNoteTreeList(NoteInfo noteInfo);
+
+    void updateParent(String[] split, Long parentId);
 }

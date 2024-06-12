@@ -32,14 +32,26 @@ public class BettaConfig
     /** 验证码类型 */
     private static String captchaType;
 
+    private static String vueAppBaseApi;
+
     public static String getProfile()
     {
         return profile;
     }
 
+    public static String getVueAppBaseApi()
+    {
+        return vueAppBaseApi;
+    }
+
     public void setProfile(String profile)
     {
         BettaConfig.profile = profile;
+    }
+
+    public void setVueAppBaseApi(String vueAppBaseApi)
+    {
+        BettaConfig.vueAppBaseApi = vueAppBaseApi;
     }
 
     public static boolean isAddressEnabled()
@@ -107,5 +119,13 @@ public class BettaConfig
     public static String getNotePath()
     {
         return getProfile() + "/note";
+    }
+
+    /**
+     * 公告相关上传路径
+     */
+    public static String getNoticePath()
+    {
+        return getProfile() + "/notice";
     }
 }

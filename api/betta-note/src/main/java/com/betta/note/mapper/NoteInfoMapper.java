@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.note.domain.NoteInfo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 文件夹Mapper接口
@@ -62,4 +63,6 @@ public interface NoteInfoMapper
     public int deleteNoteInfoByIds(Long[] ids);
 
     List<TreeSelect> selectTreeSelect(NoteInfo noteInfo);
+
+    void updateParent(@Param("array") String[] ids, @Param("parentId") Long parentId);
 }

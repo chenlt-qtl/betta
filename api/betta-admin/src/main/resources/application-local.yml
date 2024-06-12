@@ -13,5 +13,6 @@ spring:
 
 betta:
   profile: D:/betta/uploadPath
+  vueAppBaseApi: /dev-api
 server:
   port: 8081

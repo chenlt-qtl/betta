@@ -90,6 +90,7 @@ const actions = {
         commit('SET_OPENED_NOTES', openedNotes)
         resolve(res)
       }).catch(error => {
+        commit('SET_OPENED_NOTE', {})
         reject(error)
       })
     })

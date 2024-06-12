@@ -9,6 +9,10 @@ package com.betta.common.enums;
 public enum UploadFileType
 {
     /**
+     *公告
+     */
+    NOTICE("notice"),
+    /**
      * 单词
      */
     WORD("word"),

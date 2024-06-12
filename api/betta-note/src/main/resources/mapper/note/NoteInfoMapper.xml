@@ -106,6 +106,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateParent">
+        update note_info set parent_id = #{parentId}
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
     <delete id="deleteNoteInfoById" parameterType="Long">
         delete from note_info where id = #{id}
     </delete>

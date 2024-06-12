@@ -12,27 +12,12 @@
 </template>
 
 <script>
-import {
-  listNoteInfo,
-  getNoteInfo,
-  delNoteInfo,
-  addNoteInfo,
-  updateNoteInfo,
-  listNoteTree,
-} from "@/api/note/noteInfo";
 import NoteMenu from "@/components/Note/noteMenu";
 import NoteContent from "@/components/Note/noteContent";
 
 export default {
   name: "NoteInfo",
   components: { NoteMenu, NoteContent },
-  data() {
-    return {
-      dataStr: "ABC",
-      loading: true,
-      note: {},
-    };
-  },
   created() {
     this.getNote();
   },

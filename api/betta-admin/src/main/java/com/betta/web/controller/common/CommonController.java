@@ -1,11 +1,17 @@
 package com.betta.web.controller.common;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.betta.common.enums.UploadFileType;
+import com.betta.common.utils.SecurityUtils;
+import com.betta.common.utils.file.Base64Utils;
+import com.betta.common.utils.file.ImageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +67,42 @@ public class CommonController {
         }
     }
 
+
+    /**
+     * 保存笔记中的图片，会转成JPG（有损压缩）
+     *
+     * @param param
+     * @return
+     */
+    @PostMapping(value = "/uploadImg/note")
+    public AjaxResult uploadNoteImg(@RequestBody Map param) {
+        if (param.containsKey("file")) {
+            try {
+                String file = String.valueOf(param.get("file"));
+                Matcher matcher = ImageUtils.BASE64_PATTERN.matcher(file);
+                if (matcher.find()) {
+                    String data = matcher.group(0);//数据
+                    String type = matcher.group(1);//type
+                    String imgData = data.split(",")[1];
+                    String username = SecurityUtils.getUsername();
+                    String fileName = username + "_" + System.currentTimeMillis() + ".jpg";//文件名称
+                    String notePath = BettaConfig.getNotePath();
+                    //绝对路径
+                    String absPath = FileUploadUtils.getAbsoluteFile(notePath, fileName).getAbsolutePath();
+                    if (Base64Utils.saveBase64Image(imgData, type, absPath)) {
+                        //返回相对路径
+                        return AjaxResult.success("操作成功", BettaConfig.getVueAppBaseApi() + FileUploadUtils.getPathFileName(notePath, fileName));
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return AjaxResult.error(e.getMessage());
+            }
+        }
+        return AjaxResult.error("没有找到图片信息");
+    }
+
     /**
      * 通用上传请求（单个）
      */
@@ -73,8 +115,8 @@ public class CommonController {
                 filePath = BettaConfig.getWordPath();
             } else if (StringUtils.equals(UploadFileType.ARTICLE.getType(), type)) {
                 filePath = BettaConfig.getArticlePath();
-            } else if (StringUtils.equals(UploadFileType.NOTE.getType(), type)) {
-                filePath = BettaConfig.getNotePath();
+            } else if (StringUtils.equals(UploadFileType.NOTICE.getType(), type)) {
+                filePath = BettaConfig.getNoticePath();
             }
 
             // 上传并返回新文件名称

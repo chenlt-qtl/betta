@@ -7,8 +7,8 @@
         clearable
         size="small"
         prefix-icon="el-icon-search"
-        style="margin-bottom: 20px"
       />
+      <NoteAddBtn />
     </div>
     <div class="tree-container">
       <el-tree
@@ -19,11 +19,12 @@
         ref="tree"
         highlight-current
         @node-click="handleNodeClick"
+        :default-expanded-keys="['0']"
       >
         <span class="custom-tree-node" slot-scope="{ node }">
           <span class="label" :title="node.label">{{ node.label }}</span>
-          <span class="dropdown">
-            <NoteTreeDropdown :note="node" />
+          <span class="dropdown" v-if="node.data.id">
+            <NoteTreeDropdown :note="node.data" />
           </span>
         </span>
       </el-tree>
@@ -33,10 +34,11 @@
 
 <script>
 import NoteTreeDropdown from "./noteTreeDropdown.vue";
+import NoteAddBtn from "./noteAddBtn.vue";
 
 export default {
   name: "NoteTree",
-  components: { NoteTreeDropdown },
+  components: { NoteTreeDropdown, NoteAddBtn },
   data() {
     return {
       noteName: "",
@@ -66,20 +68,22 @@ export default {
       this.$refs.tree.filter(val);
     },
     openedNote(note) {
-      const selectNode = this.$refs.tree.getNode(note.parentId);
-      function expandParent(node) {
-        node.expand();
-        node.parent && expandParent(node.parent);
-      }
+      if (note.parentId) {
+        const selectNode = this.$refs.tree.getNode(note.parentId);
+        function expandParent(node) {
+          node.expand();
+          node.parent && expandParent(node.parent);
+        }
 
-      //展开
-      if (selectNode && !selectNode.expanded) {
-        expandParent(selectNode);
-      }
+        //展开
+        if (selectNode && !selectNode.expanded) {
+          expandParent(selectNode);
+        }
 
-      if (selectNode) {
-        this.$refs.tree.setCurrentKey(note.parentId);
-        this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
+        if (selectNode) {
+          this.$refs.tree.setCurrentKey(note.parentId);
+          this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
+        }
       }
     },
   },
@@ -98,6 +102,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 .note-tree {
+  .head-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+  }
   .tree-container {
     max-height: calc(100vh - 180px);
     overflow: auto;

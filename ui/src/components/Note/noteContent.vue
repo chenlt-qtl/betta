@@ -1,31 +1,41 @@
 <template>
   <div class="note-content">
     <OpenedTab></OpenedTab>
-    <div v-if="openedNote.id" class="toolbar">
-      <input
-        maxLength="100"
-        v-model="title"
-        @input="changeTitle"
-        @blur="updateTitle"
-      />
-      <i class="el-icon-time"></i>
-      <i class="el-icon-download"></i>
-      <i class="el-icon-star-off orange"></i>
-      <i class="el-icon-star-on orange"></i>
-      <i
-        v-if="isSave"
-        style="color: #78e08f"
-        class="el-icon-circle-check icon"
-      ></i>
-      <i v-if="!isSave" class="el-icon-warning-outline orange icon"></i>
+    <div v-if="openedNote.id">
+      <div class="toolbar">
+        <input
+          ref="title"
+          maxLength="100"
+          v-model="title"
+          @input="changeTitle"
+          @blur="updateTitle"
+        />
+        <i class="el-icon-time"></i>
+        <i class="el-icon-download"></i>
+        <i
+          v-if="!isFav"
+          @click="() => updateFav(true)"
+          class="el-icon-star-off orange"
+        ></i>
+        <i
+          v-if="isFav"
+          @click="() => updateFav(false)"
+          class="el-icon-star-on orange"
+        ></i>
+        <i
+          v-if="isSave"
+          style="color: #78e08f"
+          class="el-icon-circle-check icon"
+        ></i>
+        <i v-if="!isSave" class="el-icon-warning-outline orange icon"></i>
+      </div>
+      <MdEditor
+        :value="content.text"
+        :propClass="editorClass"
+        @blur="updateText"
+        @change="changeText"
+      ></MdEditor>
     </div>
-    <MdEditor
-      v-if="openedNote.id"
-      :value="content.text"
-      :propClass="editorClass"
-      @blur="updateText"
-      @change="changeText"
-    ></MdEditor>
     <el-empty v-if="!openedNote.id" description=""></el-empty>
   </div>
 </template>
@@ -33,8 +43,15 @@
 <script>
 import MdEditor from "@/components/MarkDownEditor";
 import OpenedTab from "@/components/Note/noteOpenedTab";
-import { getNoteInfo, addNoteInfo, updateNoteInfo } from "@/api/note/noteInfo";
+import { updateName } from "@/api/note/noteInfo";
 import { getContent, updateContent } from "@/api/note/content";
+import {
+  listFavorite,
+  getFavorite,
+  delFavorite,
+  addFavorite,
+  updateFavorite,
+} from "@/api/note/favorite";
 
 export default {
   name: "NoteList",
@@ -50,16 +67,21 @@ export default {
       ids: [],
       noteName: "",
       content: {},
+      fav: {},
+      isFav: false,
       isSave: true,
     };
   },
   created() {
-    this.getData();
+    this.getContent();
+    this.getFav();
   },
   watch: {
     openedNote() {
-      this.isSave = true;
-      this.getData();
+      if (this.openedNote.id) {
+        this.isSave = true;
+        this.getContent();
+      }
     },
   },
   computed: {
@@ -69,7 +91,7 @@ export default {
   },
   methods: {
     /** 查询文件夹列表 */
-    getData() {
+    getContent() {
       const { name, contentId } = this.openedNote;
       this.title = name;
       if (contentId) {
@@ -80,6 +102,18 @@ export default {
         this.content = {};
       }
     },
+    getFav() {
+      getFavorite().then(({ data }) => {
+        if (data) {
+          this.fav = data;
+          this.fav.favNoteIds = (data.noteIds || "").split(",");
+          this.isFav = this.fav.favNoteIds.includes(String(this.openedNote.id));
+          console.log('================this.isFav====================');
+          console.log(this.isFav);
+          console.log('====================================');
+        }
+      });
+    },
     changeTitle() {
       this.isSave = false;
     },
@@ -89,7 +123,7 @@ export default {
         return;
       }
       const note = { ...this.openedNote, name: this.title };
-      updateNoteInfo(note).then(() => {
+      updateName(note).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.isSave = true;
 
@@ -112,55 +146,24 @@ export default {
         });
       }
     },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        contentId: null,
-        name: null,
-        parentId: null,
-        tag: null,
-        source: null,
-        isLeaf: [],
-        createTime: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null,
-        status: null,
-        parentIds: null,
-      };
-      this.resetForm("form");
-    },
-
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getNoteInfo(id).then((response) => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改文件夹";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateNoteInfo(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addNoteInfo(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+    updateFav(isAdd) {
+      let noteIds = [];
+      const { favNoteIds, id } = this.fav;
+      if (isAdd) {
+        noteIds = [...favNoteIds, this.openedNote.id];
+      } else {
+        noteIds = favNoteIds.filter((id) => id != this.openedNote.id);
+      }
+      const data = { id, noteIds: noteIds.join(",") };
+      if (id) {
+        updateFavorite(data).then(() => {
+          this.getFav();
+        });
+      } else {
+        addFavorite(data).then(() => {
+          this.getFav();
+        });
+      }
     },
   },
 };

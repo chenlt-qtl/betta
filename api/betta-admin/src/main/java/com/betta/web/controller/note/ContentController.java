@@ -5,6 +5,7 @@ import com.betta.common.core.controller.BaseController;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
+import com.betta.common.utils.file.ImageUtils;
 import com.betta.common.utils.poi.ExcelUtil;
 import com.betta.note.domain.Content;
 import com.betta.note.service.IContentService;
@@ -17,14 +18,13 @@ import java.util.List;
 
 /**
  * 笔记内容Controller
- * 
+ *
  * @author ruoyi
  * @date 2024-06-06
  */
 @RestController
 @RequestMapping("/note/content")
-public class ContentController extends BaseController
-{
+public class ContentController extends BaseController {
     @Autowired
     private IContentService contentService;
 
@@ -33,8 +33,7 @@ public class ContentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('note:content:list')")
     @GetMapping("/list")
-    public TableDataInfo list(Content content)
-    {
+    public TableDataInfo list(Content content) {
         startPage();
         List<Content> list = contentService.selectcontentList(content);
         return getDataTable(list);
@@ -46,8 +45,7 @@ public class ContentController extends BaseController
     @PreAuthorize("@ss.hasPermi('note:content:export')")
     @Log(title = "笔记内容", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Content content)
-    {
+    public void export(HttpServletResponse response, Content content) {
         List<Content> list = contentService.selectcontentList(content);
         ExcelUtil<Content> util = new ExcelUtil<Content>(Content.class);
         util.exportExcel(response, list, "笔记内容数据");
@@ -58,9 +56,10 @@ public class ContentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('note:content:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
-        return success(contentService.selectcontentById(id));
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
+        Content content = contentService.selectcontentById(id);
+        content.setText(ImageUtils.dbToWeb(content.getText(),"md"));
+        return success(content);
     }
 
     /**
@@ -69,8 +68,8 @@ public class ContentController extends BaseController
     @PreAuthorize("@ss.hasPermi('note:content:add')")
     @Log(title = "笔记内容", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Content content)
-    {
+    public AjaxResult add(@RequestBody Content content) {
+        content.setText(ImageUtils.webToDb(content.getText(),"md"));
         return toAjax(contentService.insertcontent(content));
     }
 
@@ -80,8 +79,8 @@ public class ContentController extends BaseController
     @PreAuthorize("@ss.hasPermi('note:content:edit')")
     @Log(title = "笔记内容", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Content content)
-    {
+    public AjaxResult edit(@RequestBody Content content) {
+        content.setText(ImageUtils.webToDb(content.getText(),"md"));
         return toAjax(contentService.updatecontent(content));
     }
 
@@ -90,9 +89,8 @@ public class ContentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('note:content:remove')")
     @Log(title = "笔记内容", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(contentService.deletecontentByIds(ids));
     }
 }

@@ -14,12 +14,23 @@
         <el-button
           v-if="isCheck"
           type="text"
+          icon="el-icon-truck"
+          size="mini"
+          :disabled="multiple"
+          @click="handleMove"
+          v-hasPermi="['note:noteInfo:edit']"
+          >移动</el-button
+        >
+        <el-button
+          v-if="isCheck"
+          type="text"
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['note:noteInfo:remove']"
-        ></el-button>
+          >删除</el-button
+        >
         <el-button
           v-if="isCheck"
           type="text"
@@ -54,6 +65,7 @@
         <el-table-column :label="label" prop="name" show-overflow-tooltip />
       </el-table>
     </div>
+    <noteMoveDialog ref="moveDialog"></noteMoveDialog>
   </div>
 </template>
 
@@ -65,9 +77,11 @@ import {
   addNoteInfo,
   updateNoteInfo,
 } from "@/api/note/noteInfo";
+import noteMoveDialog from "./noteMoveDialog.vue";
 
 export default {
   name: "NoteList",
+  components: { noteMoveDialog },
   data() {
     return {
       //是否是多选模式
@@ -85,8 +99,6 @@ export default {
       showSearch: true,
       // 弹出层标题
       title: "",
-      // 是否显示弹出层
-      open: false,
       // 表单参数
       form: {},
       // 表单校验
@@ -146,6 +158,12 @@ export default {
       this.ids = selection.map((item) => item.id);
       this.single = selection.length != 1;
       this.multiple = !selection.length;
+    },
+    handleMove() {
+      this.$refs.moveDialog.openDialog({
+        ids: this.ids,
+        parentId: this.selectedTreeNote.id,
+      });
     },
   },
 };

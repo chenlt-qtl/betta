@@ -44,6 +44,23 @@ export function updateNoteInfo(data) {
   })
 }
 
+// 修改名称
+export function updateName(data) {
+  return request({
+    url: '/note/noteInfo/' + data.id,
+    method: 'put',
+    data: data
+  })
+}
+
+// 移动
+export function updateParent(ids,parentId) {
+  return request({
+    url: '/note/noteInfo/parent?ids=' + ids + "&parentId=" + parentId,
+    method: 'put'
+  })
+}
+
 // 删除文件夹
 export function delNoteInfo(id) {
   return request({

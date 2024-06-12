@@ -1,6 +1,7 @@
 package com.betta.note.service.impl;
 
 import com.betta.common.annotation.CreateByScope;
+import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.DateUtils;
@@ -14,7 +15,6 @@ import com.betta.note.service.INoteInfoDeleteService;
 import com.betta.note.service.INoteInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -65,9 +65,12 @@ public class NoteInfoServiceImpl implements INoteInfoService {
      * @return 结果
      */
     @Override
-    public int insertNoteInfo(NoteInfo noteInfo) {
-        noteInfo.setCreateTime(DateUtils.getNowDate());
-        return noteInfoMapper.insertNoteInfo(noteInfo);
+    public Long insertNoteInfo(NoteInfo noteInfo) {
+        Content noteContent = new Content();
+        contentService.insertcontent(noteContent);
+        noteInfo.setContentId(noteContent.getId());
+        noteInfoMapper.insertNoteInfo(noteInfo);
+        return noteInfo.getId();
     }
 
     /**
@@ -129,6 +132,22 @@ public class NoteInfoServiceImpl implements INoteInfoService {
         root.setParentId(-1L);
         notes.add(root);
         return TreeUtil.wrapTreeDataToTreeList(notes, noteInfo.getParentId());
+    }
+
+    /**更新父节点
+     *
+     * @param ids
+     * @param parentId
+     */
+    @Override
+    public void updateParent(String[] ids, Long parentId) {
+        NoteInfo parent = selectNoteInfoById(parentId);
+        if (parentId!= 0 && parent == null) {
+            throw new ServiceException("父节点不合法");
+        } else {
+            noteInfoMapper.updateParent(ids, parentId);
+        }
+
     }
 
 
