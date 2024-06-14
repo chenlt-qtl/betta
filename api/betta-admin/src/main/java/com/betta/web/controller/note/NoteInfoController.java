@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.core.domain.entity.SysDept;
 import com.betta.common.exception.ServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,6 +49,16 @@ public class NoteInfoController extends BaseController {
         startPage();
         List<NoteInfo> list = noteInfoService.selectNoteInfoList(noteInfo);
         return getDataTable(list);
+    }
+
+    /**
+     * 查询文件夹列表
+     */
+    @PreAuthorize("@ss.hasPermi('note:noteInfo:list')")
+    @GetMapping("/last")
+    public AjaxResult listLast() {
+        List<NoteInfo> list = noteInfoService.selectLast(20);
+        return AjaxResult.success(list);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.betta.note.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.note.domain.NoteInfo;
@@ -65,4 +66,8 @@ public interface NoteInfoMapper
     List<TreeSelect> selectTreeSelect(NoteInfo noteInfo);
 
     void updateParent(@Param("array") String[] ids, @Param("parentId") Long parentId);
+
+    List<NoteInfo> selectNoteInfoByIds(String[] noteIds);
+
+    List<NoteInfo> selectLast(Map param);
 }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.note.mapper.HistoryMapper">
+    
+    <resultMap type="history" id="historyResult">
+        <result property="id"    column="id"    />
+        <result property="noteId"    column="note_id"    />
+        <result property="title"    column="title"    />
+        <result property="text"    column="text"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selecthistoryVo">
+        select id, note_id, title, text, create_by, create_time from note_info_history
+    </sql>
+
+    <select id="selecthistoryList" parameterType="history" resultMap="historyResult">
+        select id, note_id, title, create_by, create_time  from note_info_history
+        <where>  
+            <if test="noteId != null "> and note_id = #{noteId}</if>
+            <if test="title != null  and title != ''"> and title like concat('%',#{title},'%')</if>
+            <if test="params.type == 'auto'"> and title is null</if>
+            <if test="params.type == 'name'"> and title is not null</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selecthistoryById" parameterType="Long" resultMap="historyResult">
+        <include refid="selecthistoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="inserthistory" parameterType="history" useGeneratedKeys="true" keyProperty="id">
+        insert into note_info_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noteId != null">note_id,</if>
+            <if test="title != null">title,</if>
+            <if test="text != null">text,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noteId != null">#{noteId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="text != null">#{text},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatehistory" parameterType="history">
+        update note_info_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="noteId != null">note_id = #{noteId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="text != null">text = #{text},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletehistoryById" parameterType="Long">
+        delete from note_info_history where id = #{id}
+    </delete>
+
+    <delete id="deletehistoryByIds" parameterType="String">
+        delete from note_info_history where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

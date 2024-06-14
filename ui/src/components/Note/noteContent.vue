@@ -7,11 +7,11 @@
           ref="title"
           maxLength="100"
           v-model="title"
-          @input="changeTitle"
+          @input="onChange"
           @blur="updateTitle"
         />
-        <i class="el-icon-time"></i>
-        <i class="el-icon-download"></i>
+        <NoteHistoryListBtn></NoteHistoryListBtn>
+        <NoteHistorySaveBtn :text="content.text"></NoteHistorySaveBtn>
         <i
           v-if="!isFav"
           @click="() => updateFav(true)"
@@ -23,17 +23,16 @@
           class="el-icon-star-on orange"
         ></i>
         <i
-          v-if="isSave"
+          v-if="isSaved"
           style="color: #78e08f"
           class="el-icon-circle-check icon"
         ></i>
-        <i v-if="!isSave" class="el-icon-warning-outline orange icon"></i>
+        <i v-if="!isSaved" class="el-icon-warning-outline orange icon"></i>
       </div>
       <MdEditor
         :value="content.text"
-        :propClass="editorClass"
         @blur="updateText"
-        @change="changeText"
+        @change="onChange"
       ></MdEditor>
     </div>
     <el-empty v-if="!openedNote.id" description=""></el-empty>
@@ -45,52 +44,44 @@ import MdEditor from "@/components/MarkDownEditor";
 import OpenedTab from "@/components/Note/noteOpenedTab";
 import { updateName } from "@/api/note/noteInfo";
 import { getContent, updateContent } from "@/api/note/content";
-import {
-  listFavorite,
-  getFavorite,
-  delFavorite,
-  addFavorite,
-  updateFavorite,
-} from "@/api/note/favorite";
+import { getFavorite, addFavorite, updateFavorite } from "@/api/note/favorite";
+import NoteHistorySaveBtn from "./noteHistorySaveBtn.vue";
+import NoteHistoryListBtn from "./noteHistoryListBtn.vue";
 
 export default {
-  name: "NoteList",
-  props: ["note"],
-  components: { MdEditor, OpenedTab },
+  components: { MdEditor, OpenedTab, NoteHistorySaveBtn, NoteHistoryListBtn },
   data() {
     return {
       title: "",
-      editorClass: { height: "100vh" },
       // 遮罩层
       loading: true,
-      // 选中数组
-      ids: [],
-      noteName: "",
       content: {},
       fav: {},
+      //是否已收藏
       isFav: false,
-      isSave: true,
+      //是否已经保存到数据库
+      isSaved: true,
     };
   },
   created() {
     this.getContent();
     this.getFav();
   },
-  watch: {
-    openedNote() {
-      if (this.openedNote.id) {
-        this.isSave = true;
-        this.getContent();
-      }
-    },
-  },
   computed: {
     openedNote() {
       return this.$store.state.note.openedNote;
     },
   },
+  watch: {
+    openedNote() {
+      if (this.openedNote.id) {
+        this.isSaved = true;
+        this.getContent();
+      }
+    },
+  },
   methods: {
-    /** 查询文件夹列表 */
+    /** 查询笔记内容 */
     getContent() {
       const { name, contentId } = this.openedNote;
       this.title = name;
@@ -108,14 +99,12 @@ export default {
           this.fav = data;
           this.fav.favNoteIds = (data.noteIds || "").split(",");
           this.isFav = this.fav.favNoteIds.includes(String(this.openedNote.id));
-          console.log('================this.isFav====================');
-          console.log(this.isFav);
-          console.log('====================================');
         }
       });
     },
-    changeTitle() {
-      this.isSave = false;
+    //当有修改时触发
+    onChange() {
+      this.isSaved = false;
     },
     updateTitle() {
       if (!this.title) {
@@ -125,27 +114,26 @@ export default {
       const note = { ...this.openedNote, name: this.title };
       updateName(note).then(() => {
         this.$modal.msgSuccess("修改成功");
-        this.isSave = true;
+        this.isSaved = true;
 
         //更新openedNotes
         const data = new Map(this.$store.state.note.openedNotes);
         data.set(String(this.openedNote.id), note);
         this.$store.dispatch("note/setOpenedNotes", data);
+        //更新列表
         this.$store.dispatch("note/getListData");
       });
     },
-    changeText() {
-      this.isSave = false;
-    },
     updateText(text) {
       //如果有改动，才保存
-      if (!this.isSave) {
+      if (!this.isSaved) {
         updateContent({ ...this.content, text }).then(() => {
-          this.isSave = true;
+          this.isSaved = true;
           this.$modal.msgSuccess("修改成功");
         });
       }
     },
+    //isAdd true 添加到收藏夹
     updateFav(isAdd) {
       let noteIds = [];
       const { favNoteIds, id } = this.fav;

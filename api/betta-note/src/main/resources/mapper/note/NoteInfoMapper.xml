@@ -54,7 +54,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNoteInfoVo"/>
         where id = #{id}
     </select>
-        
+
+
+    <select id="selectNoteInfoByIds" resultMap="NoteInfoResult">
+        <include refid="selectNoteInfoVo"/>
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectLast" resultMap="NoteInfoResult">
+        <include refid="selectNoteInfoVo"/>
+        <where>${params.createByScope}</where>
+        order by update_time desc
+        limit #{limit}
+    </select>
+
     <insert id="insertNoteInfo" parameterType="NoteInfo" useGeneratedKeys="true" keyProperty="id">
         insert into note_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

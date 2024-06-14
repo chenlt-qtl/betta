@@ -18,6 +18,14 @@ export function listNoteTree(query) {
   })
 }
 
+// 查询最近文档列表
+export function listLast() {
+  return request({
+    url: '/note/noteInfo/last',
+    method: 'get',
+  })
+}
+
 // 查询文件夹详细
 export function getNoteInfo(id) {
   return request({

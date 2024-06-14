@@ -10,7 +10,7 @@
       </el-dropdown-menu>
     </el-dropdown>
     <el-dialog
-      :title="`请输入${this.isLeaf?'笔记':'文件夹'}名称`"
+      :title="`请输入${this.isLeaf ? '笔记' : '文件夹'}名称`"
       :visible.sync="open"
       width="500px"
       append-to-body
@@ -59,7 +59,10 @@ export default {
             this.$modal.msgSuccess("保存成功");
             this.open = false;
             if (this.isLeaf) {
-              this.$router.push("/n/note?id=" + res.data);
+              this.$router.push({
+                path: "/n/note",
+                query: { ...this.$route.query, id: res.data },
+              });
             } else {
               this.$store.dispatch("note/getTreeData");
             }

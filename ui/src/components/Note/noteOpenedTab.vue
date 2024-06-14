@@ -40,7 +40,10 @@ export default {
   },
   methods: {
     handleClick(data) {
-      this.$router.push("/n/note?id=" + data.name);
+      this.$router.push({
+        path: "/n/note",
+        query: { ...this.$route.query, id: data.name },
+      });
     },
     handleTabsEdit(targetName, action) {
       const openedNoteId = this.$store.state.note.openedNote.id;
@@ -48,8 +51,13 @@ export default {
         const openedNotes = new Map(this.openedNotes);
         openedNotes.delete(targetName);
         this.$store.dispatch("note/setOpenedNotes", openedNotes);
-        if(openedNoteId==targetName){
-          this.$router.push("/n/note");
+        if (openedNoteId == targetName) {
+          const query = { ...this.$route.query };
+          delete query.id;
+          this.$router.push({
+            path: "/n/note",
+            query,
+          });
         }
       }
     },

@@ -19,32 +19,43 @@ export default {
   name: "NoteInfo",
   components: { NoteMenu, NoteContent },
   created() {
-    this.getNote();
+    this.initData();
   },
   computed: {
-    treeData() {
-      return this.$store.state.note.treeData;
-    },
     noteId() {
       return this.$route.query && this.$route.query.id;
+    },
+    type() {
+      return this.$route.query && this.$route.query.type;
     },
   },
   watch: {
     noteId() {
       this.getNote();
     },
-    treeData(data) {
-      this.getNote();
+    type() {
+      //设置listType
+      this.$store.dispatch("note/setListType", this.type);
+      //更新list
+      this.$store.dispatch("note/getListData");
     },
   },
   methods: {
     getNote() {
-      //有noteId且加载完tree才加载openNote
-      if (this.noteId && this.treeData && this.treeData.length > 0) {
-        this.$store.dispatch("note/openNote", this.noteId);
-      } else {
-        this.$store.dispatch("note/setOpendNote", {});
-      }
+      return this.$store.dispatch("note/openNote", this.noteId);
+    },
+    initData() {
+
+      //设置listType
+      this.$store.dispatch("note/setListType", this.type);
+
+      //加载Note
+      this.getNote().then(() => {
+        //加载树
+        this.$store.dispatch("note/getTreeData");
+        //加载list
+        this.$store.dispatch("note/getListData");
+      });
     },
   },
 };

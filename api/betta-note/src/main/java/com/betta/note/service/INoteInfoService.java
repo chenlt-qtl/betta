@@ -57,4 +57,8 @@ public interface INoteInfoService
     List<TreeSelect> selectNoteTreeList(NoteInfo noteInfo);
 
     void updateParent(String[] split, Long parentId);
+
+    List<NoteInfo> selectNoteInfoByIds(String[] noteIds);
+
+    List<NoteInfo> selectLast(int limit);
 }

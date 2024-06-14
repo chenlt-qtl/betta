@@ -6,7 +6,7 @@
           v-if="!isCheck"
           type="text"
           size="mini"
-          :disabled="listNote.length <= 0"
+          :disabled="listNote.length <= 0 || type != null"
           @click="handleCheck"
           v-hasPermi="['note:noteInfo:remove']"
           ><svg-icon v-if="!isCheck" icon-class="checkbox"
@@ -39,10 +39,6 @@
           >取消</el-button
         >
       </el-col>
-      <!-- <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar> -->
     </el-row>
     <div class="table">
       <el-table
@@ -70,13 +66,7 @@
 </template>
 
 <script>
-import {
-  listNoteInfo,
-  getNoteInfo,
-  delNoteInfo,
-  addNoteInfo,
-  updateNoteInfo,
-} from "@/api/note/noteInfo";
+import { delNoteInfo } from "@/api/note/noteInfo";
 import noteMoveDialog from "./noteMoveDialog.vue";
 
 export default {
@@ -95,17 +85,11 @@ export default {
       single: true,
       // 非多个禁用
       multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 弹出层标题
-      title: "",
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {},
-      noteName: "",
       label: "",
     };
+  },
+  created() {
+    this.setLabel();
   },
   computed: {
     selectedTreeNote() {
@@ -117,16 +101,34 @@ export default {
     openedNote() {
       return this.$store.state.note.openedNote;
     },
+    type() {
+      return this.$route.query && this.$route.query.type;
+    },
   },
   watch: {
-    selectedTreeNote() {
-      this.label = this.selectedTreeNote.label;
-    },
     listNote() {
       this.selectOpenRow();
     },
+    type() {
+      this.setLabel();
+    },
+    selectedTreeNote() {
+      this.setLabel();
+    },
   },
   methods: {
+    setLabel() {
+      switch (this.type) {
+        case "fav":
+          this.label = "收藏夹";
+          break;
+        case "last":
+          this.label = "最近文档";
+          break;
+        default:
+          this.label = this.selectedTreeNote.label;
+      }
+    },
     selectOpenRow() {
       if (this.openedNote.id) {
         const row = this.listNote.find((n) => n.id == this.openedNote.id);
@@ -135,7 +137,10 @@ export default {
     },
     // 选中数据
     handleRowClick(selection) {
-      this.$router.push("/n/note?id=" + selection.id);
+      this.$router.push({
+        path: "/n/note",
+        query: { ...this.$route.query, id: selection.id },
+      });
     },
     handleCheck() {
       this.isCheck = true;

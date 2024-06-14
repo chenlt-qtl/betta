@@ -1,7 +1,6 @@
 package com.betta.note.service.impl;
 
 import com.betta.common.annotation.CreateByScope;
-import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.DateUtils;
@@ -16,7 +15,9 @@ import com.betta.note.service.INoteInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -148,6 +149,20 @@ public class NoteInfoServiceImpl implements INoteInfoService {
             noteInfoMapper.updateParent(ids, parentId);
         }
 
+    }
+
+    @Override
+    public List<NoteInfo> selectNoteInfoByIds(String[] noteIds) {
+        return noteInfoMapper.selectNoteInfoByIds(noteIds);
+    }
+
+    @Override
+    @CreateByScope("")
+    public List<NoteInfo> selectLast(int limit) {
+        Map param = new HashMap();
+        param.put("limit",limit);
+        param.put("params",new HashMap<>());
+        return noteInfoMapper.selectLast(param);
     }
 
 

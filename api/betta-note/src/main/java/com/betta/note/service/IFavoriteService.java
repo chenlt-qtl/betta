@@ -2,6 +2,7 @@ package com.betta.note.service;
 
 import java.util.List;
 import com.betta.note.domain.Favorite;
+import com.betta.note.domain.NoteInfo;
 
 /**
  * 收藏Service接口
@@ -58,4 +59,6 @@ public interface IFavoriteService
      * @return 结果
      */
     public int deleteFavoriteById(Long id);
+
+    List<NoteInfo> selectFavNoteList();
 }

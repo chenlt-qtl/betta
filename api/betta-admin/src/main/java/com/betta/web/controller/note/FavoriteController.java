@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.betta.common.utils.SecurityUtils;
+import com.betta.note.domain.NoteInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,37 +26,33 @@ import com.betta.common.core.page.TableDataInfo;
 
 /**
  * 收藏Controller
- * 
+ *
  * @author chenlt
  * @date 2024-06-12
  */
 @RestController
 @RequestMapping("/note/favorite")
-public class FavoriteController extends BaseController
-{
+public class FavoriteController extends BaseController {
     @Autowired
     private IFavoriteService favoriteService;
 
     /**
-     * 查询收藏列表
+     * 查询收藏笔记列表
      */
     @PreAuthorize("@ss.hasPermi('note:favorite:list')")
     @GetMapping("/list")
-    public TableDataInfo list(Favorite favorite)
-    {
-        startPage();
-        List<Favorite> list = favoriteService.selectFavoriteList(favorite);
-        return getDataTable(list);
+    public AjaxResult list() {
+        List<NoteInfo> list = favoriteService.selectFavNoteList();
+        return AjaxResult.success(list);
     }
 
     @PreAuthorize("@ss.hasPermi('note:favorite:query')")
     @GetMapping("/cur")
-    public AjaxResult getCur()
-    {
+    public AjaxResult getCur() {
         Favorite favorite = new Favorite();
         favorite.setCreateBy(SecurityUtils.getUsername());
         List<Favorite> list = favoriteService.selectFavoriteList(favorite);
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             favorite = list.get(0);
         }
         return AjaxResult.success(favorite);
@@ -67,8 +64,7 @@ public class FavoriteController extends BaseController
     @PreAuthorize("@ss.hasPermi('note:favorite:export')")
     @Log(title = "收藏", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Favorite favorite)
-    {
+    public void export(HttpServletResponse response, Favorite favorite) {
         List<Favorite> list = favoriteService.selectFavoriteList(favorite);
         ExcelUtil<Favorite> util = new ExcelUtil<Favorite>(Favorite.class);
         util.exportExcel(response, list, "收藏数据");
@@ -79,8 +75,7 @@ public class FavoriteController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('note:favorite:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(favoriteService.selectFavoriteById(id));
     }
 
@@ -90,8 +85,7 @@ public class FavoriteController extends BaseController
     @PreAuthorize("@ss.hasPermi('note:favorite:add')")
     @Log(title = "收藏", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Favorite favorite)
-    {
+    public AjaxResult add(@RequestBody Favorite favorite) {
         return toAjax(favoriteService.insertFavorite(favorite));
     }
 
@@ -101,8 +95,7 @@ public class FavoriteController extends BaseController
     @PreAuthorize("@ss.hasPermi('note:favorite:edit')")
     @Log(title = "收藏", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Favorite favorite)
-    {
+    public AjaxResult edit(@RequestBody Favorite favorite) {
         return toAjax(favoriteService.updateFavorite(favorite));
     }
 
@@ -111,9 +104,8 @@ public class FavoriteController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('note:favorite:remove')")
     @Log(title = "收藏", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(favoriteService.deleteFavoriteByIds(ids));
     }
 }

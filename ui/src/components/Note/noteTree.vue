@@ -19,7 +19,6 @@
         ref="tree"
         highlight-current
         @node-click="handleNodeClick"
-        :default-expanded-keys="['0']"
       >
         <span class="custom-tree-node" slot-scope="{ node }">
           <span class="label" :title="node.label">{{ node.label }}</span>
@@ -51,9 +50,6 @@ export default {
       },
     };
   },
-  created() {
-    this.$store.dispatch("note/getTreeData");
-  },
   computed: {
     treeData() {
       return this.$store.state.note.treeData;
@@ -67,24 +63,13 @@ export default {
     noteName(val) {
       this.$refs.tree.filter(val);
     },
-    openedNote(note) {
-      if (note.parentId) {
-        const selectNode = this.$refs.tree.getNode(note.parentId);
-        function expandParent(node) {
-          node.expand();
-          node.parent && expandParent(node.parent);
-        }
-
-        //展开
-        if (selectNode && !selectNode.expanded) {
-          expandParent(selectNode);
-        }
-
-        if (selectNode) {
-          this.$refs.tree.setCurrentKey(note.parentId);
-          this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
-        }
-      }
+    openedNote() {
+      this.selectNode(this.openedNote.parentId);
+    },
+    treeData() {
+      this.$nextTick(() => {
+        this.selectNode(this.openedNote.parentId);
+      });
     },
   },
   methods: {
@@ -96,6 +81,28 @@ export default {
     // 节点单击事件
     handleNodeClick(data) {
       this.$store.dispatch("note/setSelectedTreeNote", data);
+      this.$store.dispatch("note/getListData");
+      const query = { ...this.$route.query };
+      delete query.type;
+      this.$router.push({ path: "/n/note", query });
+    },
+    //展开并选中节点
+    selectNode(id = 0) {
+      const selectNode = this.$refs.tree.getNode(id);
+      function expandParent(node) {
+        node.expand();
+        node.parent && expandParent(node.parent);
+      }
+
+      //展开
+      if (selectNode && !selectNode.expanded) {
+        expandParent(selectNode);
+      }
+
+      if (selectNode) {
+        this.$refs.tree.setCurrentKey(id);
+        this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
+      }
     },
   },
 };
