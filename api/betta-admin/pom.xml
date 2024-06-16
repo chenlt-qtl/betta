@@ -49,10 +49,10 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
-        <!-- 核心模块-->
+        <!-- es模块-->
         <dependency>
             <groupId>com.betta</groupId>
-            <artifactId>betta-framework</artifactId>
+            <artifactId>betta-es</artifactId>
         </dependency>
 
         <!-- 定时任务-->

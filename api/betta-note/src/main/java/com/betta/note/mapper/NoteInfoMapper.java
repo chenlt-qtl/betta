@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.note.domain.NoteInfo;
+import com.betta.note.domain.NoteVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -30,6 +31,8 @@ public interface NoteInfoMapper
      * @return 文件夹集合
      */
     public List<NoteInfo> selectNoteInfoList(NoteInfo noteInfo);
+
+    public List<NoteVo> selectNoteDetailList(NoteInfo noteInfo);
 
     /**
      * 新增文件夹

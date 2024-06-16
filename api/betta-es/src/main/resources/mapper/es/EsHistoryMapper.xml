@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.es.mapper.EsHistoryMapper">
+    
+    <resultMap type="EsHistory" id="EsHistoryResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="comment"    column="comment"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectEsHistoryVo">
+        select id, user_name, comment, update_time, update_by from es_history
+    </sql>
+
+    <select id="selectEsHistoryList" parameterType="EsHistory" resultMap="EsHistoryResult">
+        <include refid="selectEsHistoryVo"/>
+        <where>  
+            <if test="userName != null "> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+        </where>
+    </select>
+    
+    <select id="selectEsHistoryById" parameterType="Long" resultMap="EsHistoryResult">
+        <include refid="selectEsHistoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEsHistory" parameterType="EsHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into es_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">user_name,</if>
+            <if test="comment != null">comment,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">#{userName},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEsHistory" parameterType="EsHistory">
+        update es_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="comment != null">comment = #{comment},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEsHistoryById" parameterType="Long">
+        delete from es_history where id = #{id}
+    </delete>
+
+    <delete id="deleteEsHistoryByIds" parameterType="String">
+        delete from es_history where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

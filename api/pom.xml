@@ -184,6 +184,12 @@
                 <version>1.0.0</version>
             </dependency>
 
+            <!-- es模块-->
+            <dependency>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-es</artifactId>
+                <version>1.0.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -196,6 +202,7 @@
         <module>betta-common</module>
         <module>betta-eng</module>
         <module>betta-note</module>
+        <module>betta-es</module>
     </modules>
     <packaging>pom</packaging>
 

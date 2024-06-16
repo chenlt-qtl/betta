@@ -13,6 +13,8 @@ betta:
   # 验证码类型 math 数字计算 char 字符验证
   captchaType: math
   vueAppBaseApi: /prod-api
+  esHost: 127.0.0.1
+  esPort: 9200
 
 # 开发环境配置
 server:
@@ -148,6 +150,7 @@ spring:
         wall:
           config:
             multi-statement-allow: true
+
 # token配置
 token:
   # 令牌自定义标识

@@ -8,6 +8,7 @@ import com.betta.common.utils.TreeUtil;
 import com.betta.note.domain.Content;
 import com.betta.note.domain.NoteInfo;
 import com.betta.note.domain.NoteInfoDelete;
+import com.betta.note.domain.NoteVo;
 import com.betta.note.mapper.NoteInfoMapper;
 import com.betta.note.service.IContentService;
 import com.betta.note.service.INoteInfoDeleteService;
@@ -57,6 +58,12 @@ public class NoteInfoServiceImpl implements INoteInfoService {
     @Override
     public List<NoteInfo> selectNoteInfoList(NoteInfo noteInfo) {
         return noteInfoMapper.selectNoteInfoList(noteInfo);
+    }
+
+    @Override
+    @CreateByScope("a.")
+    public List<NoteVo> selectNoteInfoDetailList(NoteInfo noteInfo) {
+        return noteInfoMapper.selectNoteDetailList(noteInfo);
     }
 
     /**
