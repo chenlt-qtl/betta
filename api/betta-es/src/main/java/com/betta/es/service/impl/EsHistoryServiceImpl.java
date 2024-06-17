@@ -12,7 +12,7 @@ import com.betta.es.service.IEsHistoryService;
  * ES历史Service业务层处理
  * 
  * @author chenlt
- * @date 2024-06-16
+ * @date 2024-06-17
  */
 @Service
 public class EsHistoryServiceImpl implements IEsHistoryService 
@@ -53,6 +53,7 @@ public class EsHistoryServiceImpl implements IEsHistoryService
     @Override
     public int insertEsHistory(EsHistory esHistory)
     {
+        esHistory.setCreateTime(DateUtils.getNowDate());
         return esHistoryMapper.insertEsHistory(esHistory);
     }
 

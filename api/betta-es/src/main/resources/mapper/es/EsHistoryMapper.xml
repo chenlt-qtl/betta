@@ -8,19 +8,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="userName"    column="user_name"    />
         <result property="comment"    column="comment"    />
+        <result property="updateDocTime"    column="update_doc_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="updateBy"    column="update_by"    />
     </resultMap>
 
     <sql id="selectEsHistoryVo">
-        select id, user_name, comment, update_time, update_by from es_history
+        select id, user_name, comment, update_doc_time, create_time, create_by, update_time, update_by from es_history
     </sql>
 
     <select id="selectEsHistoryList" parameterType="EsHistory" resultMap="EsHistoryResult">
         <include refid="selectEsHistoryVo"/>
         <where>  
-            <if test="userName != null "> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
             <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+            <if test="updateDocTime != null "> and update_doc_time = #{updateDocTime}</if>
         </where>
     </select>
     
@@ -34,12 +38,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userName != null">user_name,</if>
             <if test="comment != null">comment,</if>
+            <if test="updateDocTime != null">update_doc_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="updateBy != null">update_by,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userName != null">#{userName},</if>
             <if test="comment != null">#{comment},</if>
+            <if test="updateDocTime != null">#{updateDocTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
          </trim>
@@ -50,6 +60,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="userName != null">user_name = #{userName},</if>
             <if test="comment != null">comment = #{comment},</if>
+            <if test="updateDocTime != null">update_doc_time = #{updateDocTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
         </trim>

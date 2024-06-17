@@ -7,7 +7,7 @@ import com.betta.es.domain.EsHistory;
  * ES历史Service接口
  * 
  * @author chenlt
- * @date 2024-06-16
+ * @date 2024-06-17
  */
 public interface IEsHistoryService 
 {

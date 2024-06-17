@@ -41,7 +41,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select a.id,a.name,a.create_by as createBy,b.text from note_info a left join note_content b on a.content_id=b.id
         <where>
             <if test="id != null ">and a.id = #{id}</if>
-            ${params.createByScope}
+            <if test="createTime != null "> and (a.create_time > #{createTime} or a.update_time > #{createTime} or
+                b.create_time > #{createTime} or b.update_time > #{createTime})</if>
+            and a.create_by = #{createBy}
+        </where>
+            limit #{params.start},#{params.offset}
+    </select>
+
+    <select id="selectNoteCount" parameterType="NoteInfo">
+        select count(1) from note_info a left join note_content b on a.content_id=b.id
+        <where>
+            <if test="createTime != null "> and (a.create_time > #{createTime} or a.update_time > #{createTime} or
+                b.create_time > #{createTime} or b.update_time > #{createTime})</if>
+            and a.create_by = #{createBy}
         </where>
     </select>
 
@@ -54,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="source != null  and source != ''"> and source = #{source}</if>
             <if test="isLeaf != null "> and is_leaf = #{isLeaf}</if>
             <if test="parentIds != null  and parentIds != ''"> and parent_ids = #{parentIds}</if>
-            ${params.createByScope}
+            and create_by=#{createBy}
         </where>
         order by name
     </select>

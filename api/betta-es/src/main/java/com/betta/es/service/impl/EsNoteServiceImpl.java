@@ -4,12 +4,14 @@ import com.alibaba.fastjson2.JSON;
 import com.betta.common.core.domain.entity.SysUser;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.SecurityUtils;
+import com.betta.es.domain.EsHistory;
 import com.betta.es.service.IEsHistoryService;
 import com.betta.es.service.IEsNoteService;
 import com.betta.note.domain.NoteInfo;
 import com.betta.note.domain.NoteVo;
 import com.betta.note.service.INoteInfoService;
 import com.betta.system.service.ISysUserService;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -27,6 +29,7 @@ import org.elasticsearch.client.indices.CreateIndexRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -110,7 +113,11 @@ public class EsNoteServiceImpl implements IEsNoteService {
     }
 
     @Override
-    public void insertPageNoteDoc(List<NoteVo> list,String userName) {
+    public void insertNoteDocs(List<NoteVo> list, String userName) {
+
+        if(list.isEmpty()){
+            return;
+        }
         BulkRequest bulkRequest = new BulkRequest();
         list.forEach(noteVo -> {
             IndexRequest request = new IndexRequest(userName).id(noteVo.getId().toString());
@@ -130,6 +137,47 @@ public class EsNoteServiceImpl implements IEsNoteService {
     }
 
     @Override
+    public Long batchInsertDoc(String userName){
+        NoteInfo noteInfo = new NoteInfo();
+        noteInfo.setCreateBy(userName);
+
+        //查询历史，根据时间来搜索需要更新的doc
+        EsHistory esHistory = new EsHistory();
+        esHistory.setUserName(userName);
+        List<EsHistory> esHistories = esHistoryService.selectEsHistoryList(esHistory);
+
+        EsHistory history_db;
+        if(!esHistories.isEmpty()){
+            history_db = esHistories.get(0);
+            noteInfo.setCreateTime(history_db.getUpdateDocTime());
+        }else{
+            history_db = new EsHistory();
+            history_db.setUserName(userName);
+        }
+        history_db.setUpdateDocTime(new Date());
+
+        //查询出有多少条需要更新的note数据
+        Long count = noteInfoService.selectNoteInfoDetailCount(noteInfo);
+
+        //分页增加doc
+        int pageSize = 30;
+        noteInfo.getParams().put("offset",pageSize);
+        for(int i=0;i<count;i=i+pageSize){
+            noteInfo.getParams().put("start",i);
+            List<NoteVo> list = noteInfoService.selectNoteInfoDetailList(noteInfo);
+            insertNoteDocs(list,userName);
+        }
+
+        //保存历史数据
+        if(Objects.isNull(history_db.getId())) {
+            esHistoryService.insertEsHistory(history_db);
+        }else {
+            esHistoryService.updateEsHistory(history_db);
+        }
+        return count;
+    }
+
+    @Override
     public int updateNoteDoc(NoteInfo noteInfo) {
         return 0;
     }
@@ -137,6 +185,17 @@ public class EsNoteServiceImpl implements IEsNoteService {
     @Override
     public int deleteNoteDocByIds(Long[] ids) {
         return 0;
+    }
+
+    @Override
+    public void deleteIndex(String username) throws IOException {
+        SysUser sysUser = userService.selectUserByUserName(username);
+        if(Objects.isNull(sysUser)){
+            throw new ServiceException("用户不存在");
+        }
+
+        DeleteIndexRequest request = new DeleteIndexRequest(username);
+        restHighLevelClient.indices().delete(request, RequestOptions.DEFAULT);
     }
 
     /**

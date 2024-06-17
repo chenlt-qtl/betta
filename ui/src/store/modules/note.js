@@ -8,6 +8,10 @@ import {
   listFavorite
 } from "@/api/note/favorite";
 
+import {
+  search
+} from "@/api/note/es";
+
 const state = {
   //树节点数据
   treeData: new Array(),
@@ -66,26 +70,35 @@ const actions = {
   getListData({
     commit,
     state
-  }) {
+  }, searchStr) {
     const type = state.listType;
-    let method;
-    switch (type) {
-      case "fav":
-        method = listFavorite;
-        break;
-      case "last":
-        method = listLast;
-        break;
-      default:
-        method = listNoteInfo;
+    let method, queryParams;
+    if (searchStr) {
+      method = search;
+      queryParams = searchStr;
+    } else {
+      switch (type) {
+        case "fav":
+          method = listFavorite;
+          break;
+        case "last":
+          method = listLast;
+          break;
+        default:
+          //没有父节点ID不发送请求
+          if (!state.selectedTreeNote.id && state.selectedTreeNote.id != "0") {
+            return;
+          }
+          queryParams = {
+            pageNum: 1,
+            pageSize: 1000,
+            parentId: state.selectedTreeNote.id,
+            isLeaf: true,
+          };
+          method = listNoteInfo;
+      }
     }
 
-    const queryParams = {
-      pageNum: 1,
-      pageSize: 1000,
-      parentId: state.selectedTreeNote.id,
-      isLeaf: true,
-    };
     return new Promise((resolve, reject) => {
       method(queryParams).then(res => {
         commit('SET_LIST_NOTE', res.rows || res.data)
@@ -119,7 +132,6 @@ const actions = {
     })
   },
   setSelectedTreeNote({
-    dispatch,
     commit
   }, data) {
     commit('SET_SELECTED_TREE_NOTE', data)
@@ -138,7 +150,7 @@ const actions = {
     commit
   }, data) {
     commit("SET_LIST_TYPE", data)
-  }
+  },
 }
 
 export default {

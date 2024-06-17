@@ -34,6 +34,8 @@ public interface NoteInfoMapper
 
     public List<NoteVo> selectNoteDetailList(NoteInfo noteInfo);
 
+    public Long selectNoteCount(NoteInfo noteInfo);
+
     /**
      * 新增文件夹
      * 

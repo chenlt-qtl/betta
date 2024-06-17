@@ -21,11 +21,12 @@ public interface IEsNoteService {
     /**
      * 新增文件
      *
-     * @param noteInfo 文件
      */
     public void insertNoteDoc(Long noteId);
 
-    void insertPageNoteDoc(List<NoteVo> list, String userName);
+    void insertNoteDocs(List<NoteVo> list, String userName);
+
+    Long batchInsertDoc(String userName);
 
     /**
      * 修改文件
@@ -43,4 +44,5 @@ public interface IEsNoteService {
      */
     public int deleteNoteDocByIds(Long[] ids);
 
+    void deleteIndex(String userName) throws IOException;
 }

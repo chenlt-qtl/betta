@@ -4,6 +4,7 @@ import com.betta.common.annotation.CreateByScope;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.DateUtils;
+import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.TreeUtil;
 import com.betta.note.domain.Content;
 import com.betta.note.domain.NoteInfo;
@@ -61,9 +62,13 @@ public class NoteInfoServiceImpl implements INoteInfoService {
     }
 
     @Override
-    @CreateByScope("a.")
     public List<NoteVo> selectNoteInfoDetailList(NoteInfo noteInfo) {
         return noteInfoMapper.selectNoteDetailList(noteInfo);
+    }
+
+    @Override
+    public Long selectNoteInfoDetailCount(NoteInfo noteInfo) {
+        return noteInfoMapper.selectNoteCount(noteInfo);
     }
 
     /**
@@ -130,8 +135,8 @@ public class NoteInfoServiceImpl implements INoteInfoService {
     }
 
     @Override
-    @CreateByScope("")
     public List<TreeSelect> selectNoteTreeList(NoteInfo noteInfo) {
+        noteInfo.setCreateBy(SecurityUtils.getUsername());
         List<TreeSelect> notes = noteInfoMapper.selectTreeSelect(noteInfo);
         //增加根节点
         TreeSelect root = new TreeSelect();

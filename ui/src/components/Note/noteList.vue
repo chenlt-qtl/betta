@@ -1,5 +1,22 @@
 <template>
   <div class="note-list">
+    <el-row :gutter="10" class="mb8 abc" v-if="!type">
+      <el-col :span="24">
+        <el-input
+          placeholder="请输入内容"
+          v-model="searchStr"
+          class="input-with-select"
+          @keyup.enter.native="onSearch"
+        >
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+            size="mini"
+            @click="onSearch"
+          ></el-button>
+        </el-input>
+      </el-col>
+    </el-row>
     <el-row :gutter="10" class="mb8" type="flex" justify="end">
       <el-col :span="1.5">
         <el-button
@@ -74,6 +91,8 @@ export default {
   components: { noteMoveDialog },
   data() {
     return {
+      //搜索内容
+      searchStr:"",
       //是否是多选模式
       isCheck: false,
       // 遮罩层
@@ -142,6 +161,9 @@ export default {
         query: { ...this.$route.query, id: selection.id },
       });
     },
+    onSearch(){
+      this.$store.dispatch("note/getListData",this.searchStr);
+    },
     handleCheck() {
       this.isCheck = true;
     },
@@ -173,8 +195,16 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .note-list {
+  .abc {
+    .el-input-group {
+      .el-input-group__append {
+        padding: 0 10px;
+      }
+    }
+  }
+
   .table {
     max-height: calc(100vh - 250px);
     overflow: auto;

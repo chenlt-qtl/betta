@@ -2,6 +2,7 @@ package com.betta.note.service;
 
 import java.util.List;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.note.domain.NoteInfo;
 import com.betta.note.domain.NoteVo;
@@ -31,6 +32,8 @@ public interface INoteInfoService
     public List<NoteInfo> selectNoteInfoList(NoteInfo noteInfo);
 
     public List<NoteVo> selectNoteInfoDetailList(NoteInfo noteInfo);
+
+    Long selectNoteInfoDetailCount(NoteInfo noteInfo);
 
     /**
      * 新增文件夹
