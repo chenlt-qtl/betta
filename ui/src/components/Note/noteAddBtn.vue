@@ -95,11 +95,13 @@ export default {
 </script>
 <style scoped lang='scss'>
 .note-add-btn {
+  
   .el-dropdown-link {
     cursor: pointer;
     color: #409eff;
     display: inline-block;
     width: 46px;
+    font-size: 12px ;
   }
   .el-icon-arrow-down {
     font-size: 12px;

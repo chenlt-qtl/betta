@@ -55,6 +55,12 @@
             <artifactId>betta-es</artifactId>
         </dependency>
 
+        <!-- 其他模块-->
+        <dependency>
+            <groupId>com.betta</groupId>
+            <artifactId>betta-other</artifactId>
+        </dependency>
+
         <!-- 定时任务-->
         <dependency>
             <groupId>com.betta</groupId>

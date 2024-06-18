@@ -196,6 +196,13 @@ public class EsNoteServiceImpl implements IEsNoteService {
 
         DeleteIndexRequest request = new DeleteIndexRequest(username);
         restHighLevelClient.indices().delete(request, RequestOptions.DEFAULT);
+        //删除es历史
+        EsHistory esHistory = new EsHistory();
+        esHistory.setUserName(username);
+        List<EsHistory> esHistories = esHistoryService.selectEsHistoryList(esHistory);
+        if(!esHistories.isEmpty()) {
+            esHistoryService.deleteEsHistoryById(esHistories.get(0).getId());
+        }
     }
 
     /**

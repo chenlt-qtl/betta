@@ -107,8 +107,11 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .note-tree {
+  input{
+    height: 28px;
+  }
   .head-container {
     display: flex;
     justify-content: center;

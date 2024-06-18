@@ -1,6 +1,6 @@
 <template>
   <div class="note-list">
-    <el-row :gutter="10" class="mb8 abc" v-if="!type">
+    <el-row :gutter="10" class="mb8" v-if="!type">
       <el-col :span="24">
         <el-input
           placeholder="请输入内容"
@@ -17,8 +17,11 @@
         </el-input>
       </el-col>
     </el-row>
-    <el-row :gutter="10" class="mb8" type="flex" justify="end">
-      <el-col :span="1.5">
+    <div class="toolbar">
+      <span class="label">
+        {{ label }}
+      </span>
+      <span>
         <el-button
           v-if="!isCheck"
           type="text"
@@ -36,7 +39,7 @@
           :disabled="multiple"
           @click="handleMove"
           v-hasPermi="['note:noteInfo:edit']"
-          >移动</el-button
+          ></el-button
         >
         <el-button
           v-if="isCheck"
@@ -55,8 +58,8 @@
           @click="() => (this.isCheck = false)"
           >取消</el-button
         >
-      </el-col>
-    </el-row>
+      </span>
+    </div>
     <div class="table">
       <el-table
         ref="table"
@@ -92,7 +95,7 @@ export default {
   data() {
     return {
       //搜索内容
-      searchStr:"",
+      searchStr: "",
       //是否是多选模式
       isCheck: false,
       // 遮罩层
@@ -161,8 +164,9 @@ export default {
         query: { ...this.$route.query, id: selection.id },
       });
     },
-    onSearch(){
-      this.$store.dispatch("note/getListData",this.searchStr);
+    onSearch() {
+      this.label = "搜索结果";
+      this.$store.dispatch("note/getListData", this.searchStr);
     },
     handleCheck() {
       this.isCheck = true;
@@ -197,11 +201,26 @@ export default {
 </script>
 <style lang="scss">
 .note-list {
-  .abc {
-    .el-input-group {
-      .el-input-group__append {
-        padding: 0 10px;
-      }
+  .el-input-group {
+    input {
+      height: 30px;
+    }
+    .el-input-group__append {
+      padding: 0 10px;
+    }
+  }
+  .el-table__header-wrapper {
+    display: none;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    .label {
+      flex: 1;
+      font-size: 12px;
+      font-weight: 600;
     }
   }
 
