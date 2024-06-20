@@ -57,6 +57,7 @@ public class NoteInfoServiceImpl implements INoteInfoService {
      * @return 文件夹
      */
     @Override
+    @CreateByScope(value = "",adminAccessAll = false)
     public List<NoteInfo> selectNoteInfoList(NoteInfo noteInfo) {
         return noteInfoMapper.selectNoteInfoList(noteInfo);
     }

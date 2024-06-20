@@ -8,15 +8,13 @@ import {
   listFavorite
 } from "@/api/note/favorite";
 
-import {
-  search
-} from "@/api/note/es";
-
 const state = {
   //树节点数据
   treeData: new Array(),
-  //树选中的节点
-  selectedTreeNote: {},
+  //树选中的节点Id
+  selectedNoteId: "",
+  //树选中的节点Name
+  selectedNoteName: "",
   //列表数据
   listNote: [],
   //打开的笔记
@@ -24,16 +22,21 @@ const state = {
   //打开的笔记TAB集合
   openedNotes: new Map(),
   //列表类型
-  listType: ""
+  listType: "",
+  //搜索内容
+  search: "",
 }
 const mutations = {
   SET_TREE_DATA: (state, treeData) => {
     state.treeData = treeData
   },
-  SET_SELECTED_TREE_NOTE: (state, note) => {
-    if (state.selectedTreeNote.id != note.id) {
-      state.selectedTreeNote = note
+  SET_SELECTED_NOTE_ID: (state, data) => {
+    if (!state.selectedNoteId || state.selectedNoteId != data) {
+      state.selectedNoteId = data
     }
+  },
+  SET_SELECTED_NOTE_NAME: (state, data) => {
+    state.selectedNoteName = data
   },
   SET_OPENED_NOTE: (state, note) => {
     state.openedNote = note
@@ -46,6 +49,9 @@ const mutations = {
   },
   SET_LIST_TYPE: (state, type) => {
     state.listType = type
+  },
+  SET_SEARCH: (state, search) => {
+    state.search = search
   },
 }
 
@@ -70,33 +76,38 @@ const actions = {
   getListData({
     commit,
     state
-  }, searchStr) {
+  }) {
     const type = state.listType;
+    const searchStr = state.search;
+    const selectedNoteId = state.selectedNoteId;
     let method, queryParams;
-    if (searchStr) {
-      method = search;
-      queryParams = searchStr;
-    } else {
-      switch (type) {
-        case "fav":
-          method = listFavorite;
-          break;
-        case "last":
-          method = listLast;
-          break;
-        default:
-          //没有父节点ID不发送请求
-          if (!state.selectedTreeNote.id && state.selectedTreeNote.id != "0") {
-            return;
-          }
+    switch (type) {
+      case "fav":
+        method = listFavorite;
+        break;
+      case "last":
+        method = listLast;
+        break;
+      default:
+        //没有父节点ID不发送请求
+        if (!selectedNoteId && selectedNoteId != "0") {
+          return;
+        }
+        if (searchStr) {
           queryParams = {
             pageNum: 1,
             pageSize: 1000,
-            parentId: state.selectedTreeNote.id,
-            isLeaf: true,
+            name: searchStr
           };
-          method = listNoteInfo;
-      }
+        } else {
+          queryParams = {
+            pageNum: 1,
+            pageSize: 1000,
+            parentId: selectedNoteId,
+          };
+        }
+
+        method = listNoteInfo;
     }
 
     return new Promise((resolve, reject) => {
@@ -108,7 +119,7 @@ const actions = {
       })
     })
   },
-  // 打开note树
+  // 打开note
   openNote({
     commit,
     state
@@ -120,6 +131,7 @@ const actions = {
           commit('SET_OPENED_NOTE', res.data)
           openedNotes.set(id, res.data)
           commit('SET_OPENED_NOTES', openedNotes)
+          commit('SET_SELECTED_NOTE_ID', res.data.parentId)
           resolve(res)
         }).catch(error => {
           commit('SET_OPENED_NOTE', {})
@@ -131,10 +143,15 @@ const actions = {
       }
     })
   },
-  setSelectedTreeNote({
+  setSelectedNoteId({
     commit
   }, data) {
-    commit('SET_SELECTED_TREE_NOTE', data)
+    commit('SET_SELECTED_NOTE_ID', data)
+  },
+  setSelectedNoteName({
+    commit
+  }, data) {
+    commit('SET_SELECTED_NOTE_NAME', data)
   },
   setOpenedNotes({
     commit
@@ -143,13 +160,18 @@ const actions = {
   },
   setOpendNote({
     commit
-  }, data) {
-    commit("SET_OPENED_NOTE", data)
+  }, data4) {
+    commit("SET_OPENED_NOTE", data4)
   },
   setListType({
     commit
   }, data) {
     commit("SET_LIST_TYPE", data)
+  },
+  setSearch({
+    commit
+  }, data) {
+    commit("SET_SEARCH", data)
   },
 }
 

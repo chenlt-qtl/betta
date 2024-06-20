@@ -57,6 +57,9 @@ export default {
     openedNote() {
       return this.$store.state.note.openedNote;
     },
+    selectedNoteId() {
+      return this.$store.state.note.selectedNoteId;
+    },
   },
   watch: {
     // 根据名称筛选树
@@ -66,6 +69,9 @@ export default {
     openedNote() {
       this.selectNode(this.openedNote.parentId);
     },
+    selectedNoteId() {
+      this.selectNode(this.selectedNoteId);
+    },
     treeData() {
       this.$nextTick(() => {
         this.selectNode(this.openedNote.parentId);
@@ -74,14 +80,14 @@ export default {
   },
   methods: {
     // 筛选节点
-    filterNode(value, data) {
+    filterNode(value, data1) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data1.label.indexOf(value) !== -1;
     },
     // 节点单击事件
-    handleNodeClick(data) {
-      this.$store.dispatch("note/setSelectedTreeNote", data);
-      this.$store.dispatch("note/getListData");
+    handleNodeClick(data2) {
+      this.$store.dispatch("note/setSelectedNoteId", data2.id);
+      this.$store.dispatch("note/setSelectedNoteName", data2.label);
       const query = { ...this.$route.query };
       delete query.type;
       this.$router.push({ path: "/n/note", query });
@@ -95,13 +101,13 @@ export default {
       }
 
       //展开
-      if (selectNode && !selectNode.expanded) {
+      if (selectNode) {
         expandParent(selectNode);
       }
 
       if (selectNode) {
         this.$refs.tree.setCurrentKey(id);
-        this.$store.dispatch("note/setSelectedTreeNote", selectNode.data);
+        this.$store.dispatch("note/setSelectedNoteName", selectNode.label);
       }
     },
   },
@@ -109,7 +115,7 @@ export default {
 </script>
 <style lang="scss">
 .note-tree {
-  input{
+  input {
     height: 28px;
   }
   .head-container {

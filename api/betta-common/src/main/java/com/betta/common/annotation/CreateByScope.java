@@ -12,4 +12,10 @@ import java.lang.annotation.*;
 @Documented
 public @interface CreateByScope {
     public String value();
+
+    /**
+     * admin可访问全部数据
+     * @return
+     */
+    public boolean adminAccessAll() default true;
 }

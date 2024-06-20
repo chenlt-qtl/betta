@@ -39,8 +39,7 @@
           :disabled="multiple"
           @click="handleMove"
           v-hasPermi="['note:noteInfo:edit']"
-          ></el-button
-        >
+        ></el-button>
         <el-button
           v-if="isCheck"
           type="text"
@@ -78,7 +77,14 @@
           width="55"
           align="center"
         />
-        <el-table-column :label="label" prop="name" show-overflow-tooltip />
+        <el-table-column :label="label" show-overflow-tooltip>
+          <template slot-scope="scope">
+            <i
+              :class="scope.row.isLeaf ? 'el-icon-document' : 'el-icon-folder'"
+            ></i>
+            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <noteMoveDialog ref="moveDialog"></noteMoveDialog>
@@ -96,6 +102,8 @@ export default {
     return {
       //搜索内容
       searchStr: "",
+      //是否正在搜索
+      isSearch: false,
       //是否是多选模式
       isCheck: false,
       // 遮罩层
@@ -114,9 +122,6 @@ export default {
     this.setLabel();
   },
   computed: {
-    selectedTreeNote() {
-      return this.$store.state.note.selectedTreeNote || {};
-    },
     listNote() {
       return this.$store.state.note.listNote;
     },
@@ -126,16 +131,28 @@ export default {
     type() {
       return this.$route.query && this.$route.query.type;
     },
+    selectedNoteName() {
+      return this.$store.state.note.selectedNoteName;
+    },
+    selectedNoteId() {
+      return this.$store.state.note.selectedNoteId;
+    },
   },
   watch: {
+    openedNote() {
+      this.selectOpenRow();
+    },
     listNote() {
       this.selectOpenRow();
     },
     type() {
       this.setLabel();
     },
-    selectedTreeNote() {
+    selectedNoteName() {
       this.setLabel();
+    },
+    selectedNoteId() {
+      this.$store.dispatch("note/getListData");
     },
   },
   methods: {
@@ -148,7 +165,11 @@ export default {
           this.label = "最近文档";
           break;
         default:
-          this.label = this.selectedTreeNote.label;
+          if (this.$store.state.note.search) {
+            this.label = "搜索结果";
+          } else {
+            this.label = this.selectedNoteName;
+          }
       }
     },
     selectOpenRow() {
@@ -159,14 +180,30 @@ export default {
     },
     // 选中数据
     handleRowClick(selection) {
-      this.$router.push({
-        path: "/n/note",
-        query: { ...this.$route.query, id: selection.id },
-      });
+      if (selection.isLeaf) {
+        this.$router.push({
+          path: "/n/note",
+          query: { ...this.$route.query, id: selection.id },
+        });
+      } else {
+        this.searchStr = "";
+        this.isSearch = false;
+        this.$store.dispatch("note/setSearch", this.searchStr);
+        this.$store.dispatch("note/setSelectedNoteId", selection.id);
+      }
     },
     onSearch() {
-      this.label = "搜索结果";
-      this.$store.dispatch("note/getListData", this.searchStr);
+      if (this.searchStr) {
+        this.isSearch = true;
+      } else {
+        this.isSearch = false;
+      }
+      this.$store.dispatch("note/setSearch", this.searchStr);
+      this.$store.dispatch("note/setSelectedNoteId", 0);
+      this.$nextTick(() => {
+        this.setLabel();
+        this.$store.dispatch("note/getListData");
+      });
     },
     handleCheck() {
       this.isCheck = true;
@@ -193,7 +230,7 @@ export default {
     handleMove() {
       this.$refs.moveDialog.openDialog({
         ids: this.ids,
-        parentId: this.selectedTreeNote.id,
+        parentId: this.selectedNoteId,
       });
     },
   },

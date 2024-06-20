@@ -39,8 +39,8 @@ public class CreateByScopeAspect {
         LoginUser loginUser = SecurityUtils.getLoginUser();
         if (StringUtils.isNotNull(loginUser)) {
             SysUser currentUser = loginUser.getUser();
-            // 如果是超级管理员，则不过滤数据
-            if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin()) {
+            // 如果adminAccessAll是true 且 是超级管理员，则不过滤数据
+            if (StringUtils.isNotNull(currentUser) && !(controllerDataScope.adminAccessAll() && currentUser.isAdmin())) {
                 createByFilter(joinPoint, currentUser, controllerDataScope.value());
             }
         }

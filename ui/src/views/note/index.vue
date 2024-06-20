@@ -28,6 +28,9 @@ export default {
     type() {
       return this.$route.query && this.$route.query.type;
     },
+    searchStr() {
+      return this.$route.search && this.$route.search.search;
+    },
   },
   watch: {
     noteId() {
@@ -45,7 +48,6 @@ export default {
       return this.$store.dispatch("note/openNote", this.noteId);
     },
     initData() {
-
       //设置listType
       this.$store.dispatch("note/setListType", this.type);
 
@@ -53,8 +55,6 @@ export default {
       this.getNote().then(() => {
         //加载树
         this.$store.dispatch("note/getTreeData");
-        //加载list
-        this.$store.dispatch("note/getListData");
       });
     },
   },

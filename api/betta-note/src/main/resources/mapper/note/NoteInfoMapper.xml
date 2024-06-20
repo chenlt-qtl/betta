@@ -26,14 +26,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectNoteInfoList" parameterType="NoteInfo" resultMap="NoteInfoResult">
         <include refid="selectNoteInfoVo"/>
-        <where>  
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        <where>
+            and parent_id is not null
+            <if test="name != null  and name != ''">
+
+            and (name like concat('%', #{name}, '%') or exists
+            (select 1 from note_content where note_info.content_id = note_content.id
+            and note_content.text like concat('%', #{name}, '%') ))
+
+            </if>
             <if test="parentId != null "> and parent_id = #{parentId}</if>
             <if test="tag != null  and tag != ''"> and tag = #{tag}</if>
             <if test="source != null  and source != ''"> and source = #{source}</if>
             <if test="isLeaf != null "> and is_leaf = #{isLeaf}</if>
             <if test="parentIds != null  and parentIds != ''"> and parent_ids = #{parentIds}</if>
+            ${params.createByScope}
         </where>
+        order by is_leaf
     </select>
 
 
