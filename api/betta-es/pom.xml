@@ -20,10 +20,10 @@
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
         </dependency>
         <!-- 核心模块-->
-        <dependency>
-            <groupId>com.betta</groupId>
-            <artifactId>betta-framework</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.betta</groupId>-->
+<!--            <artifactId>betta-framework</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
 

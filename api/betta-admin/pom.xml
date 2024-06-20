@@ -50,9 +50,15 @@
         </dependency>
 
         <!-- es模块-->
+<!--        <dependency>-->
+<!--            <groupId>com.betta</groupId>-->
+<!--            <artifactId>betta-es</artifactId>-->
+<!--        </dependency>-->
+
+        <!-- 核心模块-->
         <dependency>
             <groupId>com.betta</groupId>
-            <artifactId>betta-es</artifactId>
+            <artifactId>betta-framework</artifactId>
         </dependency>
 
         <!-- 其他模块-->
