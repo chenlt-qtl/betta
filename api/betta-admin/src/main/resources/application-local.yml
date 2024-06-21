@@ -16,3 +16,8 @@ betta:
   vueAppBaseApi: /dev-api
 server:
   port: 8081
+
+# 日志配置
+logging:
+  level:
+    com.betta: debug
