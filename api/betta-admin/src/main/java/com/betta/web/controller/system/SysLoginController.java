@@ -2,6 +2,9 @@ package com.betta.web.controller.system;
 
 import java.util.List;
 import java.util.Set;
+
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +26,7 @@ import com.betta.system.service.ISysMenuService;
  * @author ruoyi
  */
 @RestController
+@Slf4j
 public class SysLoginController
 {
     @Autowired
@@ -59,6 +63,7 @@ public class SysLoginController
     @GetMapping("getInfo")
     public AjaxResult getInfo()
     {
+        log.info("-----getInfo-----");
         SysUser user = SecurityUtils.getLoginUser().getUser();
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
