@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.betta.common.enums.UploadFileType;
+import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.file.Base64Utils;
 import com.betta.common.utils.file.ImageUtils;
@@ -86,7 +87,7 @@ public class CommonController {
                     String imgData = data.split(",")[1];
                     String username = SecurityUtils.getUsername();
                     String fileName = username + "_" + System.currentTimeMillis() + ".jpg";//文件名称
-                    String notePath = BettaConfig.getNotePath();
+                    String notePath = BettaConfig.getNotePath() + "/" + DateUtils.datePath();// 路径:note/yyyy/MM/dd
                     //绝对路径
                     String absPath = FileUploadUtils.getAbsoluteFile(notePath, fileName).getAbsolutePath();
                     if (Base64Utils.saveBase64Image(imgData, type, absPath)) {

@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectcontentList" parameterType="content" resultMap="contentResult">
         <include refid="selectcontentVo"/>
         <where>  
-            <if test="text != null  and text != ''"> and text = #{text}</if>
+            <if test="text != null  and text != ''"> and text like concat('%',#{text},'%')</if>
         </where>
     </select>
     
