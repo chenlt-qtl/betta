@@ -51,14 +51,12 @@ service.interceptors.request.use(config => {
     config.url = url;
   }
   if (!isRepeatSubmit && (config.method === 'post' || config.method === 'put')) {
-    Message.info("request 40");
     const requestObj = {
       url: config.url,
       data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
       time: new Date().getTime()
     }
     const requestSize = Object.keys(JSON.stringify(requestObj)).length; // 请求数据大小
-    Message.info("request 40" + requestSize);
     const limitSize = 5 * 1024 * 1024; // 限制存放数据5M
     if (requestSize >= limitSize) {
       console.warn(`[${config.url}]: ` + '请求数据大小超出允许的5M限制，无法进行防重复提交验证。')
@@ -68,7 +66,6 @@ service.interceptors.request.use(config => {
     if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
       cache.session.setJSON('sessionObj', requestObj)
     } else {
-      Message.info("request 71");
       const s_url = sessionObj.url; // 请求地址
       const s_data = sessionObj.data; // 请求数据
       const s_time = sessionObj.time; // 请求时间
@@ -80,7 +77,6 @@ service.interceptors.request.use(config => {
       } else {
         cache.session.setJSON('sessionObj', requestObj)
       }
-      Message.info("request 83");
     }
   }
   return config

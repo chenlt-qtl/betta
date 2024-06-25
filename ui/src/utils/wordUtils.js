@@ -38,9 +38,6 @@ export const splipSentences = (sentenceStrs, type) => {
         index = r.index + word.length;
       }
       if (index < item.length) {
-        console.log('====================================');
-        console.log(1);
-        console.log('====================================');
         sentence.allWords.push({
           text: item.slice(index).trim(),
           isWord: false
