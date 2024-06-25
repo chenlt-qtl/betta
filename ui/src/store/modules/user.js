@@ -1,8 +1,5 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import {
-  Message
-} from 'element-ui'
 
 const user = {
   state: {
@@ -57,10 +54,6 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
-          Message.info("res" + res);
-          console.log('================getInfo res====================');
-          console.log(res);
-          console.log('====================================');
           const user = res.user
           const avatar = (user.avatar == "" || user.avatar == null) ? require("@/assets/images/profile.jpg") : process.env.VUE_APP_BASE_API + user.avatar;
           if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组

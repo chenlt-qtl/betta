@@ -85,8 +85,6 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-  console.log(error)
-  Message.info("request 89" + error);
   Promise.reject(error)
 })
 
@@ -139,7 +137,6 @@ service.interceptors.response.use(res => {
     }
   },
   error => {
-    console.log('err' + error)
     let {
       message
     } = error;

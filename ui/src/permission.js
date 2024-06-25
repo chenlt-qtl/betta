@@ -34,11 +34,7 @@ router.beforeEach((to, from, next) => {
       if (store.getters.roles.length === 0) {
         isRelogin.show = true
         // 判断当前用户是否已拉取完user_info信息
-        console.log('===============GetInfo=====================');
-        Message.info("GetInfo")
         store.dispatch('GetInfo').then(() => {
-          console.log('==============after==GetInfo====================');
-          Message.info("after GetInfo")
           isRelogin.show = false
           store.dispatch('GenerateRoutes').then(accessRoutes => {
             // 根据roles权限生成可访问的路由表
@@ -49,10 +45,6 @@ router.beforeEach((to, from, next) => {
             }) // hack方法 确保addRoutes已完成
           })
         }).catch(err => {
-          console.log('==============err======================');
-          console.log(err);
-          console.log('====================================');
-          Message.info("err" + err);
           store.dispatch('LogOut').then(() => {
             Message.error("666" + err)
             next({
