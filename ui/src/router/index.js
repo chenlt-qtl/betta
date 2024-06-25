@@ -87,7 +87,12 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
+  },
+  {
+    path: '/playlist',
+    component: () => import('@/views/eng/playlist'),
+    hidden: true
+  },
 ]
 
 // 动态路由，基于用户权限动态去加载

@@ -16,7 +16,7 @@ NProgress.configure({
   showSpinner: false
 })
 
-const whiteList = ['/login', '/register']
+const whiteList = ['/login', '/register', '/playlist']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
