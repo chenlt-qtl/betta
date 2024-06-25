@@ -42,8 +42,8 @@ export default {
     };
   },
   computed: {
-    selectedTreeNote() {
-      return this.$store.state.note.selectedTreeNote || {};
+    selectedNoteId() {
+      return this.$store.state.note.selectedNoteId;
     },
   },
   methods: {
@@ -52,12 +52,13 @@ export default {
         if (valid) {
           const note = {
             name: this.form.name,
-            parentId: this.selectedTreeNote.id,
+            parentId: this.selectedNoteId,
             isLeaf: this.isLeaf,
           };
           addNoteInfo(note).then((res) => {
             this.$modal.msgSuccess("保存成功");
             this.open = false;
+            this.$store.dispatch("note/getListData");
             if (this.isLeaf) {
               this.$router.push({
                 path: "/n/note",
@@ -75,7 +76,7 @@ export default {
     },
 
     handleCommand(command) {
-      if (this.selectedTreeNote.id == undefined) {
+      if (this.selectedNoteId == undefined) {
         this.$modal.msgError("请选择要增加的文件夹");
       } else {
         this.form = {};

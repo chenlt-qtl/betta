@@ -421,7 +421,7 @@ export default {
       const content = this.form.content;
       const allWords = splipSentences(content.split(brReg))[0].allWords;
       allWords.forEach((element) => {
-        if (this.sentenceWordList.find((word) => word == element.text)) {
+        if (this.sentenceWordList.find((word) => word == element.text.toLowerCase())) {
           element.style = {
             padding: "5px",
             margin: "0 5px",

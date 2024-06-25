@@ -42,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="parentIds != null  and parentIds != ''"> and parent_ids = #{parentIds}</if>
             ${params.createByScope}
         </where>
-        order by is_leaf
+        order by is_leaf,`name`
     </select>
 
 
