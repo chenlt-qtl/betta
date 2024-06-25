@@ -6,7 +6,7 @@
           <button class="button back">
             <i class="fa fa-arrow-left" />
           </button>
-          <h2 class="title">My Playlist</h2>
+          <h2 class="title">播放列表</h2>
           <button class="button more">
             <i class="fa fa-ellipsis-h" />
           </button>
@@ -32,10 +32,15 @@
           <button class="controlButton">
             <i class="fa fa-step-backward"></i>
           </button>
-
           <button class="playButton" @click="playList">
-            <i v-if="!isPlaying" style="font-size: 28px" class="fa fa-play"></i>
-            <i v-if="isPlaying" style="font-size: 22px" class="fa fa-pause"></i>
+            <div>
+              <i v-if="!isPlaying" class="fa fa-play"></i>
+              <i
+                v-if="isPlaying"
+                style="font-size: 22px; left: 0"
+                class="fa fa-pause"
+              ></i>
+            </div>
           </button>
 
           <button class="controlButton">
@@ -49,30 +54,54 @@
 <script>
 import { play } from "@/utils/audio";
 
+let player;
+
 export default {
   data() {
     return {
       baseUrl: process.env.VUE_APP_BASE_API,
-      playIndex:0,//正在播放第几首，从1开始
-      isPlaying:false,//是否正在播放
+      playIndex: 0, //正在播放第几首，从1开始
+      isPlaying: false, //是否正在播放
       listData: [
         {
           name: "a123213",
-          url: "/profile/article/2024/06/25/5_20240625110127A001.mp3",
+          url: "/profile/word/a/afford.mp3",
         },
         {
           name: "b123123",
-          url: "/profile/article/2024/06/05/1_20240605083055A009",
+          url: "/profile/word/a/apple.mp3",
         },
       ],
     };
   },
   methods: {
     playList() {
-      console.log('====================================');
-      console.log(123);
-      console.log('====================================');
-      this.isPlaying = !this.isPlaying
+      if (!this.isPlaying) {
+        if (player) {
+          player.play();
+        } else {
+          player = this.playMp3();
+          player.addEventListener("ended", () => {
+            console.log("播放已经结束！");
+            if (this.playIndex < this.listData.length - 1) {
+              this.playIndex = this.playIndex + 1;
+            } else {
+              this.playIndex = 0;
+            }
+            this.playMp3();
+          });
+        }
+      }else{
+        player.pause();
+      }
+      this.isPlaying = !this.isPlaying;
+    },
+    playMp3() {
+      const dataLength = this.listData.length;
+      if (dataLength > 0 && this.playIndex < dataLength) {
+        player = play(this.listData[this.playIndex].url);
+        return player;
+      }
     },
   },
 };
@@ -279,33 +308,35 @@ export default {
         inset 5px 5px 5px rgba(0, 0, 0, 0.07),
         inset -5px -5px 5px rgba(255, 255, 255, 0.7);
 
-    //   &::before {
-    //     content: "";
-    //     position: absolute;
-    //     width: 70px;
-    //     height: 70px;
-    //     border-radius: 50%;
-    //     background-color: #fed0b3;
-    //     top: 50%;
-    //     left: 50%;
-    //     margin: -35px 0 0 -35px;
-    //     box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.5),
-    //       inset -3px -3px 3px rgba(0, 0, 0, 0.05);
-    //   }
+      &::before {
+        content: "";
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background-color: #fed0b3;
+        top: 50%;
+        left: 50%;
+        margin: -35px 0 0 -35px;
+        box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.5),
+          inset -3px -3px 3px rgba(0, 0, 0, 0.05);
+      }
 
-    //   &:hover::before {
-    //     box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.35),
-    //       inset -3px -3px 3px rgba(0, 0, 0, 0.035);
-    //   }
+      &:hover::before {
+        box-shadow: inset 3px 3px 3px rgba(255, 255, 255, 0.35),
+          inset -3px -3px 3px rgba(0, 0, 0, 0.035);
+      }
 
-    //   &:active::before {
-    //     box-shadow: inset 3px 3px 3px rgba(0, 0, 0, 0.05),
-    //       inset -3px -3px 3px rgba(255, 255, 255, 0.5);
-    //   }
+      &:active::before {
+        box-shadow: inset 3px 3px 3px rgba(0, 0, 0, 0.05),
+          inset -3px -3px 3px rgba(255, 255, 255, 0.5);
+      }
 
       i {
+        position: relative;
+        left: 3px;
         color: #fff;
-        z-index: 99;
+        font-size: 28px;
       }
     }
   }
