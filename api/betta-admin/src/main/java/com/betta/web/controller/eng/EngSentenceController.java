@@ -48,7 +48,6 @@ public class EngSentenceController extends BaseController {
      * @param inPlayList  是否在播放列表
      * @return
      */
-    @PreAuthorize("@ss.hasPermi('eng:sentence:list')")
     @GetMapping("/list/play")
     public TableDataInfo listPlay(EngSentence engSentence, boolean inPlayList, String username) {
         startPage();

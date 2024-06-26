@@ -110,7 +110,6 @@ public class EngSentenceServiceImpl implements IEngSentenceService {
     }
 
     @Override
-    @CreateByScope("eng_sentence")
     public List<EngSentence> selectPlayList(EngSentence engSentence, boolean inPlayList, String username) {
         PlayList playList = new PlayList();
         playList.setUserName(username);
@@ -124,6 +123,7 @@ public class EngSentenceServiceImpl implements IEngSentenceService {
         } else if (inPlayList) {
             return new ArrayList<>();
         }
+        engSentence.setCreateBy(username);
         return engSentenceMapper.selectPlayList(engSentence);
     }
 }

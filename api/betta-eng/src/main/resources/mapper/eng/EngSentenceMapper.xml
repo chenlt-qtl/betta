@@ -52,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.notExistIds != null  and params.notExistIds != ''">and eng_sentence.id not in (${params.notExistIds})</if>
 
             <!-- 数据范围过滤 -->
-            ${params.createByScope}
+            and eng_sentence.create_by = #{createBy}
             and eng_sentence.mp3 is not null
         </where>
         order by group_name,article_name,idx
