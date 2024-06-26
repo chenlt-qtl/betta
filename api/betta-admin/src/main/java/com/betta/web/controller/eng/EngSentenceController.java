@@ -3,6 +3,9 @@ package com.betta.web.controller.eng;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.betta.common.exception.ServiceException;
+import com.betta.common.utils.SecurityUtils;
+import com.betta.common.utils.StringUtils;
 import com.betta.eng.service.IEngSentenceService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +20,13 @@ import com.betta.common.core.page.TableDataInfo;
 
 /**
  * 文章句子Controller
- * 
+ *
  * @author ruoyi
  * @date 2024-06-02
  */
 @RestController
 @RequestMapping("/eng/sentence")
-public class EngSentenceController extends BaseController
-{
+public class EngSentenceController extends BaseController {
     @Autowired
     private IEngSentenceService engSentenceService;
 
@@ -33,8 +35,7 @@ public class EngSentenceController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:sentence:list')")
     @GetMapping("/list")
-    public TableDataInfo list(EngSentence engSentence)
-    {
+    public TableDataInfo list(EngSentence engSentence) {
         startPage();
         List<EngSentence> list = engSentenceService.selectEngSentenceList(engSentence);
         return getDataTable(list);
@@ -42,16 +43,22 @@ public class EngSentenceController extends BaseController
 
     /**
      * 查询播放列表相关句子
+     *
      * @param engSentence
-     * @param inPlayList  是否不在播放列表
+     * @param inPlayList  是否在播放列表
      * @return
      */
     @PreAuthorize("@ss.hasPermi('eng:sentence:list')")
     @GetMapping("/list/play")
-    public TableDataInfo listPlay(EngSentence engSentence, @RequestParam boolean inPlayList)
-    {
+    public TableDataInfo listPlay(EngSentence engSentence, boolean inPlayList, String username) {
         startPage();
-        List<EngSentence> list = engSentenceService.selectPlayList(engSentence,inPlayList);
+        if(!StringUtils.hasText(username)){
+            username = SecurityUtils.getUsername();
+        }
+        if(!StringUtils.hasText(username)){
+            throw new ServiceException("请输入用户名");
+        }
+        List<EngSentence> list = engSentenceService.selectPlayList(engSentence, inPlayList,username);
         return getDataTable(list);
     }
 
@@ -61,8 +68,7 @@ public class EngSentenceController extends BaseController
     @PreAuthorize("@ss.hasPermi('eng:sentence:export')")
     @Log(title = "文章句子", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, EngSentence engSentence)
-    {
+    public void export(HttpServletResponse response, EngSentence engSentence) {
         List<EngSentence> list = engSentenceService.selectEngSentenceList(engSentence);
         ExcelUtil<EngSentence> util = new ExcelUtil<EngSentence>(EngSentence.class);
         util.exportExcel(response, list, "文章句子数据");
@@ -73,8 +79,7 @@ public class EngSentenceController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:sentence:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(engSentenceService.selectEngSentenceById(id));
     }
 
@@ -84,8 +89,7 @@ public class EngSentenceController extends BaseController
     @PreAuthorize("@ss.hasPermi('eng:sentence:add')")
     @Log(title = "文章句子", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody EngSentence engSentence)
-    {
+    public AjaxResult add(@RequestBody EngSentence engSentence) {
         return toAjax(engSentenceService.insertEngSentence(engSentence));
     }
 
@@ -95,8 +99,7 @@ public class EngSentenceController extends BaseController
     @PreAuthorize("@ss.hasPermi('eng:sentence:edit')")
     @Log(title = "文章句子", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody EngSentence engSentence)
-    {
+    public AjaxResult edit(@RequestBody EngSentence engSentence) {
         return toAjax(engSentenceService.updateEngSentence(engSentence));
     }
 
@@ -105,9 +108,8 @@ public class EngSentenceController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:sentence:remove')")
     @Log(title = "文章句子", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(engSentenceService.deleteEngSentenceByIds(ids));
     }
 }

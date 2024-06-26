@@ -54,6 +54,7 @@
 <script>
 import { play } from "@/utils/audio";
 import { listPlay } from "@/api/eng/sentence";
+import { mapGetters } from "vuex";
 
 let player;
 
@@ -67,6 +68,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["name"]),
     articleName() {
       if (this.listData.length > 0) {
         return this.listData[this.playIndex].articleName;
@@ -75,16 +77,30 @@ export default {
     },
   },
   created() {
+    let username = this.name;
+    if (!username) {
+      username = this.$route.query && this.$route.query.u;
+      if (!username) {
+        this.$modal.msgError("请输入用户名");
+        return;
+      }
+    }
     listPlay({
       pageNum: 1,
       pageSize: 1000,
       inPlayList: true,
+      username,
     }).then((response) => {
       this.listData = response.rows.filter((data) => data.mp3);
     });
   },
   methods: {
     playList() {
+      if (this.listData.length <= 0) {
+        this.$modal.msgError("播放列表为空");
+        return;
+      }
+
       if (!this.isPlaying) {
         if (player) {
           player.play();

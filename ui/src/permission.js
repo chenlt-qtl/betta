@@ -16,7 +16,7 @@ NProgress.configure({
   showSpinner: false
 })
 
-const whiteList = ['/login', '/register', '/playlist']
+const whiteList = ['/login', '/register', '/eng/playlist']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -46,7 +46,7 @@ router.beforeEach((to, from, next) => {
           })
         }).catch(err => {
           store.dispatch('LogOut').then(() => {
-            Message.error("666" + err)
+            Message.error(err)
             next({
               path: '/'
             })

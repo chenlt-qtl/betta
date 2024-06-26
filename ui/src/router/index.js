@@ -89,7 +89,7 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/playlist',
+    path: '/eng/playlist',
     component: () => import('@/views/eng/playlist'),
     hidden: true
   },

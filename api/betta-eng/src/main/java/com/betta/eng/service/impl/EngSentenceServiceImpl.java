@@ -111,9 +111,9 @@ public class EngSentenceServiceImpl implements IEngSentenceService {
 
     @Override
     @CreateByScope("eng_sentence")
-    public List<EngSentence> selectPlayList(EngSentence engSentence, boolean inPlayList) {
+    public List<EngSentence> selectPlayList(EngSentence engSentence, boolean inPlayList, String username) {
         PlayList playList = new PlayList();
-        playList.setUserName(SecurityUtils.getUsername());
+        playList.setUserName(username);
         List<PlayList> playLists = playListService.selectPlayListList(playList);
         String sentenceIds = "";
         if (!playLists.isEmpty()) {
