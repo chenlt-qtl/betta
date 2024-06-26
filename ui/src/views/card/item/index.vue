@@ -81,7 +81,7 @@
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="类型" align="center" prop="type">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.card_type" :value="scope.row.type"/>
@@ -129,12 +129,12 @@
               :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="值" prop="value">
-          <el-input v-model="form.value" placeholder="请输入值" />
-        </el-form-item>
+        </el-form-item>      
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" />
+        </el-form-item>
+        <el-form-item label="值" prop="value">
+          <el-input-number v-model="form.value" placeholder="请输入值" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
