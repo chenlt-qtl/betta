@@ -18,7 +18,7 @@
         <img src="../../assets/images/boy-2.svg" />
       </div>
     </div>
-    <div class="input">
+    <div class="input-bar">
       <div class="symbol">
         <el-radio v-model="symbol" label="1">+</el-radio>
         <el-radio v-model="symbol" label="-1">-</el-radio>
@@ -169,11 +169,11 @@ export default {
   flex-direction: column;
   align-items: center;
   .head {
-    width: 800px;
+    max-width: 600px;
+    width: 100%;
     padding: 20px;
     display: flex;
     gap: 10px;
-    display: flex;
 
     .account {
       position: relative;
@@ -232,9 +232,11 @@ export default {
       }
     }
   }
-  .input {
+  .input-bar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 20px;
     .symbol {
       display: flex;
@@ -250,7 +252,7 @@ export default {
       border-radius: 5px;
       padding: 5px 15px;
       text-align: center;
-      margin: 0 5px;
+      margin: 5px;
     }
     .red {
       border: #f28086 1px solid;
@@ -262,7 +264,8 @@ export default {
     }
   }
   .tab {
-    width: 800px;
+    max-width: 600px;
+    width: 100%;
     .item {
       cursor: pointer;
       margin: 5px;
