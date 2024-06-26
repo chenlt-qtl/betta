@@ -92,7 +92,6 @@
 </template>
 
 <script>
-import { delNoteInfo } from "@/api/note/noteInfo";
 import noteMoveDialog from "./noteMoveDialog.vue";
 
 export default {
@@ -210,15 +209,23 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
+      const ids = row.id ? [row.id] : this.ids;
       this.$modal
         .confirm('是否确认删除文件夹编号为"' + ids + '"的数据项？')
-        .then(function () {
-          return delNoteInfo(ids);
+        .then(() => {
+          this.$store.dispatch("note/delNotes", ids);
         })
         .then(() => {
-          this.$store.dispatch("note/getListData");
           this.$modal.msgSuccess("删除成功");
+          //如果包含openedNote，修改url
+          if (ids.includes(this.openedNote.id)) {
+            const newQuery = { ...this.$route.query };
+            delete newQuery["id"];
+            this.$router.push({
+              path: "/n/note",
+              query: newQuery,
+            });
+          }
         })
         .catch(() => {});
     },

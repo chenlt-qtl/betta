@@ -3,6 +3,7 @@ import {
   getNoteInfo,
   listLast,
   listNoteTree,
+  delNoteInfo
 } from "@/api/note/noteInfo";
 import {
   listFavorite
@@ -139,6 +140,31 @@ const actions = {
         })
       } else {
         commit('SET_OPENED_NOTE', {})
+        resolve()
+      }
+    })
+  },
+  delNotes({
+    commit,
+    state,
+    dispatch
+  }, ids) {
+    const openedNotes = new Map(state.openedNotes)
+
+    return new Promise((resolve, reject) => {
+      if (ids) {
+        delNoteInfo(ids).then(res => {
+          ids.forEach(id => {
+            openedNotes.delete(String(id))
+          })
+          commit('SET_OPENED_NOTES', openedNotes)
+          dispatch('getTreeData')
+          dispatch('getListData')
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
+      } else {
         resolve()
       }
     })

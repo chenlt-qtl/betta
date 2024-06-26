@@ -82,9 +82,6 @@ export default {
       });
     },
     delNote() {
-      console.log('====================================');
-      console.log(this.note);
-      console.log('====================================');
       this.$confirm(
         "删除文件夹 [ " + this.note.label + " ] , 是否继续?",
         "提示",
@@ -94,12 +91,11 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        delNoteInfo(this.note.id).then((res) => {
+        this.$store.dispatch("note/delNotes", [this.note.id]).then(() => {
           this.$message({
             type: "success",
             message: "删除成功!",
           });
-          this.$store.dispatch("note/getTreeData");
         });
       });
     },
