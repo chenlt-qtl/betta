@@ -7,6 +7,7 @@
       :inline="true"
       v-show="showSearch"
       label-width="68px"
+      @submit.native.prevent
     >
       <el-form-item label="关键字" prop="content">
         <el-input
@@ -14,7 +15,6 @@
           placeholder="请输入关键字"
           clearable
           @keyup.enter.native="handleQuery"
-          @keydown.enter.prevent
         />
       </el-form-item>
       <el-form-item>
