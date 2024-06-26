@@ -48,8 +48,8 @@ export default {
     };
   },
   computed: {
-    selectedTreeNote() {
-      return this.$store.state.note.selectedTreeNote;
+    selectedNoteId() {
+      return this.$store.state.note.selectedNoteId;
     },
   },
   methods: {
@@ -73,7 +73,7 @@ export default {
       }
     },
     rename() {
-      const note = { id: this.selectedTreeNote.id, name: this.form.name };
+      const note = { id: this.selectedNoteId, name: this.form.name };
       updateName(note).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.openRename = false;
