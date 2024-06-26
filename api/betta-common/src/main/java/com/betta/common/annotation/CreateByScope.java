@@ -14,8 +14,8 @@ public @interface CreateByScope {
     public String value();
 
     /**
-     * admin可访问全部数据
+     * admin 是否可访问全部数据
      * @return
      */
-    public boolean adminAccessAll() default true;
+    public boolean adminAccessAll() default false;
 }

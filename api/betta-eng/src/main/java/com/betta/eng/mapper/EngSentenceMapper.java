@@ -60,4 +60,6 @@ public interface EngSentenceMapper
     public int deleteEngSentenceByIds(Long[] ids);
 
     int deleteByArticleId(Long articleId);
+
+    List<EngSentence> selectPlayList(EngSentence engSentence);
 }

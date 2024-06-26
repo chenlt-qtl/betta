@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.eng.mapper.PlayListMapper">
+    
+    <resultMap type="PlayList" id="PlayListResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="sentenceIds"    column="sentence_ids"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectPlayListVo">
+        select id, user_name, sentence_ids, create_time, create_by, update_time, update_by from eng_play_list
+    </sql>
+
+    <select id="selectPlayListList" parameterType="PlayList" resultMap="PlayListResult">
+        <include refid="selectPlayListVo"/>
+        <where>  
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="sentenceIds != null  and sentenceIds != ''"> and sentence_ids like concat('%', #{sentenceIds}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPlayListById" parameterType="Long" resultMap="PlayListResult">
+        <include refid="selectPlayListVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPlayList" parameterType="PlayList" useGeneratedKeys="true" keyProperty="id">
+        insert into eng_play_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="sentenceIds != null">sentence_ids,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="sentenceIds != null">#{sentenceIds},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlayList" parameterType="PlayList">
+        update eng_play_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="sentenceIds != null">sentence_ids = #{sentenceIds},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePlayListById" parameterType="Long">
+        delete from eng_play_list where id = #{id}
+    </delete>
+
+    <delete id="deletePlayListByIds" parameterType="String">
+        delete from eng_play_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

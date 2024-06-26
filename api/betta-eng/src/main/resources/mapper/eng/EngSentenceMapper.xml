@@ -7,6 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="EngSentence" id="EngSentenceResult">
         <result property="id"    column="id"    />
         <result property="articleId"    column="article_id"    />
+        <result property="articleName"    column="article_name"    />
+        <result property="groupName"    column="group_name"    />
         <result property="content"    column="content"    />
         <result property="acceptation"    column="acceptation"    />
         <result property="idx"    column="idx"    />
@@ -35,6 +37,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ${params.createByScope}
         </where>
         order by idx
+    </select>
+
+
+    <select id="selectPlayList" parameterType="EngSentence" resultMap="EngSentenceResult">
+        select eng_sentence.id,content,eng_sentence.mp3,eng_article_group.name as group_name,eng_article.title  as article_name
+        from eng_sentence, eng_article_group, eng_article
+        <where>
+            and eng_sentence.article_id = eng_article.id and eng_article_group.id = eng_article.group_id
+            <if test="content != null  and content != ''"> and content like concat('%',#{content},'%')</if>
+            <if test="groupId != null  and groupId != ''"> and eng_article_group.id = #{groupId}</if>
+            <if test="articleName != null  and articleName != ''"> and eng_article.title like concat('%',#{articleName},'%')</if>
+            <if test="params.existIds != null  and params.existIds != ''">and eng_sentence.id in (${params.existIds})</if>
+            <if test="params.notExistIds != null  and params.notExistIds != ''">and eng_sentence.id not in (${params.notExistIds})</if>
+
+            <!-- 数据范围过滤 -->
+            ${params.createByScope}
+            and eng_sentence.mp3 is not null
+        </where>
+        order by group_name,article_name,idx
     </select>
     
     <select id="selectEngSentenceById" parameterType="Long" resultMap="EngSentenceResult">

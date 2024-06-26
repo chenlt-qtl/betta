@@ -20,7 +20,7 @@
         </div>
 
         <div class="info">
-          <h3 class="song">Sober Up</h3>
+          <h3 class="song">{{ articleName }}</h3>
           <h4 class="artist">AJR/Rviers Cuomo</h4>
         </div>
 
@@ -53,6 +53,7 @@
 </template>
 <script>
 import { play } from "@/utils/audio";
+import { listPlay } from "@/api/eng/sentence";
 
 let player;
 
@@ -62,17 +63,25 @@ export default {
       baseUrl: process.env.VUE_APP_BASE_API,
       playIndex: 0, //正在播放第几首，从1开始
       isPlaying: false, //是否正在播放
-      listData: [
-        {
-          name: "a123213",
-          url: "/profile/word/a/afford.mp3",
-        },
-        {
-          name: "b123123",
-          url: "/profile/word/a/apple.mp3",
-        },
-      ],
+      listData: [],
     };
+  },
+  computed: {
+    articleName() {
+      if (this.listData.length > 0) {
+        return this.listData[this.playIndex].articleName;
+      }
+      return "无标题";
+    },
+  },
+  created() {
+    listPlay({
+      pageNum: 1,
+      pageSize: 1000,
+      inPlayList: true,
+    }).then((response) => {
+      this.listData = response.rows.filter((data) => data.mp3);
+    });
   },
   methods: {
     playList() {
@@ -82,16 +91,18 @@ export default {
         } else {
           player = this.playMp3();
           player.addEventListener("ended", () => {
-            console.log("播放已经结束！");
+            if (!this.isPlaying) {
+              return;
+            }
             if (this.playIndex < this.listData.length - 1) {
               this.playIndex = this.playIndex + 1;
             } else {
               this.playIndex = 0;
             }
-            this.playMp3();
+            setTimeout(() => this.playMp3(), 1500); //1.5秒后再播放
           });
         }
-      }else{
+      } else {
         player.pause();
       }
       this.isPlaying = !this.isPlaying;
@@ -99,7 +110,7 @@ export default {
     playMp3() {
       const dataLength = this.listData.length;
       if (dataLength > 0 && this.playIndex < dataLength) {
-        player = play(this.listData[this.playIndex].url);
+        player = play(this.listData[this.playIndex].mp3);
         return player;
       }
     },
@@ -122,7 +133,7 @@ export default {
     background-color: #f1f8fd;
     position: relative;
     border-radius: 40px;
-    margin: 30px auto;
+    margin: 10px auto;
     box-shadow: 20px 20px 30px 0 rgba(0, 0, 0, 0.1);
 
     &:after {

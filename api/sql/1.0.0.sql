@@ -27,3 +27,15 @@ CREATE TABLE `card_item`
     `update_by`   varchar(32) DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='卡片项明细表';
+
+CREATE TABLE `eng_play_list`
+(
+    `id`           bigint NOT NULL AUTO_INCREMENT,
+    `user_name`    varchar(32) DEFAULT NULL COMMENT '用户名',
+    `sentence_ids` text        DEFAULT NULL COMMENT '句子ID',
+    `create_time`  datetime    DEFAULT NULL,
+    `create_by`    varchar(32) DEFAULT NULL,
+    `update_time`  datetime    DEFAULT NULL,
+    `update_by`    varchar(32) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB COMMENT='播放列表';

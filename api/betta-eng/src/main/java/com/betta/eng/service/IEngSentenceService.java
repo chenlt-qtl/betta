@@ -60,4 +60,6 @@ public interface IEngSentenceService
     public int deleteEngSentenceById(Long id);
 
     int deleteByArticle(Long articleId);
+
+    List<EngSentence> selectPlayList(EngSentence engSentence,boolean inPlayList);
 }

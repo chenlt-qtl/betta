@@ -9,6 +9,16 @@ export function listSentence(query) {
   })
 }
 
+
+// 查询播放列表相关的数据
+export function listPlay(query) {
+  return request({
+    url: '/eng/sentence/list/play',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询文章句子详细
 export function getSentence(id) {
   return request({

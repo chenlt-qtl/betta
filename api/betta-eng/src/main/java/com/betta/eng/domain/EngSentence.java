@@ -49,4 +49,9 @@ public class EngSentence extends BaseEntity
     /** $column.columnComment */
     private String status;
 
+    private String articleName;
+
+    private String groupName;
+
+    private Long groupId;
 }
