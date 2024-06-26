@@ -15,9 +15,9 @@
       width="500px"
       append-to-body
     >
-      <el-form ref="form" :model="form" :rules="rules">
+      <el-form ref="form" :model="form" :rules="rules" @submit.native.prevent>
         <el-form-item label="" prop="name">
-          <el-input v-model="form.name" placeholder="请输入标题" />
+          <el-input v-model="form.name" placeholder="请输入标题" @keyup.enter.native="submitForm"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -96,7 +96,7 @@ export default {
 </script>
 <style scoped lang='scss'>
 .note-add-btn {
-  
+
   .el-dropdown-link {
     cursor: pointer;
     color: #409eff;
