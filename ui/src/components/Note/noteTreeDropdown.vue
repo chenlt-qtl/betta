@@ -82,6 +82,9 @@ export default {
       });
     },
     delNote() {
+      console.log('====================================');
+      console.log(this.note);
+      console.log('====================================');
       this.$confirm(
         "删除文件夹 [ " + this.note.label + " ] , 是否继续?",
         "提示",
@@ -91,7 +94,7 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        delNoteInfo(this.note.data.id).then((res) => {
+        delNoteInfo(this.note.id).then((res) => {
           this.$message({
             type: "success",
             message: "删除成功!",
