@@ -13,7 +13,7 @@ export const play = (url, timeStr, rate = 1) => {
 
   let duration, startTime;
 
-  if (/^\d+,\d+$/.test(timeStr)) {
+  if (/^\d+,\d+(.\d+)*$/.test(timeStr)) {
     const [startTimeStr = 0, durationStr = 0] = timeStr.split(",");
     startTime = parseInt(startTimeStr) //秒
     duration = parseFloat(durationStr) //毫秒
