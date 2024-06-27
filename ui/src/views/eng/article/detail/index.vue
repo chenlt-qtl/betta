@@ -127,7 +127,7 @@
         :limit.sync="queryParams.pageSize"
         @pagination="getSentenceList"
       />
-      <el-divider content-position="center">单词信息</el-divider>
+      <el-divider content-position="center">单词信息 (共 {{wordTotal}} 条)</el-divider>
       <el-table v-loading="loading" :data="wordList">
         <el-table-column label="单词" align="center" prop="wordName" />
         <el-table-column label="音标" align="center" prop="phAm" />
@@ -293,6 +293,7 @@ export default {
       multiple: true,
       // 总条数
       sentenceTotal: 0,
+      wordTotal: 0,
       // 英语文章表格数据
       sentenceList: [],
       // 弹出层标题
@@ -371,6 +372,7 @@ export default {
         articleId: this.articleId,
       }).then((response) => {
         this.wordList = response.rows;
+        this.wordTotal = response.total;
         this.sentenceWordList = response.rows.map((word) => word.wordName);
         this.loading = false;
       });

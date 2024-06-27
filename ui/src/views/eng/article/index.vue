@@ -89,7 +89,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="分组" align="center" prop="groupName" />
+      <el-table-column label="标题" align="center" prop="title" />
       <el-table-column label="图片" align="center" prop="picture" width="100">
         <template slot-scope="scope">
           <image-preview :src="scope.row.picture" :width="50" :height="50" />
@@ -102,7 +102,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="标题" align="center" prop="title" />
+      <el-table-column label="分组" align="center" prop="groupName" />
       <el-table-column label="注释" align="center" prop="comment" />
       <el-table-column
         label="操作"
@@ -149,15 +149,8 @@
     <!-- 添加或修改英语文章对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="分组" prop="groupId">
-          <el-select v-model="form.groupId">
-            <el-option
-              v-for="group in groupList"
-              :key="group.id"
-              :label="group.name"
-              :value="group.id"
-            />
-          </el-select>
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="form.title" placeholder="请输入标题" />
         </el-form-item>
         <el-form-item label="图片" prop="picture">
           <image-upload v-model="form.picture" uploadType="article" />
@@ -170,8 +163,15 @@
             uploadType="article"
           />
         </el-form-item>
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" placeholder="请输入标题" />
+        <el-form-item label="分组" prop="groupId">
+          <el-select v-model="form.groupId">
+            <el-option
+              v-for="group in groupList"
+              :key="group.id"
+              :label="group.name"
+              :value="group.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="手工注释" prop="comment">
           <el-input
