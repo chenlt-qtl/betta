@@ -6,8 +6,8 @@
         <el-input-number
           v-model="classDuration"
           :disabled="isRun"
-          @change="(e) => classDuration=e"
-          style="width:150px"
+          @change="(e) => (classDuration = e)"
+          style="width: 150px"
         ></el-input-number
       ></span>
       <span
@@ -15,15 +15,19 @@
         <el-input-number
           v-model="afterClassDuration"
           :disabled="isRun"
-          @change="(e) => afterClassDuration=e"
-          style="width:150px"
+          @change="(e) => (afterClassDuration = e)"
+          style="width: 150px"
         ></el-input-number
       ></span>
-      <el-button @click="startClass">开始上课</el-button>
-      <el-button @click="stop">暂停/继续</el-button>
-      <el-popconfirm :disabled="!isRun" title="确认要重置?" @confirm="reset"
-        ><el-button :disabled="!isRun" slot="reference">重置</el-button></el-popconfirm
-      >
+      <div>
+        <el-button @click="startClass">开始上课</el-button>
+        <el-button @click="stop">暂停/继续</el-button>
+        <el-popconfirm style="margin-left:10px" :disabled="!isRun" title="确认要重置?" @confirm="reset"
+          ><el-button :disabled="!isRun" slot="reference"
+            >重置</el-button
+          ></el-popconfirm
+        >
+      </div>
     </div>
 
     <div class="display">
@@ -134,15 +138,18 @@ export default {
 .timer-container {
   max-width: 800px;
   margin: 20px auto;
+  
 
   .header {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     align-items: center;
-    >span{
-        display: flex;
-        align-items: center;
-        gap: 5px;
+    justify-content: center;
+    > span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
   }
 
