@@ -69,7 +69,10 @@
         </el-table-column>
         <el-table-column label="音频" align="center" prop="mp3">
           <template v-if="scope.row.mp3" slot-scope="scope">
-            <el-button type="text" @click="() => play(scope.row.mp3,scope.row.mp3Time)">
+            <el-button
+              type="text"
+              @click="() => play(scope.row.mp3, scope.row.mp3Time)"
+            >
               <svg-icon icon-class="sound" />
             </el-button>
           </template>
@@ -187,15 +190,19 @@
             <image-upload v-model="form.picture" />
           </el-form-item>
           <el-form-item label="音频" prop="mp3">
-            <file-upload :fileType="['mp3']" v-model="form.mp3" uploadType="article"/>
+            <file-upload
+              :fileType="['mp3']"
+              v-model="form.mp3"
+              uploadType="article"
+            />
           </el-form-item>
           <el-form-item label="MP3时间" prop="mp3Time">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
-            格式: 开始时间,持续时间  例: 5,8
+            格式: 开始时间,持续时间 例: 5,8
             <el-button
               v-if="form.mp3"
               type="text"
-              @click="() => play(form.mp3,form.mp3Time)"
+              @click="() => play(form.mp3, form.mp3Time)"
             >
               <svg-icon icon-class="sound" />
             </el-button>
@@ -326,8 +333,8 @@ export default {
         })
         .catch(() => {});
     },
-    play(url,mp3Time) {
-      play(url,mp3Time);
+    play(url, mp3Time) {
+      play(url, mp3Time);
     },
     /** 查询英语句子列表 */
     getSentenceList() {
@@ -393,12 +400,6 @@ export default {
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.resetSentence();
-      this.openSentence = true;
-      this.title = "添加英语文章";
-    },
     /** 修改按钮操作 */
     handleUpdateSentence(row) {
       this.resetSentence();
@@ -421,7 +422,11 @@ export default {
       const content = this.form.content;
       const allWords = splipSentences(content.split(brReg))[0].allWords;
       allWords.forEach((element) => {
-        if (this.sentenceWordList.find((word) => word == element.text.toLowerCase())) {
+        if (
+          this.sentenceWordList.find(
+            (word) => word == element.text.toLowerCase()
+          )
+        ) {
           element.style = {
             padding: "5px",
             margin: "0 5px",
@@ -499,18 +504,9 @@ export default {
     /** 文章句子添加按钮操作 */
     handleAddSentence() {
       this.resetSentence();
+      this.form.idx = this.sentenceTotal + 1;
       this.openSentence = true;
       this.title = "添加文章句子";
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download(
-        "eng/article/export",
-        {
-          ...this.queryParams,
-        },
-        `article_${new Date().getTime()}.xlsx`
-      );
     },
     acceptationFormatter(row, column) {
       const acceptation = row.acceptation;
