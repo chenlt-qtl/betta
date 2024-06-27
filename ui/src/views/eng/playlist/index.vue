@@ -21,7 +21,7 @@
 
         <div class="info">
           <h3 class="song">{{ articleName }}</h3>
-          <h4 class="artist">AJR/Rviers Cuomo</h4>
+          <h4 class="artist">{{ displayStr }}</h4>
         </div>
 
         <div class="time">
@@ -56,7 +56,7 @@ import { play } from "@/utils/audio";
 import { listPlay } from "@/api/eng/sentence";
 import { mapGetters } from "vuex";
 
-let player;
+let player, intervalIndex;
 
 export default {
   data() {
@@ -65,6 +65,7 @@ export default {
       playIndex: 0, //正在播放第几首，从1开始
       isPlaying: false, //是否正在播放
       listData: [],
+      restTime: 90 * 60, //定时90分钟
     };
   },
   computed: {
@@ -74,6 +75,18 @@ export default {
         return this.listData[this.playIndex].articleName;
       }
       return "无标题";
+    },
+    //显示的剩余时间
+    displayStr() {
+      let str = "";
+      const restMin = Math.floor(this.restTime / 60);
+      str += restMin < 10 ? "0" : "";
+      str += restMin;
+
+      const restSec = this.restTime % 60;
+      str += restSec < 10 ? " : 0" : " : ";
+      str += restSec;
+      return str;
     },
   },
   created() {
@@ -100,7 +113,6 @@ export default {
         this.$modal.msgError("播放列表为空");
         return;
       }
-
       if (!this.isPlaying) {
         if (player) {
           player.play();
@@ -122,6 +134,20 @@ export default {
         player.pause();
       }
       this.isPlaying = !this.isPlaying;
+      this.isPlaying && this.timed();
+    },
+    timed() {
+      //到时间，停止播放
+      if (this.restTime <= 0) {
+        clearInterval(intervalIndex);
+        intervalIndex = null;
+        player.pause();
+      } else {
+        if (this.isPlaying) {
+          this.restTime = this.restTime - 1;
+          intervalIndex = setTimeout(() => this.timed(), 1000);
+        }
+      }
     },
     playMp3() {
       const dataLength = this.listData.length;
