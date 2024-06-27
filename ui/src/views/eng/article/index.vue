@@ -165,6 +165,7 @@
         <el-form-item label="音频" prop="mp3">
           <file-upload
             :fileType="['mp3']"
+            :fileSize="100"
             v-model="form.mp3"
             uploadType="article"
           />
