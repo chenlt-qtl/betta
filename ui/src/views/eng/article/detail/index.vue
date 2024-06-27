@@ -68,10 +68,15 @@
           </template>
         </el-table-column>
         <el-table-column label="音频" align="center" prop="mp3">
-          <template v-if="scope.row.mp3" slot-scope="scope">
+          <template
+            v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)"
+            slot-scope="scope"
+          >
             <el-button
               type="text"
-              @click="() => play(scope.row.mp3, scope.row.mp3Time)"
+              @click="
+                () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
+              "
             >
               <svg-icon icon-class="sound" />
             </el-button>
@@ -189,20 +194,25 @@
           <el-form-item label="图片" prop="picture" uploadType="article">
             <image-upload v-model="form.picture" />
           </el-form-item>
-          <el-form-item label="音频" prop="mp3">
+          <el-form-item v-if="article.mp3" label="独立音频" prop="useTopMp3">
+            <el-radio-group v-model="useTopMp3">
+              <el-radio-button :label="0">是</el-radio-button>
+              <el-radio-button :label="1">否</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="音频" prop="mp3" v-if="!useTopMp3">
             <file-upload
               :fileType="['mp3']"
               v-model="form.mp3"
               uploadType="article"
             />
           </el-form-item>
-          <el-form-item label="MP3时间" prop="mp3Time">
+          <el-form-item label="MP3时间" prop="mp3Time" v-if="useTopMp3">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
             格式: 开始时间,持续时间 例: 5,8
             <el-button
-              v-if="form.mp3"
               type="text"
-              @click="() => play(form.mp3, form.mp3Time)"
+              @click="() => play(article.mp3, form.mp3Time)"
             >
               <svg-icon icon-class="sound" />
             </el-button>
@@ -266,6 +276,7 @@ export default {
   name: "Article",
   data() {
     return {
+      useTopMp3: 1,
       articleId: 0,
       article: {},
       baseUrl: process.env.VUE_APP_BASE_API,
@@ -382,6 +393,7 @@ export default {
         mp3Time: null,
         status: null,
       };
+      this.useTopMp3 = this.article.mp3 ? 1 : 0;
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -406,6 +418,7 @@ export default {
       const id = row.id || this.sentenceIds;
       getSentence(id).then((response) => {
         this.form = response.data;
+        this.useTopMp3 = this.form.mp3 ? 0 : 1;
         this.openSentence = true;
         this.title = "修改句子";
       });
@@ -458,6 +471,7 @@ export default {
     /** 提交句子按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
+        this.form[this.useTopMp3 ? "mp3" : "mp3Time"] = ""; //清空音频
         if (valid) {
           if (this.form.id != null) {
             updateSentence(this.form).then((response) => {

@@ -20,8 +20,14 @@
     </div>
     <div class="input-bar">
       <div class="symbol">
-        <el-radio v-model="symbol" label="1">+</el-radio>
-        <el-radio v-model="symbol" label="-1">-</el-radio>
+        <el-radio-group v-model="symbol">
+          <el-radio :label="1">+</el-radio>
+          <el-radio :label="-1">-</el-radio>
+        </el-radio-group>
+        <!-- <el-radio-group v-model="symbol">
+          <el-radio-button label="1">+</el-radio-button>
+          <el-radio-button label="-1">-</el-radio-button>
+        </el-radio-group> -->
       </div>
       <el-input-number
         placeholder="请输入内容"
@@ -87,7 +93,7 @@ export default {
     return {
       data: [100, 50, 30, 20, 10, 5, 3, 1],
       //符号
-      symbol: "1",
+      symbol: 1,
       accountId: 0,
       accountData: [{}, {}],
       score: 0,
@@ -95,11 +101,11 @@ export default {
       listData: {},
     };
   },
-  computed:{
-    value(){
-      const score = this.score||0;
-      return (this.symbol == "1" ? score : -score)*1;
-    }
+  computed: {
+    value() {
+      const score = this.score || 0;
+      return this.symbol * score;
+    },
   },
   methods: {
     /** 查询卡片项明细列表 */
@@ -127,14 +133,14 @@ export default {
     },
     onReset() {
       this.score = 0;
-      this.symbol = "1";
+      this.symbol = 1;
     },
     addScore(value) {
       const score = value + this.value;
       if (score < 0) {
-        this.symbol = "-1";
+        this.symbol = -1;
       } else {
-        this.symbol = "1";
+        this.symbol = 1;
       }
       this.score = Math.abs(score);
     },
@@ -142,7 +148,7 @@ export default {
       this.$modal
         .confirm(
           this.accountData[this.accountId].name +
-            (this.symbol == "1" ? " + " : " - ") +
+            (this.symbol == 1 ? " + " : " - ") +
             this.score +
             " ？"
         )
