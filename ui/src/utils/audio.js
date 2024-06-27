@@ -12,11 +12,21 @@ export const play = (url, timeStr, rate = 1) => {
   player.pause();
 
   let duration, startTime;
+  const timeArr = timeStr.split(",");
 
-  if (/^\d+,\d+(.\d+)*$/.test(timeStr)) {
-    const [startTimeStr = 0, durationStr = 0] = timeStr.split(",");
-    startTime = parseInt(startTimeStr) //秒
-    duration = parseFloat(durationStr) //毫秒
+  if (timeArr.length == 2) {
+    //处理开始时间
+    if (/^\d+$/.test(timeArr[0])) {//格式1
+      startTime = parseInt(timeArr[0]) //秒
+    } else if (/^\d+:\d+$/.test(timeArr[0])) {//格式2
+      const arr = timeArr[0].split(":");
+      startTime = parseInt(arr[0]) * 60 + parseInt(arr[1])
+    }
+    
+    //处理时长
+    if (/^\d+(.\d+)*$/.test(timeArr[1])) {
+      duration = parseFloat(timeArr[1]) //秒
+    }
   }
 
   player.currentTime = startTime | 0;
