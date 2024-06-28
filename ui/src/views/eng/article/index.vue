@@ -129,6 +129,14 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-view"
+            @click="handlePlayArticle(scope.row)"
+            v-hasPermi="['eng:article:edit']"
+            >播放</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['eng:article:edit']"
@@ -303,6 +311,10 @@ export default {
     handleReadArticle: function (row) {
       const articleId = row.id;
       this.$router.push("/eng/article/read/" + articleId);
+    },
+    handlePlayArticle: function (row) {
+      const articleId = row.id;
+      this.$router.push("/eng/playlist?article=" + articleId);
     },
     /** 搜索按钮操作 */
     handleQuery() {

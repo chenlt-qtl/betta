@@ -20,16 +20,16 @@
         </div>
 
         <div class="info">
-          <h3 class="song">{{ articleName }}</h3>
+          <h3 class="song">{{ mp3Name }}</h3>
           <h4 class="artist">{{ displayStr }}</h4>
         </div>
 
         <div class="time">
-          <div class="bar"></div>
+          <div class="bar" :style="{ width: `${barPercent}%` }"></div>
         </div>
 
         <div class="control">
-          <button class="controlButton">
+          <button class="controlButton" @click="() => step(-1)">
             <i class="fa fa-step-backward"></i>
           </button>
           <button class="playButton" @click="playList">
@@ -43,7 +43,7 @@
             </div>
           </button>
 
-          <button class="controlButton">
+          <button class="controlButton" @click="() => step(1)">
             <i class="fa fa-step-forward"></i>
           </button>
         </div>
@@ -55,6 +55,9 @@
 import { play } from "@/utils/audio";
 import { listPlay } from "@/api/eng/sentence";
 import { mapGetters } from "vuex";
+import { getArticle } from "@/api/eng/article";
+import { listSentence } from "@/api/eng/sentence";
+import { listWordByArticle } from "@/api/eng/word";
 
 let player, intervalIndex;
 
@@ -62,16 +65,17 @@ export default {
   data() {
     return {
       baseUrl: process.env.VUE_APP_BASE_API,
-      playIndex: 0, //正在播放第几首，从1开始
+      playIndex: -1, //正在播放第几首，从0开始
       isPlaying: false, //是否正在播放
       listData: [],
       restTime: 90 * 60, //定时90分钟
+      isTimed: false,
     };
   },
   computed: {
     ...mapGetters(["name"]),
-    articleName() {
-      if (this.listData.length > 0) {
+    mp3Name() {
+      if (this.listData.length > 0 && this.playIndex != -1) {
         return this.listData[this.playIndex].articleName;
       }
       return "无标题";
@@ -88,53 +92,102 @@ export default {
       str += restSec;
       return str;
     },
+    barPercent() {
+      if (this.listData.length == 0 || this.playIndex == -1) {
+        return 0;
+      } else {
+        return ((this.playIndex + 1) * 100) / this.listData.length;
+      }
+    },
   },
   created() {
-    let username = this.name;
-    if (!username) {
-      username = this.$route.query && this.$route.query.u;
+    let articleId = this.$route.query && this.$route.query.article;
+    if (articleId) {
+      this.getArticleDetail(articleId);
+    } else {
+      let username = this.name;
       if (!username) {
-        this.$modal.msgError("请输入用户名");
-        return;
+        username = this.$route.query && this.$route.query.u;
+        if (!username) {
+          this.$modal.msgError("请输入用户名或文章ID");
+          return;
+        }
       }
+      listPlay({
+        pageNum: 1,
+        pageSize: 1000,
+        inPlayList: true,
+        username,
+      }).then((response) => {
+        this.listData = response.rows.filter((data) => data.mp3);
+      });
     }
-    listPlay({
-      pageNum: 1,
-      pageSize: 1000,
-      inPlayList: true,
-      username,
-    }).then((response) => {
-      this.listData = response.rows.filter((data) => data.mp3);
-    });
   },
   methods: {
+    async getArticleDetail(articleId) {
+      const listData = [];
+      const articleRes = await getArticle(articleId);
+      const article = articleRes.data;
+      const senRes = await listSentence({
+        pageNum: 1,
+        pageSize: 1000,
+        articleId,
+      });
+      if (senRes.rows && senRes.rows.length > 0) {
+        senRes.rows.forEach((sen) =>
+          listData.push({
+            mp3: sen.mp3Time ? article.mp3 : sen.mp3,
+            mp3Time: sen.mp3Time,
+            articleName: article.title,
+          })
+        );
+      }
+      const wordRes = await listWordByArticle({
+        pageNum: 1,
+        pageSize: 1000,
+        articleId,
+      });
+      if (wordRes.rows && wordRes.rows.length > 0) {
+        wordRes.rows.forEach((word) =>
+          listData.push({
+            mp3: word.phAnMp3,
+            articleName: article.title,
+          })
+        );
+      }
+      this.listData = listData;
+    },
     playList() {
       if (this.listData.length <= 0) {
         this.$modal.msgError("播放列表为空");
         return;
       }
-      if (!this.isPlaying) {
+      this.isPlaying = !this.isPlaying;
+      if (this.isPlaying) {
         if (player) {
           player.play();
         } else {
+          this.playIndex = 0; //从0开始播放
           player = this.playMp3();
-          player.addEventListener("ended", () => {
-            if (!this.isPlaying) {
-              return;
-            }
-            if (this.playIndex < this.listData.length - 1) {
-              this.playIndex = this.playIndex + 1;
-            } else {
-              this.playIndex = 0;
-            }
-            setTimeout(() => this.playMp3(), 1500); //1.5秒后再播放
-          });
+          player.addEventListener("pause", this.onEnded);
         }
       } else {
         player.pause();
       }
-      this.isPlaying = !this.isPlaying;
-      this.isPlaying && this.timed();
+      this.isPlaying && this.isTimed && this.timed();
+    },
+    onEnded() {
+      if (!this.isPlaying) {
+        return;
+      }
+      if (this.playIndex < this.listData.length - 1) {
+        this.playIndex = this.playIndex + 1;
+      } else if (this.isTimed) {
+        this.playIndex = 0;
+      } else {
+        return;
+      }
+      setTimeout(() => this.playMp3(), 1500); //1.5秒后再播放
     },
     timed() {
       //到时间，停止播放
@@ -151,9 +204,25 @@ export default {
     },
     playMp3() {
       const dataLength = this.listData.length;
-      if (dataLength > 0 && this.playIndex < dataLength) {
-        player = play(this.listData[this.playIndex].mp3);
+      if (
+        dataLength > 0 &&
+        this.playIndex < dataLength &&
+        this.playIndex >= 0
+      ) {
+        const { mp3, mp3Time } = this.listData[this.playIndex];
+        player = play(mp3, mp3Time);
         return player;
+      }
+    },
+    step(num) {
+      if (player) {
+        const dataLength = this.listData.length;
+        const newIndex = this.playIndex + num;
+        if (newIndex < dataLength - 1 && newIndex >= 0) {
+          this.playIndex = newIndex;
+          player.pause();
+          this.playMp3();
+        }
       }
     },
   },
@@ -308,7 +377,6 @@ export default {
     margin-bottom: 56px;
 
     .bar {
-      width: 80%;
       height: 12px;
       position: absolute;
       left: 2px;
