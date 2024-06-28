@@ -181,6 +181,20 @@ export const dynamicRoutes = [
       }
     ]
   },
+  {
+    path: '/eng/article/read',
+    component: Layout,
+    hidden: true,
+    permissions: ['eng:article:list'],
+    children: [
+      {
+        path: ':articleId(\\d+)',
+        component: () => import('@/views/eng/article/read'),
+        name: 'ArticleRead',
+        meta: { title: '文章跟读', activeMenu: '/eng/article' }
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

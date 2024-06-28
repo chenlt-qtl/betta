@@ -121,6 +121,14 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-view"
+            @click="handleReadArticle(scope.row)"
+            v-hasPermi="['eng:article:edit']"
+            >跟读</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['eng:article:edit']"
@@ -290,6 +298,11 @@ export default {
     handleViewArticle: function (row) {
       const articleId = row.id;
       this.$router.push("/eng/article-detail/" + articleId);
+    },
+    /** 跟读文章操作 */
+    handleReadArticle: function (row) {
+      const articleId = row.id;
+      this.$router.push("/eng/article/read/" + articleId);
     },
     /** 搜索按钮操作 */
     handleQuery() {

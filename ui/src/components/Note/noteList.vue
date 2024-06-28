@@ -67,6 +67,7 @@
         :data="listNote"
         @row-click="handleRowClick"
         size="mini"
+        :show-header="false"
         @selection-change="handleSelectionChange"
       >
         <el-table-column v-if="isCheck" type="selection" width="28">
@@ -252,9 +253,6 @@ export default {
     .el-input-group__append {
       padding: 0 10px;
     }
-  }
-  .el-table__header-wrapper {
-    display: none;
   }
 
   .toolbar {

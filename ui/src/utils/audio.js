@@ -2,7 +2,7 @@ let player = new Audio();
 let timer;
 
 /**播放MP3 */
-export const play = (url, timeStr = "", rate = 1) => {
+export const play = (url, timeStr, rate = 1) => {
 
   player.src = process.env.VUE_APP_BASE_API + url;
   player.load();
@@ -12,7 +12,7 @@ export const play = (url, timeStr = "", rate = 1) => {
   player.pause();
 
   let duration, startTime;
-  const timeArr = timeStr.split(",");
+  const timeArr = (timeStr || "").split(",");
 
   if (timeArr.length == 2) {
     //处理开始时间
