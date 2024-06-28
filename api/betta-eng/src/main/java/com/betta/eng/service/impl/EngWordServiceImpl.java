@@ -53,7 +53,6 @@ public class EngWordServiceImpl implements IEngWordService {
      * @return 单词
      */
     @Override
-    @CreateByScope("")
     public List<EngWord> selectEngWordList(EngWord engWord) {
         return engWordMapper.selectEngWordList(engWord);
     }
@@ -170,6 +169,7 @@ public class EngWordServiceImpl implements IEngWordService {
     }
 
     @Override
+    @CreateByScope("")
     public List<EngWord> selectNewList(EngWord engWord) {
         engWord.setCreateBy(SecurityUtils.getUsername());//当前用户的数据
         return engWordMapper.selectRelList(engWord);

@@ -18,14 +18,13 @@ import java.util.Map;
 
 /**
  * 单词Controller
- * 
+ *
  * @author ruoyi
  * @date 2024-06-03
  */
 @RestController
 @RequestMapping("/eng/word")
-public class EngWordController extends BaseController
-{
+public class EngWordController extends BaseController {
     @Autowired
     private IEngWordService engWordService;
 
@@ -34,20 +33,28 @@ public class EngWordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:word:list')")
     @GetMapping("/list")
-    public TableDataInfo list(EngWord engWord)
-    {
+    public TableDataInfo list(EngWord engWord) {
         startPage();
         List<EngWord> list = engWordService.selectEngWordList(engWord);
         return getDataTable(list);
     }
 
     /**
-     * 查询单词列表
+     * 根据ID获取单词
+     */
+    @PreAuthorize("@ss.hasPermi('eng:word:query')")
+    @GetMapping("/{id}")
+    public AjaxResult getById(@PathVariable Long id) {
+        EngWord word = engWordService.selectEngWordById(id);
+        return AjaxResult.success(word);
+    }
+
+    /**
+     * 查询生词本
      */
     @PreAuthorize("@ss.hasPermi('eng:word:list')")
     @GetMapping("/new")
-    public TableDataInfo listNew(EngWord engWord)
-    {
+    public TableDataInfo listNew(EngWord engWord) {
         startPage();
         List<EngWord> list = engWordService.selectNewList(engWord);
         return getDataTable(list);
@@ -58,8 +65,7 @@ public class EngWordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:word:list')")
     @GetMapping("/list/{articleId}")
-    public TableDataInfo list(@PathVariable Long articleId)
-    {
+    public TableDataInfo list(@PathVariable Long articleId) {
         startPage();
         List<EngWord> list = engWordService.selectWordListByArticle(articleId);
         return getDataTable(list);
@@ -70,8 +76,7 @@ public class EngWordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:word:query')")
     @GetMapping
-    public AjaxResult getInfo(String wordName)
-    {
+    public AjaxResult getInfo(String wordName) {
         return success(engWordService.getWord(wordName));
     }
 
@@ -81,13 +86,13 @@ public class EngWordController extends BaseController
     @PreAuthorize("@ss.hasPermi('eng:word:add')")
     @Log(title = "单词", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody EngWord engWord)
-    {
+    public AjaxResult add(@RequestBody EngWord engWord) {
         return toAjax(engWordService.insertEngWord(engWord));
     }
 
     /**
      * 新增文章对应的单词
+     *
      * @param map
      * @param articleId
      * @return
@@ -95,10 +100,9 @@ public class EngWordController extends BaseController
     @PreAuthorize("@ss.hasPermi('eng:word:add')")
     @Log(title = "单词", businessType = BusinessType.INSERT)
     @PostMapping("/{articleId}")
-    public AjaxResult addByArticle(@RequestBody Map map, @PathVariable Long articleId)
-    {
+    public AjaxResult addByArticle(@RequestBody Map map, @PathVariable Long articleId) {
         List<String> words = (List<String>) map.get("words");
-        engWordService.addByArticle(words,articleId);
+        engWordService.addByArticle(words, articleId);
         return AjaxResult.success();
     }
 
@@ -109,8 +113,7 @@ public class EngWordController extends BaseController
     @PreAuthorize("@ss.hasPermi('eng:word:edit')")
     @Log(title = "单词", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody EngWord engWord)
-    {
+    public AjaxResult edit(@RequestBody EngWord engWord) {
         return toAjax(engWordService.updateEngWord(engWord));
     }
 
@@ -119,9 +122,8 @@ public class EngWordController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eng:word:remove')")
     @Log(title = "单词", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{id}")
-    public AjaxResult remove(@PathVariable Long id)
-    {
+    @DeleteMapping("/{id}")
+    public AjaxResult remove(@PathVariable Long id) {
         engWordService.deleteEngWordById(id);
         return AjaxResult.success();
     }

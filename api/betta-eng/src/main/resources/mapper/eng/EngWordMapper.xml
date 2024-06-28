@@ -30,9 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
             <if test="acceptation != null  and acceptation != ''"> and acceptation like concat('%', #{acceptation}, '%')</if>
             <if test="exchange != null  and exchange != ''"> and exchange like concat('%', #{exchange}, '%')</if>
-            <!-- 数据范围过滤 -->
-            ${params.createByScope}
         </where>
+        order by word_name
     </select>
 
     <select id="selectEngWordByWordName" resultMap="EngWordResult">
@@ -119,6 +118,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
             <if test="acceptation != null  and acceptation != ''"> and acceptation like concat('%', #{acceptation}, '%')</if>
             <if test="exchange != null  and exchange != ''"> and exchange like concat('%', #{exchange}, '%')</if>
+            <!-- 数据范围过滤 -->
+            ${params.createByScope}
         </where>
     </select>
 </mapper>

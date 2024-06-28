@@ -29,7 +29,9 @@
               <el-button
                 type="text"
                 v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)"
-                @click="() => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)"
+                @click="
+                  () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
+                "
               >
                 {{ scope.row.content }}
               </el-button>
@@ -60,8 +62,11 @@
                 </el-button>
                 <span>{{ scope.row.phAm }}</span>
               </section>
-              <span>{{ scope.row.exchange }}</span>
-              <span>{{ acceptationFormatter(scope.row) }}</span>
+              <span>{{
+                scope.row.exchange
+                  ? scope.row.exchange
+                  : acceptationFormatter(scope.row)
+              }}</span>
             </div>
           </template>
         </el-table-column>
