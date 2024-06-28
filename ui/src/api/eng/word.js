@@ -35,6 +35,15 @@ export function getWord({wordName}) {
   })
 }
 
+
+// 根据ID查询单词
+export function getWordById(id) {
+  return request({
+    url: '/eng/word/' + id,
+    method: 'get'
+  })
+}
+
 // 新增单词
 export function addWord(data) {
   return request({
