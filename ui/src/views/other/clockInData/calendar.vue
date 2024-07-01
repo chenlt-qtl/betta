@@ -6,7 +6,7 @@
     <el-calendar v-model="value">
       <!-- 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法-->
       <template slot="dateCell" slot-scope="{ date, data }">
-        <p :class="`date ${getStyle(data)} `">
+        <p :class="`day ${(dataMap[data.day] || {}).dayClass}`">
           {{ data.day.split("-")[2] }}
         </p>
       </template>
@@ -47,8 +47,8 @@ export default {
   dicts: ["clock_in"],
   data() {
     return {
-      // 打卡数据表格数据
-      clockInDataList: [],
+      // 打卡数据
+      dataMap: {},
       // 是否显示弹出层
       open: false,
       value: new Date(),
@@ -56,7 +56,6 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 100,
-        time: new Date(),
       },
       // 表单参数
       form: { value: {} },
@@ -71,39 +70,39 @@ export default {
   created() {
     this.getList();
   },
+  watch: {
+    value(newV, oldV) {
+      if (
+        this.dateToString(newV).substring(0, 7) !=
+        this.dateToString(oldV).substring(0, 7)
+      ) {
+        this.getList();
+      }
+    },
+  },
   methods: {
     /** 查询打卡数据列表 */
     getList() {
       this.loading = true;
-      listClockInData(this.queryParams).then((response) => {
-        this.clockInDataList = response.rows;
+      listClockInData({
+        ...this.queryParams,
+        timeStr: this.dateToString(this.value).substring(0, 7),
+      }).then((response) => {
+        const dataMap = {};
+        response.rows.forEach((val) => {
+          dataMap[val.time] = val;
+          if (val.value) {
+            val.value = JSON.parse(val.value);
+            if (!Object.keys(val.value).find((key) => !val.value[key])) {
+              val.dayClass = "checked";
+            } else if (Object.keys(val.value).find((key) => val.value[key])) {
+              val.dayClass = "halfChecked";
+            }
+          }
+        });
+        this.dataMap = dataMap;
         this.loading = false;
       });
-    },
-    getStyle(d) {
-      const data = this.clockInDataList.find((v) => v.time == d.day);
-      if (data) {
-        const value = JSON.parse(data.value);
-        if(Object.keys(value).find(v=>!value[v])){
-            return ""
-        }else{
-            return "checked"
-        }
-      }
-      return "";
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        time: null,
-        value: null,
-        createTime: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null,
-      };
-      this.resetForm("form");
     },
     dateToString(date) {
       const year = date.getFullYear();
@@ -113,12 +112,9 @@ export default {
     },
     showDialog() {
       const dateStr = this.dateToString(this.value);
-      const data = this.clockInDataList.find((data) => data.time == dateStr);
-      if (data) {
-        this.form = { ...data, value: JSON.parse(data.value) };
-      } else {
-        this.form = { value: { 1: false, 2: false }, time: this.value };
-      }
+      const data = this.dataMap[dateStr];
+
+      this.form = data || { value: { 1: false, 2: false }, time: this.value };
       this.open = true;
     },
     /** 提交按钮 */
@@ -158,16 +154,26 @@ export default {
   }
 
   .date {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .day {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
   }
 
   .checked {
     background: #67c23a;
+    color: #fff;
+  }
+
+  .halfChecked {
+    background: #e6a23c;
     color: #fff;
   }
 }

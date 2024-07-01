@@ -25,6 +25,8 @@ public class ClockInData extends BaseEntity
     @Excel(name = "打卡日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date time;
 
+    private String timeStr;
+
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String value;
