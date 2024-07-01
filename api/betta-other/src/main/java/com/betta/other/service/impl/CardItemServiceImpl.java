@@ -1,12 +1,13 @@
-package com.betta.card.service.impl;
+package com.betta.other.service.impl;
 
-import java.util.List;
 import com.betta.common.utils.DateUtils;
+import com.betta.other.domain.CardItem;
+import com.betta.other.mapper.CardItemMapper;
+import com.betta.other.service.ICardItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.betta.card.mapper.CardItemMapper;
-import com.betta.card.domain.CardItem;
-import com.betta.card.service.ICardItemService;
+
+import java.util.List;
 
 /**
  * 卡片项明细Service业务层处理
@@ -15,7 +16,7 @@ import com.betta.card.service.ICardItemService;
  * @date 2024-06-17
  */
 @Service
-public class CardItemServiceImpl implements ICardItemService 
+public class CardItemServiceImpl implements ICardItemService
 {
     @Autowired
     private CardItemMapper cardItemMapper;

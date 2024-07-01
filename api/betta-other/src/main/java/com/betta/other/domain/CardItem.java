@@ -1,8 +1,8 @@
-package com.betta.card.domain;
+package com.betta.other.domain;
 
-import lombok.Data;
 import com.betta.common.annotation.Excel;
 import com.betta.common.core.domain.BaseEntity;
+import lombok.Data;
 
 /**
  * 卡片项明细对象 card_item

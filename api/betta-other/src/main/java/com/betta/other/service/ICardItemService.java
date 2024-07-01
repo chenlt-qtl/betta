@@ -1,15 +1,16 @@
-package com.betta.card.mapper;
+package com.betta.other.service;
+
+import com.betta.other.domain.CardItem;
 
 import java.util.List;
-import com.betta.card.domain.CardItem;
 
 /**
- * 卡片项明细Mapper接口
+ * 卡片项明细Service接口
  * 
  * @author chenlt
  * @date 2024-06-17
  */
-public interface CardItemMapper 
+public interface ICardItemService 
 {
     /**
      * 查询卡片项明细
@@ -44,18 +45,18 @@ public interface CardItemMapper
     public int updateCardItem(CardItem cardItem);
 
     /**
-     * 删除卡片项明细
+     * 批量删除卡片项明细
+     * 
+     * @param ids 需要删除的卡片项明细主键集合
+     * @return 结果
+     */
+    public int deleteCardItemByIds(Long[] ids);
+
+    /**
+     * 删除卡片项明细信息
      * 
      * @param id 卡片项明细主键
      * @return 结果
      */
     public int deleteCardItemById(Long id);
-
-    /**
-     * 批量删除卡片项明细
-     * 
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteCardItemByIds(Long[] ids);
 }

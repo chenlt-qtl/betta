@@ -68,7 +68,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/index'),
+        component: () => import('@/views/other/clockInData/calendar'),
         name: 'Index',
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
