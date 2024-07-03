@@ -101,9 +101,7 @@ export default {
   data() {
     return {
       //搜索内容
-      searchStr: "",
-      //是否正在搜索
-      isSearch: false,
+      searchStr: this.search,
       //是否是多选模式
       isCheck: false,
       // 遮罩层
@@ -137,6 +135,9 @@ export default {
     selectedNoteId() {
       return this.$store.state.note.selectedNoteId;
     },
+    search() {
+      return this.$route.query && this.$route.query.search;
+    },
   },
   watch: {
     openedNote() {
@@ -151,8 +152,8 @@ export default {
     selectedNoteName() {
       this.setLabel();
     },
-    selectedNoteId() {
-      this.$store.dispatch("note/getListData");
+    search(value) {
+      this.searchStr = value;
     },
   },
   methods: {
@@ -187,22 +188,18 @@ export default {
         });
       } else {
         this.searchStr = "";
-        this.isSearch = false;
-        this.$store.dispatch("note/setSearch", this.searchStr);
+        this.$router.push({
+          path: "/n/note",
+          query: { ...this.$route.query, search: "" },
+        });
         this.$store.dispatch("note/setSelectedNoteId", selection.id);
       }
     },
     onSearch() {
-      if (this.searchStr) {
-        this.isSearch = true;
-      } else {
-        this.isSearch = false;
-      }
-      this.$store.dispatch("note/setSearch", this.searchStr);
       this.$store.dispatch("note/setSelectedNoteId", 0);
-      this.$nextTick(() => {
-        this.setLabel();
-        this.$store.dispatch("note/getListData");
+      this.$router.push({
+        path: "/n/note",
+        query: { ...this.$route.query, search: this.searchStr },
       });
     },
     handleCheck() {

@@ -90,17 +90,17 @@ const actions = {
         method = listLast;
         break;
       default:
-        //没有父节点ID不发送请求
-        if (!selectedNoteId && selectedNoteId != "0") {
-          return;
-        }
         if (searchStr) {
           queryParams = {
             pageNum: 1,
             pageSize: 1000,
-            name: searchStr
+            name: searchStr,
           };
         } else {
+          //没有父节点ID不发送请求
+          if (!selectedNoteId && selectedNoteId != "0") {
+            return;
+          }
           queryParams = {
             pageNum: 1,
             pageSize: 1000,
@@ -123,16 +123,20 @@ const actions = {
   // 打开note
   openNote({
     commit,
-    state
+    state,
+    dispatch
   }, id) {
     const openedNotes = new Map(state.openedNotes)
+    const search = state.search
     return new Promise((resolve, reject) => {
       if (id) {
         getNoteInfo(id).then(res => {
           commit('SET_OPENED_NOTE', res.data)
           openedNotes.set(id, res.data)
           commit('SET_OPENED_NOTES', openedNotes)
-          commit('SET_SELECTED_NOTE_ID', res.data.parentId)
+          if (!search) {
+            dispatch('setSelectedNoteId', res.data.parentId)
+          }
           resolve(res)
         }).catch(error => {
           commit('SET_OPENED_NOTE', {})
@@ -170,9 +174,11 @@ const actions = {
     })
   },
   setSelectedNoteId({
-    commit
+    commit,
+    dispatch
   }, data) {
     commit('SET_SELECTED_NOTE_ID', data)
+    dispatch('getListData')
   },
   setSelectedNoteName({
     commit
@@ -190,14 +196,18 @@ const actions = {
     commit("SET_OPENED_NOTE", data4)
   },
   setListType({
-    commit
+    commit,
+    dispatch
   }, data) {
     commit("SET_LIST_TYPE", data)
+    dispatch('getListData')
   },
   setSearch({
-    commit
+    commit,
+    dispatch
   }, data) {
     commit("SET_SEARCH", data)
+    dispatch('getListData')
   },
 }
 

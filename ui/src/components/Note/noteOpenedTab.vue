@@ -42,7 +42,7 @@ export default {
     handleClick(data) {
       this.$router.push({
         path: "/n/note",
-        query: { ...this.$route.query, id: data.name },
+        query: { id: data.name },
       });
     },
     handleTabsEdit(targetName, action) {

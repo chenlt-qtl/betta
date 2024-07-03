@@ -28,8 +28,8 @@ export default {
     type() {
       return this.$route.query && this.$route.query.type;
     },
-    searchStr() {
-      return this.$route.search && this.$route.search.search;
+    search() {
+      return this.$route.query && this.$route.query.search;
     },
   },
   watch: {
@@ -39,9 +39,10 @@ export default {
     type() {
       //设置listType
       this.$store.dispatch("note/setListType", this.type);
-      //更新list
-      this.$store.dispatch("note/getListData");
     },
+    search(){
+      this.$store.dispatch("note/setSearch", this.search);
+    }
   },
   methods: {
     getNote() {
@@ -50,6 +51,7 @@ export default {
     initData() {
       //设置listType
       this.$store.dispatch("note/setListType", this.type);
+      this.$store.dispatch("note/setSearch", this.search);
 
       //加载Note
       this.getNote().then(() => {
