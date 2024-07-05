@@ -42,3 +42,14 @@ export function delArticle(id) {
     method: 'delete'
   })
 }
+
+
+// 查询播放列表相关的数据
+export function listPlay(query) {
+  return request({
+    url: '/eng/article/list/play',
+    method: 'get',
+    params: query
+  })
+}
+

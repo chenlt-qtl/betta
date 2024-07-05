@@ -53,9 +53,8 @@
 </template>
 <script>
 import { play } from "@/utils/audio";
-import { listPlay } from "@/api/eng/sentence";
 import { mapGetters } from "vuex";
-import { getArticle } from "@/api/eng/article";
+import { getArticle,listPlay } from "@/api/eng/article";
 import { listSentence } from "@/api/eng/sentence";
 import { listWordByArticle } from "@/api/eng/word";
 
@@ -76,7 +75,7 @@ export default {
     ...mapGetters(["name"]),
     mp3Name() {
       if (this.listData.length > 0 && this.playIndex != -1) {
-        return this.listData[this.playIndex].articleName;
+        return this.listData[this.playIndex].title;
       }
       return "无标题";
     },
@@ -119,33 +118,37 @@ export default {
         inPlayList: true,
         username,
       }).then((response) => {
-        this.listData = response.rows.filter((data) => data.mp3);
+        const articleList = response.rows;
+        console.log('====================================');
+        console.log(articleList);
+        console.log('====================================');
+        articleList.forEach(
+          article=>this.getSentence(article)
+        )
       });
     }
   },
   methods: {
-    async getArticleDetail(articleId) {
-      const listData = [];
-      const articleRes = await getArticle(articleId);
-      const article = articleRes.data;
+    async getSentence(article){
+      const listData = [...this.listData];
       const senRes = await listSentence({
         pageNum: 1,
         pageSize: 1000,
-        articleId,
+        articleId:article.id,
       });
       if (senRes.rows && senRes.rows.length > 0) {
         senRes.rows.forEach((sen) =>
           listData.push({
             mp3: sen.mp3Time ? article.mp3 : sen.mp3,
             mp3Time: sen.mp3Time,
-            articleName: article.title,
+            title: article.title,
           })
         );
       }
       const wordRes = await listWordByArticle({
         pageNum: 1,
         pageSize: 1000,
-        articleId,
+        articleId:article.id,
       });
       if (wordRes.rows && wordRes.rows.length > 0) {
         wordRes.rows.forEach((word) =>
@@ -156,6 +159,13 @@ export default {
         );
       }
       this.listData = listData;
+    },
+    async getArticleDetail(articleId) {
+      
+      const articleRes = await getArticle(articleId);
+      const article = articleRes.data;
+      this.getSentence(article)
+
     },
     playList() {
       if (this.listData.length <= 0) {

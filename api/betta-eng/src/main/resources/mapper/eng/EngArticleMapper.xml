@@ -94,4 +94,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="selectPlayList" parameterType="EngArticle" resultMap="EngArticleResult">
+        select eng_article.id,eng_article.title,eng_article.mp3,eng_article_group.name as group_name
+        from eng_article_group, eng_article
+        <where>
+            and eng_article_group.id = eng_article.group_id
+            <if test="groupId != null  and groupId != ''"> and eng_article_group.id = #{groupId}</if>
+            <if test="title != null  and title != ''"> and eng_article.title like concat('%',#{title},'%')</if>
+            <if test="params.existIds != null  and params.existIds != ''">and eng_article.id in (${params.existIds})</if>
+            <if test="params.notExistIds != null  and params.notExistIds != ''">and eng_article.id not in (${params.notExistIds})</if>
+
+            <!-- 数据范围过滤 -->
+            ${params.createByScope}
+            and eng_article.mp3 is not null
+        </where>
+        order by group_name,title
+    </select>
+
 </mapper>

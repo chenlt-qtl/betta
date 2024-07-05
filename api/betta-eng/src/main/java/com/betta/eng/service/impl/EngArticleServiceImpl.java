@@ -4,10 +4,12 @@ import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngSentence;
+import com.betta.eng.domain.PlayList;
 import com.betta.eng.mapper.EngArticleMapper;
 import com.betta.eng.service.IEngArticleService;
 import com.betta.eng.service.IEngArticleWordRelService;
 import com.betta.eng.service.IEngSentenceService;
+import com.betta.eng.service.IPlayListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,9 @@ public class EngArticleServiceImpl implements IEngArticleService {
 
     @Autowired
     private IEngSentenceService sentenceService;
+
+    @Autowired
+    private IPlayListService playListService;
 
     @Autowired
     private IEngArticleWordRelService articleWordRel;
@@ -95,5 +100,24 @@ public class EngArticleServiceImpl implements IEngArticleService {
         //删除关联
         articleWordRel.deleteByArticle(id);
         return engArticleMapper.deleteEngArticleById(id);
+    }
+
+    @Override
+    @CreateByScope("eng_article")
+    public List<EngSentence> selectPlayList(EngArticle engArticle, boolean inPlayList, String username) {
+        PlayList playList = new PlayList();
+        playList.setUserName(username);
+        List<PlayList> playLists = playListService.selectPlayListList(playList);
+        String sentenceIds = "";
+        if (!playLists.isEmpty()) {
+            sentenceIds = playLists.get(0).getSentenceIds();
+        }
+        if (StringUtils.hasText(sentenceIds)) {
+            engArticle.getParams().put(inPlayList ? "existIds" : "notExistIds", sentenceIds);
+        } else if (inPlayList) {
+            return new ArrayList<>();
+        }
+        engArticle.setCreateBy(username);
+        return engArticleMapper.selectPlayList(engArticle);
     }
 }

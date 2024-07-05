@@ -2,6 +2,11 @@ package com.betta.web.controller.eng;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.betta.common.exception.ServiceException;
+import com.betta.common.utils.SecurityUtils;
+import com.betta.common.utils.StringUtils;
+import com.betta.eng.domain.EngSentence;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,5 +105,25 @@ public class EngArticleController extends BaseController
     public AjaxResult remove(@PathVariable Long id)
     {
         return toAjax(engArticleService.deleteEngArticleById(id));
+    }
+
+    /**
+     * 查询播放列表相关句子
+     *
+     * @param engSentence
+     * @param inPlayList  是否在播放列表
+     * @return
+     */
+    @GetMapping("/list/play")
+    public TableDataInfo listPlay(EngArticle engArticle, boolean inPlayList, String username) {
+        startPage();
+        if(!StringUtils.hasText(username)){
+            username = SecurityUtils.getUsername();
+        }
+        if(!StringUtils.hasText(username)){
+            throw new ServiceException("请输入用户名");
+        }
+        List<EngSentence> list = engArticleService.selectPlayList(engArticle, inPlayList,username);
+        return getDataTable(list);
     }
 }

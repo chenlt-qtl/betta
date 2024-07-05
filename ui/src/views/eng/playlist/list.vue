@@ -9,9 +9,9 @@
       label-width="68px"
       @submit.native.prevent
     >
-      <el-form-item label="关键字" prop="content">
+      <el-form-item label="关键字" prop="title">
         <el-input
-          v-model="queryParams.content"
+          v-model="queryParams.title"
           placeholder="请输入关键字"
           clearable
           @keyup.enter.native="handleQuery"
@@ -76,13 +76,7 @@
       <el-table-column
         label="文章"
         align="center"
-        prop="articleName"
-        :show-overflow-tooltip="true"
-      />
-      <el-table-column
-        label="句子"
-        align="center"
-        prop="content"
+        prop="title"
         :show-overflow-tooltip="true"
       />
       <el-table-column
@@ -102,21 +96,21 @@
         </template>
       </el-table-column>
     </el-table>
-    <selectSentence
-      ref="selectSentence"
+    <selectArticle
+      ref="selectArticle"
       :playList="form"
       @ok="() => getList()"
-    ></selectSentence>
+    ></selectArticle>
   </div>
 </template>
 
 <script>
 import { getPlayList, addPlayList, updatePlayList } from "@/api/eng/playList";
-import selectSentence from "./selectSentence.vue";
-import { listPlay } from "@/api/eng/sentence";
+import selectArticle from "./selectArticle.vue";
+import { listPlay } from "@/api/eng/article";
 
 export default {
-  components: { selectSentence },
+  components: { selectArticle },
   data() {
     return {
       // 遮罩层
@@ -180,7 +174,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.getByUser();
-      this.$refs.selectSentence.show();
+      this.$refs.selectArticle.show();
     },
     /** 提交按钮 */
     submitForm() {

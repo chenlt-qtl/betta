@@ -2,6 +2,7 @@ package com.betta.eng.service;
 
 import java.util.List;
 import com.betta.eng.domain.EngArticle;
+import com.betta.eng.domain.EngSentence;
 
 /**
  * 英语文章Service接口
@@ -52,4 +53,5 @@ public interface IEngArticleService
      */
     public int deleteEngArticleById(Long id);
 
+    List<EngSentence> selectPlayList(EngArticle engArticle, boolean inPlayList, String username);
 }
