@@ -202,7 +202,7 @@
           </el-form-item>
           <el-form-item label="音频" prop="mp3" v-if="!useTopMp3">
             <file-upload
-              :fileType="['mp3']"
+              :fileType="['mp3','m4a']"
               v-model="form.mp3"
               uploadType="article"
             />
