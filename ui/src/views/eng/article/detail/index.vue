@@ -127,7 +127,9 @@
         :limit.sync="queryParams.pageSize"
         @pagination="getSentenceList"
       />
-      <el-divider content-position="center">单词信息 (共 {{wordTotal}} 条)</el-divider>
+      <el-divider content-position="center"
+        >单词信息 (共 {{ wordTotal }} 条)</el-divider
+      >
       <el-table v-loading="loading" :data="wordList">
         <el-table-column label="单词" align="center" prop="wordName" />
         <el-table-column label="音标" align="center" prop="phAm" />
@@ -202,15 +204,15 @@
           </el-form-item>
           <el-form-item label="音频" prop="mp3" v-if="!useTopMp3">
             <file-upload
-              :fileType="['mp3','m4a']"
+              :fileType="['mp3', 'm4a']"
               v-model="form.mp3"
               uploadType="article"
             />
           </el-form-item>
           <el-form-item label="MP3时间" prop="mp3Time" v-if="useTopMp3">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
-            格式1: 开始时间(int),持续时间(float) 例: 5,8.5<br/>
-            格式2: 开始时间(分:秒),持续时间(float) 例: 02:55,8.5<br/>
+            格式1: 开始时间(int),持续时间(float) 例: 5,8.5<br />
+            格式2: 开始时间(分:秒),持续时间(float) 例: 02:55,8.5<br />
             <el-button
               type="text"
               @click="() => play(article.mp3, form.mp3Time)"
@@ -421,7 +423,7 @@ export default {
       const id = row.id || this.sentenceIds;
       getSentence(id).then((response) => {
         this.form = response.data;
-        this.useTopMp3 = this.form.mp3 ? 0 : 1;
+        this.useTopMp3 = this.form.mp3 ? 1 : 0;
         this.openSentence = true;
         this.title = "修改句子";
       });
