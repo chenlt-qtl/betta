@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="time != null "> and time = #{time}</if>
             <if test="timeStr != null "> and time like concat(#{timeStr},'%')</if>
             <if test="value != null  and value != ''"> and value = #{value}</if>
+            ${params.createByScope}
         </where>
     </select>
     

@@ -1,5 +1,6 @@
 package com.betta.other.service.impl;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.other.domain.ClockInData;
 import com.betta.other.mapper.ClockInDataMapper;
@@ -38,6 +39,7 @@ public class ClockInDataServiceImpl implements IClockInDataService {
      * @return 打卡数据
      */
     @Override
+    @CreateByScope("")
     public List<ClockInData> selectClockInDataList(ClockInData clockInData) {
         return clockInDataMapper.selectClockInDataList(clockInData);
     }
