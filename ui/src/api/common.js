@@ -10,3 +10,14 @@ export function uploadNoteImg(fileStr) {
     }
   })
 }
+
+// 上传文件
+export function uploadByUrl(fileUrl,type) {
+  return request({
+    url: '/common/upload/url/'+type,
+    method: 'post',
+    params: {
+      url: fileUrl
+    }
+  })
+}

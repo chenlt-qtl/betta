@@ -202,13 +202,27 @@
               <el-radio-button :label="1">否</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="音频" prop="mp3" v-if="!useTopMp3">
-            <file-upload
-              :fileType="['mp3', 'm4a']"
-              v-model="form.mp3"
-              uploadType="article"
-            />
-          </el-form-item>
+          <div v-if="!useTopMp3">
+            <el-form-item label="上传方式" prop="uploadType">
+              <el-radio-group v-model="uploadType">
+                <el-radio label="file">文件</el-radio>
+                <el-radio label="url">URL</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="音频" prop="mp3">
+              <file-upload
+                v-if="uploadType == 'file'"
+                :fileType="['mp3', 'm4a']"
+                v-model="form.mp3"
+                uploadType="article"
+              />
+              <uploadByUrl
+                v-if="uploadType == 'url'"
+                v-model="form.mp3"
+                uploadType="article"
+              />
+            </el-form-item>
+          </div>
           <el-form-item label="MP3时间" prop="mp3Time" v-if="useTopMp3">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
             格式1: 开始时间(int),持续时间(float) 例: 5,8.5<br />
@@ -261,6 +275,7 @@
 
 <script>
 import { getArticle } from "@/api/eng/article";
+import uploadByUrl from "@/components/UploadByUrl";
 
 import {
   listSentence,
@@ -277,8 +292,10 @@ import { play } from "@/utils/audio";
 
 export default {
   name: "Article",
+  components: { uploadByUrl },
   data() {
     return {
+      uploadType: "file",
       useTopMp3: 1,
       articleId: 0,
       article: {},
@@ -398,6 +415,7 @@ export default {
         mp3Time: null,
         status: null,
       };
+      this.uploadType = "file";
       this.useTopMp3 = this.article.mp3 ? 1 : 0;
       this.resetForm("form");
     },
@@ -423,7 +441,8 @@ export default {
       const id = row.id || this.sentenceIds;
       getSentence(id).then((response) => {
         this.form = response.data;
-        this.useTopMp3 = this.form.mp3 ? 1 : 0;
+        this.useTopMp3 = !this.article.mp3 ? 0 : this.form.mp3 ? 0 : 1;
+        this.uploadType = "file";
         this.openSentence = true;
         this.title = "修改句子";
       });

@@ -13,6 +13,7 @@ import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.file.Base64Utils;
 import com.betta.common.utils.file.ImageUtils;
+import com.betta.common.utils.uuid.Seq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,33 @@ public class CommonController {
             ajax.put("fileName", fileName);
             ajax.put("newFileName", FileUtils.getName(fileName));
             ajax.put("originalFilename", file.getOriginalFilename());
+            return ajax;
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload/url/{type}")
+    public AjaxResult uploadFile(String url, @PathVariable String type) throws Exception {
+        try {
+            // 上传文件路径
+            String filePath = BettaConfig.getUploadPath();
+            if (StringUtils.equals(UploadFileType.WORD.getType(), type)) {
+                filePath = BettaConfig.getWordPath();
+            } else if (StringUtils.equals(UploadFileType.ARTICLE.getType(), type)) {
+                filePath = BettaConfig.getArticlePath();
+            } else if (StringUtils.equals(UploadFileType.NOTICE.getType(), type)) {
+                filePath = BettaConfig.getNoticePath();
+            }
+
+            // 上传并返回新文件名称
+            String originFileName = url.substring(url.lastIndexOf('/') + 1);
+            String extension = originFileName.substring(originFileName.lastIndexOf('.'));
+            filePath = filePath + "/" + DateUtils.datePath();
+            String fileName = FileUtils.writeBytes(url, filePath, Seq.getId(Seq.uploadSeqType)+extension);
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("url", serverConfig.getUrl() + fileName);
+            ajax.put("fileName", originFileName);
             return ajax;
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
