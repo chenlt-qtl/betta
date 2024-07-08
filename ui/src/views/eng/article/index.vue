@@ -16,6 +16,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="分组" prop="groupId">
+          <el-select v-model="queryParams.groupId">
+            <el-option
+              v-for="group in groupList"
+              :key="group.id"
+              :label="group.name"
+              :value="group.id"
+            />
+          </el-select>
+        </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
