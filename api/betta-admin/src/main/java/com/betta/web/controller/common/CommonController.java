@@ -152,9 +152,9 @@ public class CommonController {
             String originFileName = url.substring(url.lastIndexOf('/') + 1);
             String extension = originFileName.substring(originFileName.lastIndexOf('.'));
             filePath = filePath + "/" + DateUtils.datePath();
-            String fileName = FileUtils.writeBytes(url, filePath, Seq.getId(Seq.uploadSeqType)+extension);
+            String fileUrl = FileUtils.writeBytes(url, filePath, Seq.getId(Seq.uploadSeqType)+extension);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", serverConfig.getUrl() + fileName);
+            ajax.put("url", fileUrl);
             ajax.put("fileName", originFileName);
             return ajax;
         } catch (Exception e) {
