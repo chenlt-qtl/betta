@@ -26,20 +26,25 @@
         <el-table-column prop="content">
           <template slot-scope="scope">
             <section class="sentence">
-              <el-button
-                type="text"
+              <a
                 v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)"
                 @click="
                   () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
                 "
+                >{{ scope.row.content }}</a
               >
-                {{ scope.row.content }}
-              </el-button>
               <div v-if="!scope.row.mp3 && !(scope.row.mp3Time && article.mp3)">
                 {{ scope.row.content }}
               </div>
               <span>
                 {{ scope.row.acceptation }}
+                <el-button
+                  v-if="scope.row.mp3Time && article.mp3"
+                  size="mini"
+                  type="text"
+                  icon="el-icon-edit"
+                  @click="handleUpdate(scope.row)"
+                ></el-button>
               </span>
             </section>
           </template>
@@ -72,12 +77,35 @@
         </el-table-column>
       </el-table>
     </div>
+    <!-- 调整语音时间 -->
+    <el-dialog
+      title="调整时间"
+      :visible.sync="open"
+      width="300px"
+      append-to-body
+    >
+      <div class="mp3-time">
+        <el-input v-model="sentence.mp3Time" placeholder="请输入MP3时间" />
+        格式1: 5,8.5<br />
+        格式2: 02:55,8.5<br />
+        <el-button
+          type="text"
+          @click="() => play(article.mp3, sentence.mp3Time)"
+        >
+          试听
+        </el-button>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="onSubmit">确 定</el-button>
+        <el-button @click="() => (open = false)">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getArticle } from "@/api/eng/article";
-import { listSentence } from "@/api/eng/sentence";
+import { listSentence, updateSentence } from "@/api/eng/sentence";
 import { listWordByArticle } from "@/api/eng/word";
 import { play } from "@/utils/audio";
 
@@ -93,6 +121,8 @@ export default {
       // 英语文章表格数据
       sentenceList: [],
       wordList: [],
+      open: false,
+      sentence: {},
     };
   },
   created() {
@@ -144,6 +174,17 @@ export default {
       const strs = acceptation.split("|");
       return strs[0] + (strs.length > 1 ? "..." : "");
     },
+    handleUpdate(row) {
+      this.sentence = row;
+      this.open = true;
+    },
+    onSubmit() {
+      updateSentence(this.sentence).then(() => {
+        this.$modal.msgSuccess("修改成功");
+        this.open = false;
+        this.getSentenceList();
+      });
+    },
   },
 };
 </script>
@@ -185,6 +226,10 @@ export default {
       display: block;
       font-size: 12px;
     }
+    a {
+      color: #1890ff;
+      font-size: 14px;
+    }
   }
   .word-container {
     display: flex;
@@ -195,6 +240,12 @@ export default {
       gap: 20px;
       align-items: center;
     }
+  }
+  .mp3-time {
+    background: #1890ff;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 }
 </style>

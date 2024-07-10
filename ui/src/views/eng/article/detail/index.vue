@@ -400,7 +400,6 @@ export default {
     cancel() {
       this.openSentence = false;
       this.openWord = false;
-      this.resetSentence();
     },
     // 表单重置
     resetSentence() {
