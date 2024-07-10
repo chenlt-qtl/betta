@@ -106,7 +106,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             <!-- 数据范围过滤 -->
             ${params.createByScope}
-            and eng_article.mp3 is not null
         </where>
         order by group_name,title
     </select>
