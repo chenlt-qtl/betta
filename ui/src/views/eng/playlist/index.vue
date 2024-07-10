@@ -54,11 +54,11 @@
 <script>
 import { play } from "@/utils/audio";
 import { mapGetters } from "vuex";
-import { getArticle,listPlay } from "@/api/eng/article";
+import { getArticle, listPlay } from "@/api/eng/article";
 import { listSentence } from "@/api/eng/sentence";
 import { listWordByArticle } from "@/api/eng/word";
 
-let player, intervalIndex;
+let player, intervalIndex, startTime;
 
 export default {
   data() {
@@ -119,22 +119,17 @@ export default {
         username,
       }).then((response) => {
         const articleList = response.rows;
-        console.log('====================================');
-        console.log(articleList);
-        console.log('====================================');
-        articleList.forEach(
-          article=>this.getSentence(article)
-        )
+        articleList.forEach((article) => this.getSentence(article));
       });
     }
   },
   methods: {
-    async getSentence(article){
+    async getSentence(article) {
       const listData = [...this.listData];
       const senRes = await listSentence({
         pageNum: 1,
         pageSize: 1000,
-        articleId:article.id,
+        articleId: article.id,
       });
       if (senRes.rows && senRes.rows.length > 0) {
         senRes.rows.forEach((sen) =>
@@ -148,7 +143,7 @@ export default {
       const wordRes = await listWordByArticle({
         pageNum: 1,
         pageSize: 1000,
-        articleId:article.id,
+        articleId: article.id,
       });
       if (wordRes.rows && wordRes.rows.length > 0) {
         wordRes.rows.forEach((word) =>
@@ -161,11 +156,9 @@ export default {
       this.listData = listData;
     },
     async getArticleDetail(articleId) {
-      
       const articleRes = await getArticle(articleId);
       const article = articleRes.data;
-      this.getSentence(article)
-
+      this.getSentence(article);
     },
     playList() {
       if (this.listData.length <= 0) {
@@ -177,6 +170,7 @@ export default {
         if (player) {
           player.play();
         } else {
+          startTime = new Date().getTime(); //记录开始播放时间
           this.playIndex = 0; //从0开始播放
           player = this.playMp3();
           player.addEventListener("pause", this.onEnded);
@@ -190,9 +184,13 @@ export default {
       if (!this.isPlaying) {
         return;
       }
+      const nowTime = new Date().getTime();
       if (this.playIndex < this.listData.length - 1) {
         this.playIndex = this.playIndex + 1;
       } else if (this.isTimed) {
+        this.playIndex = 0;
+      } else if ((nowTime - startTime) / 1000 / 60 <= 90) {
+        //如果不到90分钟，再循环一次
         this.playIndex = 0;
       } else {
         return;
