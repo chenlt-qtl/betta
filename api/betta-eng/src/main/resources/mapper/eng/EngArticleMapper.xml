@@ -104,8 +104,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.existIds != null  and params.existIds != ''">and eng_article.id in (${params.existIds})</if>
             <if test="params.notExistIds != null  and params.notExistIds != ''">and eng_article.id not in (${params.notExistIds})</if>
 
-            <!-- 数据范围过滤 -->
-            ${params.createByScope}
+            <!-- 数据范围过滤 此处不使用CreateByScope 因为createBy参数可能不是登录用户-->
+            and eng_article.create_by = #{createBy}
         </where>
         order by group_name,title
     </select>

@@ -218,7 +218,7 @@ export default {
         this.playIndex >= 0
       ) {
         const { mp3, mp3Time } = this.listData[this.playIndex];
-        player = play(mp3, mp3Time);
+        player = play(mp3, mp3Time, 1, () => this.step(1));
         return player;
       }
     },
@@ -226,7 +226,7 @@ export default {
       if (player) {
         const dataLength = this.listData.length;
         const newIndex = this.playIndex + num;
-        if (newIndex < dataLength - 1 && newIndex >= 0) {
+        if (newIndex < dataLength && newIndex >= 0) {
           this.playIndex = newIndex;
           player.pause();
           this.playMp3();

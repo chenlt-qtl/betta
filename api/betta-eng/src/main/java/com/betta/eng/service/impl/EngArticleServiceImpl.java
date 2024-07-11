@@ -103,7 +103,6 @@ public class EngArticleServiceImpl implements IEngArticleService {
     }
 
     @Override
-    @CreateByScope("eng_article")
     public List<EngSentence> selectPlayList(EngArticle engArticle, boolean inPlayList, String username) {
         PlayList playList = new PlayList();
         playList.setUserName(username);

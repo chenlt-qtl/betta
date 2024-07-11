@@ -2,7 +2,7 @@ let player = new Audio();
 let timer;
 
 /**播放MP3 */
-export const play = (url, timeStr, rate = 1) => {
+export const play = (url, timeStr, rate = 1, onError = () => {}) => {
 
   player.src = process.env.VUE_APP_BASE_API + url;
   player.load();
@@ -32,7 +32,9 @@ export const play = (url, timeStr, rate = 1) => {
   player.currentTime = startTime | 0;
   player.playbackRate = rate; //速率
 
-  player.play();
+  player.play().catch(e => {
+    onError && onError(e)
+  });
 
   if (duration) {
 
