@@ -189,7 +189,7 @@ export default {
         this.playIndex = this.playIndex + 1;
       } else if (this.isTimed) {
         this.playIndex = 0;
-      } else if ((nowTime - startTime) / 1000 / 60 <= 90) {
+      } else if ((nowTime - startTime) / (1000 * 60) <= 90) {
         //如果不到90分钟，再循环一次
         this.playIndex = 0;
       } else {
