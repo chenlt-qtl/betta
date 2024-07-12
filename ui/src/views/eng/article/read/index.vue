@@ -38,13 +38,29 @@
               </div>
               <span>
                 {{ scope.row.acceptation }}
-                <el-button
-                  v-if="scope.row.mp3Time && article.mp3"
-                  size="mini"
-                  type="text"
-                  icon="el-icon-edit"
-                  @click="handleUpdate(scope.row)"
-                ></el-button>
+                <span v-if="scope.row.mp3Time && article.mp3">
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-edit"
+                    @click="handleUpdate(scope.row)"
+                  ></el-button>
+
+                  <el-dropdown
+                    trigger="click"
+                    @command="(c) => handleCommand(scope.row, c)"
+                  >
+                    <span class="el-dropdown-link">
+                      <i class="el-icon-more"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item command="a">S+1</el-dropdown-item>
+                      <el-dropdown-item command="b">S-1</el-dropdown-item>
+                      <el-dropdown-item command="c">D+0.5</el-dropdown-item>
+                      <el-dropdown-item command="d">D-0.5</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </span>
               </span>
             </section>
           </template>
@@ -81,16 +97,44 @@
     <el-dialog
       title="调整时间"
       :visible.sync="open"
-      width="300px"
+      width="320px"
       append-to-body
     >
-      <div class="mp3-time">
-        <el-input v-model="sentence.mp3Time" placeholder="请输入MP3时间" />
-        格式1: 5,8.5<br />
-        格式2: 02:55,8.5<br />
+      <div>
+        <el-input-number
+          v-model="time1"
+          placeholder="请输入开始时间"
+          :min="0"
+          size="mini"
+        />
+        ,
+        <el-input-number
+          v-model="time2"
+          placeholder="请输入结束时间"
+          :min="0"
+          :step="0.3"
+          :precision="1"
+          size="mini"
+        />
+        <div
+          style="padding-top: 10px; display: flex; gap: 5px; flex-wrap: wrap"
+        >
+          <el-button size="mini" type="danger" @click="() => addStart(-1)"
+            >S-1</el-button
+          >
+          <el-button size="mini" type="primary" @click="() => addStart(1)"
+            >S+1</el-button
+          >
+          <el-button size="mini" type="danger" @click="() => addDuration(-0.5)"
+            >D-0.5</el-button
+          >
+          <el-button size="mini" type="primary" @click="() => addDuration(0.5)"
+            >D+0.5</el-button
+          >
+        </div>
         <el-button
           type="text"
-          @click="() => play(article.mp3, sentence.mp3Time)"
+          @click="() => play(article.mp3, time1 + ',' + time2)"
         >
           试听
         </el-button>
@@ -123,6 +167,8 @@ export default {
       wordList: [],
       open: false,
       sentence: {},
+      time1: 0,
+      time2: 0,
     };
   },
   created() {
@@ -176,14 +222,53 @@ export default {
     },
     handleUpdate(row) {
       this.sentence = row;
+      const mp3Time = (this.sentence.mp3Time || ",").split(",");
+      this.time1 = mp3Time[0];
+      this.time2 = mp3Time[1];
       this.open = true;
     },
     onSubmit() {
+      this.sentence.mp3Time = this.time1 + "," + this.time2;
       updateSentence(this.sentence).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.open = false;
         this.getSentenceList();
       });
+    },
+    addStart(num) {
+      this.time1 += num;
+    },
+    addDuration(num) {
+      this.time2 += num;
+    },
+    updateStart(num) {
+      const mp3Time = (this.sentence.mp3Time || ",").split(",");
+      this.time1 = parseInt(mp3Time[0]) + num;
+      this.time2 = mp3Time[1];
+      this.onSubmit();
+    },
+    updateDuration(num) {
+      const mp3Time = (this.sentence.mp3Time || ",").split(",");
+      this.time1 = mp3Time[0];
+      this.time2 = parseFloat(mp3Time[1]) + num;
+      this.onSubmit();
+    },
+    handleCommand(row, command) {
+      this.sentence = row;
+      switch (command) {
+        case "a":
+          this.updateStart(1);
+          break;
+        case "b":
+          this.updateStart(-1);
+          break;
+        case "c":
+          this.updateDuration(0.5);
+          break;
+        case "d":
+          this.updateDuration(-0.5);
+          break;
+      }
     },
   },
 };
@@ -240,12 +325,6 @@ export default {
       gap: 20px;
       align-items: center;
     }
-  }
-  .mp3-time {
-    background: #1890ff;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
   }
 }
 </style>
