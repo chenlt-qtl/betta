@@ -58,6 +58,7 @@
                       <el-dropdown-item command="b">S-1</el-dropdown-item>
                       <el-dropdown-item command="c">D+0.5</el-dropdown-item>
                       <el-dropdown-item command="d">D-0.5</el-dropdown-item>
+                      <el-dropdown-item command="e">D-1</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </span>
@@ -130,9 +131,6 @@
           >
           <el-button size="mini" type="primary" @click="() => addDuration(0.5)"
             >D+0.5</el-button
-          >
-          <el-button size="mini" type="danger" @click="() => addDuration(-1)"
-            >D-1</el-button
           >
         </div>
         <el-button
@@ -270,6 +268,9 @@ export default {
           break;
         case "d":
           this.updateDuration(-0.5);
+          break;
+        case "e":
+          this.updateDuration(-1);
           break;
       }
     },
