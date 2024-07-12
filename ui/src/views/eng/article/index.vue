@@ -17,15 +17,15 @@
         />
       </el-form-item>
       <el-form-item label="分组" prop="groupId">
-          <el-select v-model="queryParams.groupId">
-            <el-option
-              v-for="group in groupList"
-              :key="group.id"
-              :label="group.name"
-              :value="group.id"
-            />
-          </el-select>
-        </el-form-item>
+        <el-select v-model="queryParams.groupId">
+          <el-option
+            v-for="group in groupList"
+            :key="group.id"
+            :label="group.name"
+            :value="group.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
@@ -262,7 +262,14 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        title: [
+          { required: true, message: "不能为空", trigger: "change" },
+        ],
+        groupId: [
+          { required: true, message: "不能为空", trigger: "blur" },
+        ],
+      },
       groupList: [],
     };
   },

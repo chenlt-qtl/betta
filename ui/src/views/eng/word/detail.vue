@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container word-detail">
+  <div class="word-detail">
     <el-input
       style="width: 50%; margin-right: 10px"
       v-model="wordName"
@@ -117,35 +117,40 @@
     </el-dialog>
   </div>
 </template>
-<style>
-.ph {
-  font-size: 20px;
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-  background-color: #f5f6f9;
-  border-radius: 20px;
-  padding: 0 25px;
-  margin: 0 20px 5px 0;
-}
+<style lang='scss'>
+.word-detail {
+  .ph {
+    font-size: 20px;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    background-color: #f5f6f9;
+    border-radius: 20px;
+    padding: 0 25px;
+    margin: 0 20px 5px 0;
+    .slow {
+      position: absolute;
+      background-color: #f5f6f9;
+      color: #46a6ff;
+      font-size: 12px;
+      left: -5px;
+      top: 13px;
+    }
+  }
 
-.word-detail .el-button--text {
-  font-size: 22px;
-  position: relative;
-}
+  .box-card{
+    margin-top: 10px;
+  }
 
-.word-acceptation {
-  padding-left: 80px;
-  margin-bottom: 20px;
-}
+  .el-button--text {
+    font-size: 22px;
+    position: relative;
+  }
 
-.ph .slow {
-  position: absolute;
-  background-color: #f5f6f9;
-  color: #46a6ff;
-  font-size: 12px;
-  left: -5px;
-  top: 13px;
+  .word-acceptation {
+    padding-left: 80px;
+    margin-bottom: 20px;
+  }
 }
 </style>
 <script>

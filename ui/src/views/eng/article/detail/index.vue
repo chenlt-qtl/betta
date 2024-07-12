@@ -440,7 +440,7 @@ export default {
       const id = row.id || this.sentenceIds;
       getSentence(id).then((response) => {
         this.form = response.data;
-        this.form.mp3Time = this.transMp3Time(this.form.mp3Time)
+        this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
         this.useTopMp3 = !this.article.mp3 ? 0 : this.form.mp3 ? 0 : 1;
         this.uploadType = "file";
         this.openSentence = true;
@@ -495,9 +495,21 @@ export default {
     /** 提交句子按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
-        this.form.mp3Time = this.transMp3Time(this.form.mp3Time)
         this.form[this.useTopMp3 ? "mp3" : "mp3Time"] = ""; //清空音频
         if (valid) {
+          //如果有文章音频 处理mp3Time
+          if (this.article.mp3) {
+            if (!this.form.mp3Time) {
+              //把[18:10.33]...中的时间解析出来
+              const match = this.form.content.match(/^\[(\d\d:\d\d)/);
+              if (match) {
+                this.form.mp3Time =
+                  match[1] + "," + ((this.form.content.length < 60) ? 5 : 8);
+              }
+            }
+            this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
+          }
+
           if (this.form.id != null) {
             updateSentence(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
