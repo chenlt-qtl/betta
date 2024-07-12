@@ -131,6 +131,9 @@
           <el-button size="mini" type="primary" @click="() => addDuration(0.5)"
             >D+0.5</el-button
           >
+          <el-button size="mini" type="danger" @click="() => addDuration(-1)"
+            >D-1</el-button
+          >
         </div>
         <el-button
           type="text"
