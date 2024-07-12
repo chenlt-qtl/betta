@@ -53,26 +53,22 @@
           >
           </el-button>
         </el-descriptions-item>
-        
-        <template v-for="(item,index) in form.acceptation.split('|')">
-          <el-descriptions-item :labelStyle="{width:'64px'}" :label="index==0?'词霸释义:':''" :key="item">{{
-            item
-          }}</el-descriptions-item>
+
+        <template v-for="(item, index) in form.acceptation.split('|')">
+          <el-descriptions-item
+            :labelStyle="{ width: '64px' }"
+            :label="index == 0 ? '词霸释义:' : ''"
+            :key="item"
+            >{{ item }}</el-descriptions-item
+          >
         </template>
-        <el-descriptions-item :labelStyle="{width:'64px'}" v-if="form.exchange" label="简明注释:">{{
-            form.exchange
-          }}</el-descriptions-item>
+        <el-descriptions-item
+          :labelStyle="{ width: '64px' }"
+          v-if="form.exchange"
+          label="简明注释:"
+          >{{ form.exchange }}</el-descriptions-item
+        >
       </el-descriptions>
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span>爱词霸例句</span>
-        </div>
-        <div v-for="item in form.icibaSentenceList" :key="item.id">
-          {{ item.orig }}<br /><br />
-          {{ item.trans }}<br /><br /><br /><br />
-        </div>
-      </el-card>
-      <br />
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <span>自定义例句</span>
@@ -90,6 +86,16 @@
           /></span>
         </div>
       </el-card>
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span>爱词霸例句</span>
+        </div>
+        <div v-for="item in form.icibaSentenceList" :key="item.id">
+          {{ item.orig }}<br /><br />
+          {{ item.trans }}<br /><br /><br /><br />
+        </div>
+      </el-card>
+      <br />
     </div>
     <!-- 修改单词注释 -->
     <el-dialog

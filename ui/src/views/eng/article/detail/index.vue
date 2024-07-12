@@ -82,11 +82,11 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column
-          label="MP3开始结束时间"
-          align="center"
-          prop="mp3Time"
-        />
+        <el-table-column label="MP3开始结束时间" align="center" prop="mp3Time">
+          <template slot-scope="scope">
+            {{ transMp3Time(scope.row.mp3Time) }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           align="center"
@@ -440,6 +440,7 @@ export default {
       const id = row.id || this.sentenceIds;
       getSentence(id).then((response) => {
         this.form = response.data;
+        this.form.mp3Time = this.transMp3Time(this.form.mp3Time)
         this.useTopMp3 = !this.article.mp3 ? 0 : this.form.mp3 ? 0 : 1;
         this.uploadType = "file";
         this.openSentence = true;
@@ -494,6 +495,7 @@ export default {
     /** 提交句子按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
+        this.form.mp3Time = this.transMp3Time(this.form.mp3Time)
         this.form[this.useTopMp3 ? "mp3" : "mp3Time"] = ""; //清空音频
         if (valid) {
           if (this.form.id != null) {
@@ -549,6 +551,18 @@ export default {
       const acceptation = row.acceptation;
       const strs = acceptation.split("|");
       return strs[0] + (strs.length > 1 ? "..." : "");
+    },
+    /** 把格式2的时间转成格式1 */
+    transMp3Time(mp3Time) {
+      const timeArr = (mp3Time || "").split(",");
+      if (timeArr.length == 2 && /^\d+:\d+$/.test(timeArr[0])) {
+        //格式2
+        const arr = timeArr[0].split(":");
+        const startTime = parseInt(arr[0]) * 60 + parseInt(arr[1]);
+        return startTime + "," + timeArr[1];
+      } else {
+        return mp3Time;
+      }
     },
   },
 };
