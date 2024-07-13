@@ -136,7 +136,7 @@ export default {
           listData.push({
             mp3: sen.mp3Time ? article.mp3 : sen.mp3,
             mp3Time: sen.mp3Time,
-            title: article.title,
+            title: sen.content,
           })
         );
       }
@@ -149,7 +149,7 @@ export default {
         wordRes.rows.forEach((word) =>
           listData.push({
             mp3: word.phAnMp3,
-            articleName: article.title,
+            title: word.wordName,
           })
         );
       }
@@ -192,7 +192,7 @@ export default {
       } else {
         //如果不到90分钟，再循环一次
         this.playIndex = 0;
-      } 
+      }
       setTimeout(() => this.playMp3(), 1500); //1.5秒后再播放
     },
     timed() {

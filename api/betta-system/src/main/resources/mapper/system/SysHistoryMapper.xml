@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.system.mapper.SysHistoryMapper">
+    
+    <resultMap type="SysHistory" id="SysHistoryResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="value"    column="value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSysHistoryVo">
+        select id, type, value, create_time, create_by, update_time, update_by from sys_history
+    </sql>
+
+    <select id="selectSysHistoryList" parameterType="SysHistory" resultMap="SysHistoryResult">
+        <include refid="selectSysHistoryVo"/>
+        <where>  
+            <if test="type != null "> and type = #{type}</if>
+            <if test="value != null  and value != ''"> and value = #{value}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysHistoryById" parameterType="Long" resultMap="SysHistoryResult">
+        <include refid="selectSysHistoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysHistory" parameterType="SysHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="value != null">value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="value != null">#{value},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysHistory" parameterType="SysHistory">
+        update sys_history
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysHistoryById" parameterType="Long">
+        delete from sys_history where id = #{id}
+    </delete>
+
+    <delete id="deleteSysHistoryByIds" parameterType="String">
+        delete from sys_history where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
