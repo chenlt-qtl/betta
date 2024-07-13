@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null "> and type = #{type}</if>
             <if test="value != null  and value != ''"> and value = #{value}</if>
         </where>
+        order by create_time desc
     </select>
     
     <select id="selectSysHistoryById" parameterType="Long" resultMap="SysHistoryResult">

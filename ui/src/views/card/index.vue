@@ -41,6 +41,9 @@
       </el-input-number>
       <el-button round @click="onReset" type="text">清空</el-button>
       <el-button round @click="onSubmit">提交</el-button>
+      <el-button type="text" @click="showHistory"
+        ><i class="el-icon-time"></i
+      ></el-button>
     </div>
     <div class="quick">
       <span
@@ -79,10 +82,26 @@
         >
       </el-tabs>
     </div>
+    <!-- 查看历史 -->
+    <el-dialog
+      title="历史记录"
+      :visible.sync="open"
+      width="500px"
+      append-to-body
+    >
+      <el-table v-loading="loading" :data="historyList">
+        <el-table-column label="内容" prop="value" />
+        <el-table-column label="时间" prop="createTime" />
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="() => (open = false)">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import { listItem, updateItem } from "@/api/card/item";
+import { listHistory } from "@/api/system/history";
 
 export default {
   dicts: ["card_type"],
@@ -99,6 +118,9 @@ export default {
       score: 0,
       activeName: "1",
       listData: {},
+      open: false,
+      historyList: [],
+      loading: false,
     };
   },
   computed: {
@@ -163,6 +185,18 @@ export default {
           this.onReset();
         })
         .catch(() => {});
+    },
+    showHistory() {
+      this.loading = true;
+      listHistory({
+        pageNum: 1,
+        pageSize: 20,
+        type: 1,
+      }).then((response) => {
+        this.loading = false;
+        this.historyList = response.rows;
+      });
+      this.open = true;
     },
   },
 };
