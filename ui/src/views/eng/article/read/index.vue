@@ -275,6 +275,9 @@ export default {
       this.onSubmit();
     },
     updateRate(rate) {
+      const mp3Time = (this.sentence.mp3Time || ",").split(",");
+      this.time1 = mp3Time[0];
+      this.time2 = mp3Time[1];
       this.time3 = rate;
       this.onSubmit();
     },

@@ -76,6 +76,7 @@
         <div v-for="item in form.sentenceList" :key="item.id">
           {{ item.content
           }}<el-button
+            v-if="item.mp3"
             style="margin-left: 10px"
             type="text"
             @click="() => play(item.mp3)"
