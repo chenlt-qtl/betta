@@ -22,9 +22,7 @@ public class EngArticleWordRel extends BaseEntity
     @Excel(name = "如果是从查询里加入，文章ID为0")
     private Long articleId;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
-    private Long wordId;
+    private String wordName;
 
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")

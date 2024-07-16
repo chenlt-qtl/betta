@@ -25,3 +25,8 @@ CREATE TABLE `eng_user_score` (
       `update_by` varchar(32) DEFAULT NULL,
       PRIMARY KEY (`id`)
 ) ENGINE=InnoDB COMMENT='用户成绩表';
+
+alter table eng_article_word_rel add column word_name varchar(200) after word_id;
+update eng_article_word_rel,eng_word set eng_article_word_rel.word_name = eng_word.word_name where eng_word.id = eng_article_word_rel.word_id;
+delete from eng_article_word_rel eawr where word_name is null;
+alter table eng_article_word_rel drop column word_id;

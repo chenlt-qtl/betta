@@ -109,7 +109,7 @@ public class EngWordServiceImpl implements IEngWordService {
 
         //查询是否已关联
         EngArticleWordRel engArticleWordRel = new EngArticleWordRel();
-        engArticleWordRel.setWordId(word.getId());
+        engArticleWordRel.setWordName(word.getWordName());
         engArticleWordRel.setCreateBy(SecurityUtils.getUsername());
         List<EngArticleWordRel> engArticleWordRels = articleWordRelService.selectEngArticleWordRelList(engArticleWordRel);
         if(!engArticleWordRels.isEmpty()) {
@@ -134,7 +134,7 @@ public class EngWordServiceImpl implements IEngWordService {
                 //与文章关联
                 EngArticleWordRel articleWordRel = new EngArticleWordRel();
                 articleWordRel.setArticleId(articleId);
-                articleWordRel.setWordId(wordId);
+                articleWordRel.setWordName(wordName);
                 List<EngArticleWordRel> articleWordRelList = articleWordRelService.selectEngArticleWordRelList(articleWordRel);
                 if (articleWordRelList.isEmpty()) {
                     articleWordRelService.insertEngArticleWordRel(articleWordRel);

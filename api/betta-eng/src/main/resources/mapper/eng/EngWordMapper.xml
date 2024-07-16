@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectWordListByArticleId" resultMap="EngWordResult">
-        select a.*,b.id as rel_id from eng_word a , eng_article_word_rel b where a.id = b.word_id
+        select a.*,b.id as rel_id from eng_word a , eng_article_word_rel b where a.word_name = b.word_name
         and b.article_id = #{articleId}
         order by word_name
     </select>
@@ -114,7 +114,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectEngWordVo"/>
         <where>
             and exists (select 1 from eng_article_word_rel  where
-            eng_article_word_rel.create_by=#{createBy} and eng_word.id=eng_article_word_rel.word_id)
+            eng_article_word_rel.create_by=#{createBy} and eng_word.word_name=eng_article_word_rel.word_name)
             <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
             <if test="acceptation != null  and acceptation != ''"> and acceptation like concat('%', #{acceptation}, '%')</if>
             <if test="exchange != null  and exchange != ''"> and exchange like concat('%', #{exchange}, '%')</if>
