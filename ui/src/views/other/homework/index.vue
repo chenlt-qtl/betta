@@ -1,5 +1,11 @@
 <template>
   <div class="hw-container">
+    <ol>
+      <li>当天完成作业+10</li>
+      <li>书写分一个字+1</li>
+      <li>书写差一个字-1</li>
+      <li>作业全对+5</li>
+    </ol>
     <el-radio-group v-model="person">
       <el-radio label="dy">豆芽</el-radio>
       <el-radio label="tt">桐桐</el-radio>
@@ -43,43 +49,64 @@ export default {
   },
   methods: {
     getData() {
-      let start = 706,
-        end = 731;
-      let total = Math.ceil((end - start) / 3) * 3;
+      let start = 715,
+        end = 721;
+      let total = Math.ceil((end - start) / 4) * 4;
       const newWorkData = {};
       //豆芽
       const everyday =
         this.person == "dy"
-          ? ["计算能手3页", "阅读30分钟", "字帖3页", "英语作业","运动","舒尔特方格1页"]
-          : ["读看图写话分三步1篇*3","阅读30分钟","听写12个词语","字帖两页","课课优默2页","暑假口算题3页","英语作业", "跳绳","舒尔特方格1页"];1
+          ? [
+              { name: "计算能手", start: 20, step: 3 },
+              "阅读30分钟",
+              { name: "字帖", start: 14, step: 2 },
+            ]
+          : [
+              "读看图写话分三步1篇*3",
+              "阅读30分钟",
+              "听写12个词语",
+              { name: "字帖", start: 25, step: 2 },
+              { name: "课课优默", start: 19, step: 2 },
+              { name: "数学(1)", start: 28, step: 4 },
+              "跳绳",
+            ];
+      const tt1 = { name: "舒尔特方格(初级)", start: 11, step: 1 };
+      const dy5 = { name: "舒尔特方格(中级)", start: 2, step: 1 };
+      const dy1 = { name: "暑假新启航(语文)", start: 16, step: 3 };
+      const dy2 = { name: "暑假新启航(数学)", start: 52, step: 3 };
+      const dy3 = { name: "暑假新启航(英语)", start: 102, step: 3 };
+      const dy4 = { name: "数学暑假计算练习", start: 2, step: 1 };
       for (let i = 0; i < total; i++) {
-        let work, key;
+        let work = [],
+          key;
         if (start <= end) {
           key = Math.floor(start / 100) + "-" + (start % 100);
-          work = [...everyday];
+          everyday.forEach((w) => this.addWork(work, w));
           start++;
           if (this.person == "dy") {
             if ((i + 1) % 3 == 0) {
-              work.push("数学暑假计算练习");
+              this.addWork(work, dy4);
             }
             if (i % 3 == 0) {
-              work.push("暑假新启航3页(语文)");
+              this.addWork(work, dy1);
             }
             if (i % 3 == 1) {
-              work.push("暑假新启航3页(数学)");
+              this.addWork(work, dy2);
             }
             if (i % 3 == 2) {
-              work.push("暑假新启航3页(英语)");
+              this.addWork(work, dy3);
             }
-            if ((i + 1) % 10 == 0) {
+            if ((i + 10) % 10 == 0) {
               work.push("作文");
             }
+            this.addWork(work, dy5);
           } else {
-            if ((i + 1) % 14 == 0) {
+            if ((i + 14) % 14 == 0) {
               work.push("看图写画");
             }
+            this.addWork(work, tt1);
           }
-          work.push(" ");
+          work.push("英语作业");
           work.push(" ");
         } else {
           key = -i;
@@ -88,6 +115,17 @@ export default {
         newWorkData[key] = work;
       }
       this.workData = newWorkData;
+    },
+    addWork(workList, work) {
+      if (typeof work == "string") {
+        workList.push(work);
+      } else {
+        const { name, start, step } = work;
+
+        const page = step > 1 ? start + "-" + (start + step - 1) : start;
+        workList.push(name + "第" + page + "页");
+        work.start = start + step;
+      }
     },
   },
 };
@@ -104,7 +142,7 @@ export default {
     border-bottom: solid 1px #ccc;
     .day {
       border-right: solid 1px #ccc;
-      width: 33.333%;
+      width: 25%;
       padding-bottom: 5px;
       .title {
         height: 44px;

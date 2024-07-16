@@ -2,7 +2,7 @@ let player = new Audio();
 let timer;
 
 /**播放MP3 */
-export const play = (url, timeStr, rate = 1, onError = () => {}) => {
+export const play = (url, timeStr, onError = () => {}) => {
 
   player.src = process.env.VUE_APP_BASE_API + url;
   player.load();
@@ -11,10 +11,10 @@ export const play = (url, timeStr, rate = 1, onError = () => {}) => {
   clearTimeout(timer)
   player.pause();
 
-  let duration, startTime;
+  let duration, startTime, rate = 1;
   const timeArr = (timeStr || "").split(",");
 
-  if (timeArr.length == 2) {
+  if (timeArr.length == 2 || timeArr.length == 3) {
     //处理开始时间
     if (/^\d+$/.test(timeArr[0])) { //格式1
       startTime = parseInt(timeArr[0]) //秒
@@ -26,6 +26,11 @@ export const play = (url, timeStr, rate = 1, onError = () => {}) => {
     //处理时长
     if (/^\d+(.\d+)*$/.test(timeArr[1])) {
       duration = parseFloat(timeArr[1]) //秒
+    }
+
+    //处理倍速
+    if (timeArr[2]) {
+      rate = parseFloat(timeArr[2])
     }
   }
 

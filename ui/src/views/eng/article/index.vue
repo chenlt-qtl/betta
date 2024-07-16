@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="article-list">
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -99,67 +99,74 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column label="图片" align="center" prop="picture" width="100">
+      <el-table-column label="文章" prop="title">
         <template slot-scope="scope">
-          <image-preview :src="scope.row.picture" :width="50" :height="50" />
-        </template>
-      </el-table-column>
-      <el-table-column label="音频" align="center" prop="mp3">
-        <template v-if="scope.row.mp3" slot-scope="scope">
-          <el-button type="text" @click="() => play(scope.row.mp3)">
-            <svg-icon icon-class="sound" />
-          </el-button>
-        </template>
-      </el-table-column>
-      <el-table-column label="分组" align="center" prop="groupName" />
-      <el-table-column label="注释" align="center" prop="comment" />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handleViewArticle(scope.row)"
-            v-hasPermi="['eng:article:edit']"
-            >句子</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handleReadArticle(scope.row)"
-            v-hasPermi="['eng:article:edit']"
-            >跟读</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handlePlayArticle(scope.row)"
-            v-hasPermi="['eng:article:edit']"
-            >播放</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['eng:article:edit']"
-            >修改</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['eng:article:remove']"
-            >删除</el-button
-          >
+          <div class="cell">
+            <section class="content">
+              <image-preview
+                :src="scope.row.picture"
+                :width="50"
+                :height="50"
+              />
+              <section class="desc">
+                <span class="title">{{ scope.row.title }} </span>
+                <span class="group">{{ scope.row.groupName }}</span>
+              </section>
+            </section>
+            <section class="toolbar">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-notebook-2"
+                @click="handleViewArticle(scope.row)"
+                v-hasPermi="['eng:article:edit']"
+                >句子</el-button
+              ><el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-chat-line-square"
+                @click="handleReadArticle(scope.row)"
+                v-hasPermi="['eng:article:edit']"
+                >跟读</el-button
+              ><el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-service"
+                @click="handlePlayArticle(scope.row)"
+                v-hasPermi="['eng:article:edit']"
+                >播放</el-button
+              ><el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-coordinate"
+                @click="handleTest(scope.row)"
+                >测试</el-button
+              ><el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="handleUpdate(scope.row)"
+                v-hasPermi="['eng:article:edit']"
+              ></el-button
+              ><el-divider direction="vertical"></el-divider>
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
+                v-hasPermi="['eng:article:remove']"
+              ></el-button
+              ><span v-if="scope.row.mp3">
+                <el-divider direction="vertical"></el-divider>
+                <el-button type="text" @click="() => play(scope.row.mp3)">
+                  <svg-icon icon-class="sound" /> </el-button
+              ></span>
+            </section>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -263,12 +270,8 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        title: [
-          { required: true, message: "不能为空", trigger: "change" },
-        ],
-        groupId: [
-          { required: true, message: "不能为空", trigger: "blur" },
-        ],
+        title: [{ required: true, message: "不能为空", trigger: "change" }],
+        groupId: [{ required: true, message: "不能为空", trigger: "blur" }],
       },
       groupList: [],
     };
@@ -293,8 +296,8 @@ export default {
         this.groupList = response.rows;
       });
     },
-    play(url, time, rate) {
-      play(url, time, rate);
+    play(url, time) {
+      play(url, time);
     },
     // 取消按钮
     cancel() {
@@ -328,6 +331,11 @@ export default {
     handleReadArticle: function (row) {
       const articleId = row.id;
       this.$router.push("/eng/article/read/" + articleId);
+    },
+    /** 测试操作 */
+    handleTest: function (row) {
+      const articleId = row.id;
+      this.$router.push("/eng/article/test/" + articleId);
     },
     handlePlayArticle: function (row) {
       const articleId = row.id;
@@ -446,3 +454,34 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.article-list {
+  .cell {
+    display: flex;
+    flex-wrap: wrap;
+    .content {
+      flex: 1;
+      display: flex;
+      gap: 15px;
+      .desc {
+        display: flex;
+        flex-direction: column;
+        .title {
+          font-weight: 600;
+          font-size: 14px;
+        }
+        .group {
+          color: #999;
+          font-size: 10px;
+        }
+      }
+    }
+    .toolbar {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+</style>

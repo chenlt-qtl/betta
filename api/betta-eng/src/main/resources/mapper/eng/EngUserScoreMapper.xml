@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.eng.mapper.EngUserScoreMapper">
+    
+    <resultMap type="EngUserScore" id="EngUserScoreResult">
+        <result property="id"    column="id"    />
+        <result property="user"    column="user"    />
+        <result property="wordName"    column="word_name"    />
+        <result property="familiarity"    column="familiarity"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectEngUserScoreVo">
+        select id, user, word_name, familiarity, status, create_time, create_by, update_time, update_by from eng_user_score
+    </sql>
+
+    <select id="selectEngUserScoreList" parameterType="EngUserScore" resultMap="EngUserScoreResult">
+        <include refid="selectEngUserScoreVo"/>
+        <where>  
+            <if test="user != null  and user != ''"> and user = #{user}</if>
+            <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
+            <if test="familiarity != null "> and familiarity &gt;= #{familiarity}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectScoreByArticle" resultMap="EngUserScoreResult">
+        select b.id,b.familiarity, a.word_name ,a.ph_am as phAm,a.acceptation,a.exchange,
+               a.ph_an_mp3 as phAnMp3 from eng_word a left join eng_user_score b on a.word_name = b.word_name
+        where exists(select 1 from eng_article_word_rel c where c.article_id = #{articleId} and a.id = c.word_id )
+        order by b.familiarity limit #{limit}
+    </select>
+
+    <select id="selectEngUserScoreById" parameterType="Long" resultMap="EngUserScoreResult">
+        <include refid="selectEngUserScoreVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEngUserScore" parameterType="EngUserScore" useGeneratedKeys="true" keyProperty="id">
+        insert into eng_user_score
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user != null">user,</if>
+            <if test="wordName != null">word_name,</if>
+            <if test="familiarity != null">familiarity,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user != null">#{user},</if>
+            <if test="wordName != null">#{wordName},</if>
+            <if test="familiarity != null">#{familiarity},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEngUserScore" parameterType="EngUserScore">
+        update eng_user_score
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="user != null">user = #{user},</if>
+            <if test="wordName != null">word_name = #{wordName},</if>
+            <if test="familiarity != null">familiarity = #{familiarity},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEngUserScoreById" parameterType="Long">
+        delete from eng_user_score where id = #{id}
+    </delete>
+
+    <delete id="deleteEngUserScoreByIds" parameterType="String">
+        delete from eng_user_score where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -216,7 +216,7 @@ export default {
         this.playIndex >= 0
       ) {
         const { mp3, mp3Time } = this.listData[this.playIndex];
-        player = play(mp3, mp3Time, 1, () => this.step(1));
+        player = play(mp3, mp3Time, () => this.step(1));
         return player;
       }
     },

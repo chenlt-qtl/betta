@@ -225,8 +225,8 @@
           </div>
           <el-form-item label="MP3时间" prop="mp3Time" v-if="useTopMp3">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
-            格式1: 开始时间(int),持续时间(float) 例: 5,8.5<br />
-            格式2: 开始时间(分:秒),持续时间(float) 例: 02:55,8.5<br />
+            格式1: 开始时间(int),持续时间(float),倍速 例: 5,8.5,0.8<br />
+            格式2: 开始时间(分:秒),持续时间(float),倍速 例: 02:55,8.5,0.8<br />
             <el-button
               type="text"
               @click="() => play(article.mp3, form.mp3Time)"

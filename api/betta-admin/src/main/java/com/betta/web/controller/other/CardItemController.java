@@ -90,7 +90,7 @@ public class CardItemController extends BaseController {
         if (StringUtils.isBlank(dictLabel)) {//为空表示是加减卡 记录历史
             SysHistory history = new SysHistory();
             String type = DictUtils.getDictValue("history_type", "card");
-            history.setValue(cardItem.getName() + ": " + (cardItem.getValue() - old.getValue()));
+            history.setValue(cardItem.getName() + ": " + (cardItem.getValue() - old.getValue())+" 余: "+cardItem.getValue());
             history.setType(Integer.parseInt(type));
             sysHistoryService.insertSysHistory(history);
         }

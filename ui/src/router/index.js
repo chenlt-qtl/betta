@@ -195,6 +195,20 @@ export const dynamicRoutes = [
       }
     ]
   },
+  {
+    path: '/eng/article/test',
+    component: Layout,
+    hidden: true,
+    permissions: ['eng:article:list'],
+    children: [
+      {
+        path: ':articleId(\\d+)',
+        component: () => import('@/views/eng/article/test'),
+        name: 'ArticleTest',
+        meta: { title: '文章测试', activeMenu: '/eng/article' }
+      }
+    ]
+  },
 ]
 
 // 防止连续点击多次路由报错

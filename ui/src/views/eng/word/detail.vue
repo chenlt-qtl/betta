@@ -36,7 +36,7 @@
             ><el-button
               style="marginleft: 10px"
               type="text"
-              @click="() => play(form.phAnMp3, '0,0', 0.5)"
+              @click="() => play(form.phAnMp3, '0,0,0.5')"
               ><svg-icon icon-class="sound" /><span class="slow">慢</span>
             </el-button>
           </div>
@@ -119,6 +119,7 @@
 </template>
 <style lang='scss'>
 .word-detail {
+  padding: 16px 24px;
   .ph {
     font-size: 20px;
     display: inline-flex;
@@ -198,8 +199,8 @@ export default {
       this.wordName = "";
       this.handleQuery();
     },
-    play(url, time, rate) {
-      play(url, time, rate);
+    play(url, time) {
+      play(url, time);
     },
     /** 更新关联 */
     updateRel() {

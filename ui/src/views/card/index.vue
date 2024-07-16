@@ -40,7 +40,17 @@
         <el-button slot="append" icon="el-icon-check"></el-button>
       </el-input-number>
       <el-button round @click="onReset" type="text">清空</el-button>
-      <el-button round @click="onSubmit">提交</el-button>
+      <el-popconfirm
+        :title="
+          accountData[accountId].name +
+          (symbol == 1 ? ' + ' : ' - ') +
+          score +
+          ' ？'
+        "
+        @confirm="onSubmit"
+      >
+        <el-button slot="reference" round>提交</el-button>
+      </el-popconfirm>
       <el-button type="text" @click="showHistory"
         ><i class="el-icon-time"></i
       ></el-button>
@@ -167,24 +177,13 @@ export default {
       this.score = Math.abs(score);
     },
     onSubmit() {
-      this.$modal
-        .confirm(
-          this.accountData[this.accountId].name +
-            (this.symbol == 1 ? " + " : " - ") +
-            this.score +
-            " ？"
-        )
-        .then(() => {
-          const oldNumber = this.accountData[this.accountId].value;
-          const newNumber = oldNumber * 1 + this.value;
-          this.accountData[this.accountId].value = newNumber;
-          updateItem(this.accountData[this.accountId]);
-        })
-        .then(() => {
-          this.$modal.msgSuccess("操作成功");
-          this.onReset();
-        })
-        .catch(() => {});
+      const oldNumber = this.accountData[this.accountId].value;
+      const newNumber = oldNumber * 1 + this.value;
+      this.accountData[this.accountId].value = newNumber;
+      updateItem(this.accountData[this.accountId]).then(() => {
+        this.$modal.msgSuccess("操作成功");
+        this.onReset();
+      });
     },
     showHistory() {
       this.loading = true;
