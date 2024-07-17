@@ -52,9 +52,9 @@ export function delScore(id) {
   })
 }
 // 查询用户成绩列表
-export function listByArticle(articleId) {
+export function listByArticle(articleId, limit = 5) {
   return request({
-    url: '/eng/score/list/article/' + articleId + "/5",
+    url: '/eng/score/list/article/' + articleId + "/" + limit,
     method: 'get'
   })
 }

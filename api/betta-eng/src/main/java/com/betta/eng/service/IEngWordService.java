@@ -49,7 +49,7 @@ public interface IEngWordService
      *
      * @param articleId
      */
-    public void addByArticle(List<String> wordNames, Long articleId);
+    public void updateByArticle(List<String> wordNames, Long articleId);
 
     /**
      * 修改单词

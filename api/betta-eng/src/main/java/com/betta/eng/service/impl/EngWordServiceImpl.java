@@ -1,11 +1,14 @@
 package com.betta.eng.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
+import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.*;
 import com.betta.eng.service.*;
 import com.betta.eng.utils.ParseIciba;
@@ -112,7 +115,7 @@ public class EngWordServiceImpl implements IEngWordService {
         engArticleWordRel.setWordName(word.getWordName());
         engArticleWordRel.setCreateBy(SecurityUtils.getUsername());
         List<EngArticleWordRel> engArticleWordRels = articleWordRelService.selectEngArticleWordRelList(engArticleWordRel);
-        if(!engArticleWordRels.isEmpty()) {
+        if (!engArticleWordRels.isEmpty()) {
             word.setRelId(engArticleWordRels.get(0).getId());
         }
         return word;
@@ -120,7 +123,12 @@ public class EngWordServiceImpl implements IEngWordService {
 
     @Override
     @Transactional
-    public void addByArticle(List<String> wordNames, Long articleId) {
+    public void updateByArticle(List<String> wordNames, Long articleId) {
+        EngArticleWordRel articleWordRel = new EngArticleWordRel();
+        articleWordRel.setArticleId(articleId);
+        List<EngArticleWordRel> articleWordRelList = articleWordRelService.selectEngArticleWordRelList(articleWordRel);
+        List<Long> keptIds = new ArrayList<>();
+
         for (String wordName : wordNames) {
             Long wordId = null;
             try {
@@ -132,15 +140,24 @@ public class EngWordServiceImpl implements IEngWordService {
             }
             if (wordId != null) {
                 //与文章关联
-                EngArticleWordRel articleWordRel = new EngArticleWordRel();
-                articleWordRel.setArticleId(articleId);
-                articleWordRel.setWordName(wordName);
-                List<EngArticleWordRel> articleWordRelList = articleWordRelService.selectEngArticleWordRelList(articleWordRel);
-                if (articleWordRelList.isEmpty()) {
+                List<EngArticleWordRel> exists = articleWordRelList.stream().filter(engArticleWordRel -> StringUtils.equals(engArticleWordRel.getWordName(), wordName)).collect(Collectors.toList());
+                if (exists.isEmpty()) {
+                    articleWordRel = new EngArticleWordRel();
+                    articleWordRel.setArticleId(articleId);
+                    articleWordRel.setWordName(wordName);
                     articleWordRelService.insertEngArticleWordRel(articleWordRel);
+                } else {
+                    keptIds.add(exists.get(0).getId());
                 }
             }
         }
+
+        //删除
+        Long[] removeIds = articleWordRelList.stream()
+                .filter(engArticleWordRel -> !keptIds.contains(engArticleWordRel.getId()))
+                .map(e -> e.getId()).collect(Collectors.toList()).toArray(new Long[]{});
+        articleWordRelService.deleteEngArticleWordRelByIds(removeIds);
+
     }
 
     /**

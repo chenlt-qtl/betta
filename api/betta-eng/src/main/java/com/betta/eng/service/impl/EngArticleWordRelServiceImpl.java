@@ -69,7 +69,11 @@ public class EngArticleWordRelServiceImpl implements IEngArticleWordRelService
     @Override
     public int deleteEngArticleWordRelByIds(Long[] ids)
     {
-        return engArticleWordRelMapper.deleteEngArticleWordRelByIds(ids);
+        if(ids.length>0) {
+            return engArticleWordRelMapper.deleteEngArticleWordRelByIds(ids);
+        }else{
+            return 0;
+        }
     }
 
     /**

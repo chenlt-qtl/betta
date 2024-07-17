@@ -5,14 +5,12 @@ import com.betta.common.core.controller.BaseController;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
-import com.betta.common.utils.poi.ExcelUtil;
 import com.betta.eng.domain.EngWord;
 import com.betta.eng.service.IEngWordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +100,7 @@ public class EngWordController extends BaseController {
     @PostMapping("/{articleId}")
     public AjaxResult addByArticle(@RequestBody Map map, @PathVariable Long articleId) {
         List<String> words = (List<String>) map.get("words");
-        engWordService.addByArticle(words, articleId);
+        engWordService.updateByArticle(words, articleId);
         return AjaxResult.success();
     }
 

@@ -139,6 +139,7 @@
           prop="acceptation"
           :formatter="acceptationFormatter"
         />
+        <el-table-column label="熟悉度" align="center" prop="familiarity" />
         <el-table-column label="注释" align="center" prop="exchange" />
         <el-table-column label="音频" align="center" prop="phAnMp3">
           <template v-if="scope.row.phAnMp3" slot-scope="scope">
@@ -285,7 +286,9 @@ import {
   updateSentence,
 } from "@/api/eng/sentence";
 
-import { listWordByArticle, addWordByArticle } from "@/api/eng/word";
+import { addWordByArticle } from "@/api/eng/word";
+import { listByArticle } from "@/api/eng/score";
+
 import { delArticleWordRel } from "@/api/eng/articleWordRel";
 import { brReg, splipSentences } from "@/utils/wordUtils";
 import { play } from "@/utils/audio";
@@ -385,14 +388,10 @@ export default {
     /** 查询单词列表 */
     getWordList() {
       this.loading = true;
-      listWordByArticle({
-        pageNum: 1,
-        pageSize: 1000,
-        articleId: this.articleId,
-      }).then((response) => {
-        this.wordList = response.rows;
-        this.wordTotal = response.total;
-        this.sentenceWordList = response.rows.map((word) => word.wordName);
+      listByArticle(this.articleId, 1000).then((response) => {
+        this.wordList = response.data;
+        this.wordTotal = this.wordList.length;
+        this.sentenceWordList = this.wordList.map((word) => word.wordName);
         this.loading = false;
       });
     },
@@ -504,7 +503,7 @@ export default {
               const match = this.form.content.match(/^\[(\d\d:\d\d)/);
               if (match) {
                 this.form.mp3Time =
-                  match[1] + "," + ((this.form.content.length < 60) ? 5 : 8);
+                  match[1] + "," + (this.form.content.length < 60 ? 5 : 8);
               }
             }
             this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
