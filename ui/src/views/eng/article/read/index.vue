@@ -60,7 +60,7 @@
                       <el-dropdown-item command="d">D-0.5</el-dropdown-item>
                       <el-dropdown-item command="e">D-1</el-dropdown-item>
                       <el-dropdown-item command="f">X1</el-dropdown-item>
-                      <el-dropdown-item command="g">X0.8</el-dropdown-item>
+                      <el-dropdown-item command="g">X0.7</el-dropdown-item>
                       <el-dropdown-item command="h">X0.5</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -144,8 +144,8 @@
           <el-button size="mini" type="primary" @click="() => addDuration(0.5)"
             >D+0.5</el-button
           >
-          <el-button size="mini" type="success" @click="() => (time3 = 0.8)"
-            >X0.8</el-button
+          <el-button size="mini" type="success" @click="() => (time3 = 0.7)"
+            >X0.7</el-button
           >
           <el-button size="mini" type="success" @click="() => (time3 = 0.5)"
             >X0.5</el-button
@@ -263,26 +263,23 @@ export default {
       this.time2 += num;
     },
     updateStart(num) {
-      const mp3Time = (this.sentence.mp3Time || ",").split(",");
       this.time1 = parseInt(mp3Time[0]) + num;
-      this.time2 = mp3Time[1];
       this.onSubmit();
     },
     updateDuration(num) {
-      const mp3Time = (this.sentence.mp3Time || ",").split(",");
-      this.time1 = mp3Time[0];
       this.time2 = parseFloat(mp3Time[1]) + num;
       this.onSubmit();
     },
     updateRate(rate) {
-      const mp3Time = (this.sentence.mp3Time || ",").split(",");
-      this.time1 = mp3Time[0];
-      this.time2 = mp3Time[1];
       this.time3 = rate;
       this.onSubmit();
     },
     handleCommand(row, command) {
       this.sentence = row;
+      const mp3Time = (this.sentence.mp3Time || ",").split(",");
+      this.time1 = mp3Time[0];
+      this.time2 = mp3Time[1];
+      this.time3 = mp3Time[2] || 1;
       switch (command) {
         case "a":
           this.updateStart(1);
@@ -303,7 +300,7 @@ export default {
           this.updateRate(1);
           break;
         case "g":
-          this.updateRate(0.8);
+          this.updateRate(0.7);
           break;
         case "h":
           this.updateRate(0.5);
@@ -354,6 +351,7 @@ export default {
     a {
       color: #1890ff;
       font-size: 14px;
+      word-break: keep-all;
     }
   }
   .word-container {

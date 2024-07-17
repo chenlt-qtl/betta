@@ -17,7 +17,7 @@
         />
       </el-form-item>
       <el-form-item label="分组" prop="groupId">
-        <el-select v-model="queryParams.groupId">
+        <el-select v-model="queryParams.groupId" @change="handleQuery">
           <el-option
             v-for="group in groupList"
             :key="group.id"
@@ -457,6 +457,7 @@ export default {
 
 <style scoped lang="scss">
 .article-list {
+  padding: 20px;
   .cell {
     display: flex;
     flex-wrap: wrap;
