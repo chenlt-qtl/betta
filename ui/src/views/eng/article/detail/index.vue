@@ -224,13 +224,15 @@
               />
             </el-form-item>
           </div>
-          <el-form-item label="MP3时间" prop="mp3Time" v-if="useTopMp3">
+          <el-form-item label="MP3时间" prop="mp3Time">
             <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
             格式1: 开始时间(int),持续时间(float),倍速 例: 5,8.5,0.8<br />
             格式2: 开始时间(分:秒),持续时间(float),倍速 例: 02:55,8.5,0.8<br />
             <el-button
               type="text"
-              @click="() => play(article.mp3, form.mp3Time)"
+              @click="
+                () => play(useTopMp3 ? article.mp3 : form.mp3, form.mp3Time)
+              "
             >
               <!-- <svg-icon icon-class="sound" /> -->试听
             </el-button>
@@ -369,7 +371,7 @@ export default {
         .catch(() => {});
     },
     play(url, mp3Time) {
-      play(url, mp3Time);
+      url && play(url, mp3Time);
     },
     /** 查询英语句子列表 */
     getSentenceList() {
@@ -494,20 +496,20 @@ export default {
     /** 提交句子按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
-        this.form[this.useTopMp3 ? "mp3" : "mp3Time"] = ""; //清空音频
         if (valid) {
-          //如果有文章音频 处理mp3Time
-          if (this.article.mp3) {
-            if (!this.form.mp3Time) {
-              //把[18:10.33]...中的时间解析出来
-              const match = this.form.content.match(/^\[(\d\d:\d\d)/);
-              if (match) {
-                this.form.mp3Time =
-                  match[1] + "," + (this.form.content.length < 60 ? 5 : 8);
-              }
-            }
-            this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
+          if(this.useTopMp3){
+            this.form.mp3 = "";
           }
+          //处理mp3Time
+          if (!this.form.mp3Time) {
+            //把[18:10.33]...中的时间解析出来
+            const match = this.form.content.match(/^\[(\d\d:\d\d)/);
+            if (match) {
+              this.form.mp3Time =
+                match[1] + "," + (this.form.content.length < 60 ? 5 : 8);
+            }
+          }
+          this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
 
           if (this.form.id != null) {
             updateSentence(this.form).then((response) => {

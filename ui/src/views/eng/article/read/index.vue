@@ -263,11 +263,11 @@ export default {
       this.time2 += num;
     },
     updateStart(num) {
-      this.time1 = parseInt(mp3Time[0]) + num;
+      this.time1 = this.time1 + num;
       this.onSubmit();
     },
     updateDuration(num) {
-      this.time2 = parseFloat(mp3Time[1]) + num;
+      this.time2 = this.time2 + num;
       this.onSubmit();
     },
     updateRate(rate) {
@@ -277,8 +277,8 @@ export default {
     handleCommand(row, command) {
       this.sentence = row;
       const mp3Time = (this.sentence.mp3Time || ",").split(",");
-      this.time1 = mp3Time[0];
-      this.time2 = mp3Time[1];
+      this.time1 = parseInt(mp3Time[0]);
+      this.time2 = parseFloat(mp3Time[1]);
       this.time3 = mp3Time[2] || 1;
       switch (command) {
         case "a":
