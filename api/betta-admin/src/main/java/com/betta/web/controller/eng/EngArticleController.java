@@ -13,6 +13,7 @@ import com.betta.eng.service.IEngSentenceService;
 import com.betta.eng.service.IEngWordService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -132,7 +133,7 @@ public class EngArticleController extends BaseController {
 
     @PreAuthorize("@ss.hasPermi('eng:article:list')")
     @GetMapping("/export/{id}")
-    public AjaxResult exportArticle(Long id) {
+    public AjaxResult exportArticle(@PathVariable Long id) {
         EngSentence engSentence = new EngSentence();
         engSentence.setArticleId(id);
         List<EngSentence> sentenceList = engSentenceService.selectEngSentenceList(engSentence);
