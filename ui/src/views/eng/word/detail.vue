@@ -214,7 +214,7 @@ export default {
         });
       } else {
         //增加
-        addArticleWordRel({ wordId: this.form.id, articleId: 0 }).then(() => {
+        addArticleWordRel({ wordName: this.form.wordName, articleId: 0 }).then(() => {
           this.$modal.msgSuccess("收藏成功");
           this.getWord();
         });

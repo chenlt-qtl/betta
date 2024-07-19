@@ -195,4 +195,26 @@ public class FileUploadUtils {
         }
         return extension;
     }
+
+    /**
+     * 根据URL上传文件
+     * @param baseDir
+     * @param url
+     * @return
+     * @throws FileSizeLimitExceededException
+     * @throws IOException
+     * @throws FileNameLengthLimitExceededException
+     * @throws InvalidExtensionException
+     */
+    public static final String upload(String baseDir, String url)
+            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
+            InvalidExtensionException {
+        String extension = ".mp3";
+        if (url.matches(".m4a")) {
+            extension = ".m4a";
+        }
+        String filePath = baseDir + "/" + DateUtils.datePath();
+        String fileUrl = FileUtils.writeBytes(url, filePath, Seq.getId(Seq.uploadSeqType) + extension);
+        return fileUrl;
+    }
 }

@@ -149,13 +149,10 @@ public class CommonController {
             }
 
             // 上传并返回新文件名称
-            String originFileName = url.substring(url.lastIndexOf('/') + 1);
-            String extension = originFileName.substring(originFileName.lastIndexOf('.'));
-            filePath = filePath + "/" + DateUtils.datePath();
-            String fileUrl = FileUtils.writeBytes(url, filePath, Seq.getId(Seq.uploadSeqType)+extension);
+            String fileUrl = FileUploadUtils.upload(filePath, url);
             AjaxResult ajax = AjaxResult.success();
             ajax.put("url", fileUrl);
-            ajax.put("fileName", originFileName);
+            ajax.put("fileName", fileUrl.substring(fileUrl.lastIndexOf("/") + 1));
             return ajax;
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());

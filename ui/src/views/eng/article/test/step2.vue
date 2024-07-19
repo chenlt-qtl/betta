@@ -2,7 +2,7 @@
   <div class="test-step2">
     <span class="tip">{{ tip }}</span>
     <section class="question">
-      <section class="wordName">{{ this.question.question }}</section>
+      <section>{{ this.question.question }}</section>
       <span v-if="!question.type" class="phAm">
         / {{ this.question.word.phAm }} /
         <svg-icon
@@ -104,7 +104,7 @@ export default {
       return result;
     },
     getExchange(word) {
-      return word.exchange || word.acceptation.split("|").join(";");
+      return word.exchange || word.acceptation.split("|").join("");
     },
     getWordName(word) {
       return word.wordName;
@@ -183,12 +183,6 @@ export default {
     font-weight: 600;
     gap: 5px;
     overflow: hidden;
-    .wordName {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      width: calc(100% - 20px);
-    }
   }
   .answer {
     ul {
