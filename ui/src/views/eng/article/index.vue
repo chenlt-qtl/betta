@@ -145,6 +145,8 @@
                 @click="handleTest(scope.row)"
                 >测试</el-button
               ><el-divider direction="vertical"></el-divider>
+              <viewArticleBtn :articleId="scope.row.id" />
+              <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
                 type="text"
@@ -232,9 +234,11 @@ import {
 } from "@/api/eng/article";
 import { listGroup } from "@/api/eng/group";
 import { play } from "@/utils/audio";
+import viewArticleBtn from "@/components/Eng/viewArticle.vue";
 
 export default {
   name: "Article",
+  components: { viewArticleBtn },
   data() {
     return {
       // 遮罩层

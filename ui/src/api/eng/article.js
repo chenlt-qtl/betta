@@ -53,3 +53,10 @@ export function listPlay(query) {
   })
 }
 
+// 查询播放列表相关的数据
+export function exportArticle(articleId) {
+  return request({
+    url: '/eng/article/export/'+articleId,
+    method: 'get',
+  })
+}
