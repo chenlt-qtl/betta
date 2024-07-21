@@ -53,6 +53,7 @@ public class EngUserScoreController extends BaseController
 
         //查询对应的句子
         EngSentence engSentence = new EngSentence();
+        engSentence.setArticleId(articleId);
         list.forEach(engUserScore -> {
             engSentence.setContent(engUserScore.getWordName());
             List<EngSentence> engSentences = engSentenceService.selectEngSentenceList(engSentence);
