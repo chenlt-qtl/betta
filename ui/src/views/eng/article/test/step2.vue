@@ -37,7 +37,7 @@ export default {
       question: {},
       isStart: false,
       questionList: [],
-      type: 0, //0：词选意思  1：意思选词
+      type: 0, //0：词选意思  1：意思选词， 2：句子填空
       tip: "",
     };
   },
@@ -47,6 +47,8 @@ export default {
     this.wordList.forEach((word) => {
       questionList.push(this.getQuestion(word, 0));
       questionList.push(this.getQuestion(word, 1));
+      const question3 = this.getQuestion(word, 2);
+      question3 && questionList.push(question3);
     });
     //打乱顺序
     for (let i = 0; i < questionList.length; i++) {
@@ -65,7 +67,7 @@ export default {
         play(this.question.word.phAnMp3);
       }
       this.tip =
-        this.index + this.wordList.length + 1 + "/" + this.wordList.length * 3;
+        this.index + this.wordList.length + 1 + "/" + this.wordList.length * 4;
     },
   },
   methods: {
@@ -111,7 +113,26 @@ export default {
     },
     //获取题目
     getQuestion(word, type) {
-      const method = type == 0 ? this.getExchange : this.getWordName;
+      let method, question;
+      switch (
+        type //0：词选意思  1：意思选词， 2：句子填空
+      ) {
+        case 0:
+          method = this.getExchange;
+          question = this.getWordName(word);
+          break;
+        case 1:
+          method = this.getWordName;
+          question = this.getExchange(word);
+          break;
+        case 2:
+          if (!word.sentence) {
+            return;
+          }
+          method = this.getWordName;
+          question = word.sentence.replace(word.wordName, "_____");
+          break;
+      }
       const answer = method(word);
       const answers = [];
       const answerKey = parseInt(Math.random() * 4);
@@ -127,7 +148,7 @@ export default {
         type,
         answerKey,
         answers,
-        question: type == 0 ? this.getWordName(word) : this.getExchange(word),
+        question,
         word,
       };
     },
@@ -148,12 +169,12 @@ export default {
       if (i == this.question.answerKey) {
         this.question.word.familiarity =
           (this.question.word.familiarity || 0) + 1;
-        this.result.right = this.result.right+1;
+        this.result.right = this.result.right + 1;
       } else {
         //答错了
         this.question.word.familiarity =
           (this.question.word.familiarity || 0) - 1;
-        this.result.wrong = this.result.wrong+1;
+        this.result.wrong = this.result.wrong + 1;
       }
       setTimeout(() => {
         if (this.index < this.questionList.length - 1) {

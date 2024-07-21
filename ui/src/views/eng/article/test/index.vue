@@ -51,6 +51,11 @@ export default {
       this.loading = true;
       listByArticle(articleId).then((response) => {
         this.wordList = response.data;
+        if(this.wordList.length<5){
+          this.$message.error(`单词数小于5个，不能测试`);
+          this.$router.push("/eng/article");
+          return;
+        }
         this.start();
         this.loading = false;
       });

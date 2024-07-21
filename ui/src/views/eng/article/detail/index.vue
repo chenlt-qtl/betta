@@ -3,10 +3,10 @@
     <el-form ref="form" :model="article" label-width="80px">
       <el-row>
         <el-col :span="12">
-          <el-form-item label="分组：">{{ article.groupName }}</el-form-item>
+          <el-form-item label="标题：">{{ article.title }}</el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="标题：">{{ article.title }}</el-form-item>
+          <el-form-item label="分组：">{{ article.groupName }}</el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="图片：">

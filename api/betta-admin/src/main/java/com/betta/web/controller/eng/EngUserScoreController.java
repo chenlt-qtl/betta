@@ -6,7 +6,9 @@ import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
 import com.betta.common.utils.poi.ExcelUtil;
+import com.betta.eng.domain.EngSentence;
 import com.betta.eng.domain.EngUserScore;
+import com.betta.eng.service.IEngSentenceService;
 import com.betta.eng.service.IEngUserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +30,9 @@ public class EngUserScoreController extends BaseController
     @Autowired
     private IEngUserScoreService engUserScoreService;
 
+    @Autowired
+    private IEngSentenceService engSentenceService;
+
     /**
      * 查询用户成绩列表
      */
@@ -45,6 +50,16 @@ public class EngUserScoreController extends BaseController
     public AjaxResult listByArticle(@PathVariable Long articleId,@PathVariable int limit)
     {
         List<EngUserScore> list = engUserScoreService.selectScoreByArticle(articleId,limit);
+
+        //查询对应的句子
+        EngSentence engSentence = new EngSentence();
+        list.forEach(engUserScore -> {
+            engSentence.setContent(engUserScore.getWordName());
+            List<EngSentence> engSentences = engSentenceService.selectEngSentenceList(engSentence);
+            if(!engSentences.isEmpty()){
+                engUserScore.setSentence(engSentences.get(0).getContent());
+            }
+        });
         return AjaxResult.success(list);
     }
 

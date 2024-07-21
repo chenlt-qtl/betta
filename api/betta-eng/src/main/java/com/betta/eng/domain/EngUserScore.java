@@ -49,4 +49,5 @@ public class EngUserScore extends BaseEntity
     @Excel(name = "音频位置")
     private String phAnMp3;
 
+    private String sentence;
 }
