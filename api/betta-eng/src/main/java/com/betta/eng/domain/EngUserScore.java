@@ -50,4 +50,6 @@ public class EngUserScore extends BaseEntity
     private String phAnMp3;
 
     private String sentence;
+
+    private String sentenceAcceptation;
 }

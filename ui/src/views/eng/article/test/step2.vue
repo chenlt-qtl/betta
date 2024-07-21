@@ -2,7 +2,12 @@
   <div class="test-step2">
     <span class="tip">{{ tip }}</span>
     <section class="question">
-      <section>{{ this.question.question }}</section>
+      <section :style="{ fontSize: question.type ? '16px' : '26px' }">
+        {{ question.question }}
+      </section>
+      <section v-if="question.sentenceAcceptation">
+        {{ this.question.sentenceAcceptation }}
+      </section>
       <span v-if="!question.type" class="phAm">
         / {{ this.question.word.phAm }} /
         <svg-icon
@@ -113,7 +118,7 @@ export default {
     },
     //获取题目
     getQuestion(word, type) {
-      let method, question;
+      let method, question, sentenceAcceptation;
       switch (
         type //0：词选意思  1：意思选词， 2：句子填空
       ) {
@@ -134,6 +139,7 @@ export default {
             new RegExp(word.wordName, "i"),
             "_____"
           );
+          sentenceAcceptation = word.sentenceAcceptation;
           break;
       }
       const answer = method(word);
@@ -152,6 +158,7 @@ export default {
         answerKey,
         answers,
         question,
+        sentenceAcceptation,
         word,
       };
     },
@@ -203,7 +210,6 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
     font-weight: 600;
     gap: 5px;
     overflow: hidden;

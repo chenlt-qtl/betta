@@ -59,6 +59,7 @@ public class EngUserScoreController extends BaseController
             List<EngSentence> engSentences = engSentenceService.selectEngSentenceList(engSentence);
             if(!engSentences.isEmpty()){
                 engUserScore.setSentence(engSentences.get(0).getContent());
+                engUserScore.setSentenceAcceptation(engSentences.get(0).getAcceptation());
             }
         });
         return AjaxResult.success(list);
