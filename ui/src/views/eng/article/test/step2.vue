@@ -130,7 +130,10 @@ export default {
             return;
           }
           method = this.getWordName;
-          question = word.sentence.replace(word.wordName, "_____");
+          question = word.sentence.replace(
+            new RegExp(word.wordName, "i"),
+            "_____"
+          );
           break;
       }
       const answer = method(word);
