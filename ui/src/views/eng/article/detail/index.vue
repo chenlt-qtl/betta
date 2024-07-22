@@ -62,11 +62,11 @@
         <el-table-column label="句子内容" align="center" prop="content" />
         <el-table-column label="解释" align="center" prop="acceptation" />
         <el-table-column label="序号" align="center" prop="idx" />
-        <el-table-column label="图片" align="center" prop="picture" width="100">
+        <!-- <el-table-column label="图片" align="center" prop="picture" width="100">
           <template v-if="scope.row.picture" slot-scope="scope">
             <image-preview :src="scope.row.picture" :width="50" :height="50" />
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="音频" align="center" prop="mp3">
           <template
             v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)"
@@ -194,9 +194,9 @@
           <el-form-item label="序号" prop="idx">
             <el-input v-model="form.idx" placeholder="请输入序号" />
           </el-form-item>
-          <el-form-item label="图片" prop="picture" uploadType="article">
+          <!-- <el-form-item label="图片" prop="picture" uploadType="article">
             <image-upload v-model="form.picture" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item v-if="article.mp3" label="独立音频" prop="useTopMp3">
             <el-radio-group v-model="useTopMp3">
               <el-radio-button :label="0">是</el-radio-button>
