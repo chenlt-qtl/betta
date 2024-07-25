@@ -49,33 +49,33 @@ export default {
   },
   methods: {
     getData() {
-      let start = 715,
-        end = 721;
+      let start = 724,
+        end = 726;
       let total = Math.ceil((end - start) / 4) * 4;
       const newWorkData = {};
       //豆芽
       const everyday =
         this.person == "dy"
           ? [
-              { name: "计算能手", start: 20, step: 3 },
+              { name: "计算能手", start: 38, step: 2 },
               "阅读30分钟",
-              { name: "字帖", start: 14, step: 2 },
+              { name: "字帖", start: 23, step: 1 },
             ]
           : [
               "读看图写话分三步1篇*3",
               "阅读30分钟",
               "听写12个词语",
-              { name: "字帖", start: 25, step: 2 },
-              { name: "课课优默", start: 19, step: 2 },
-              { name: "数学(1)", start: 28, step: 4 },
+              { name: "字帖", start: 40, step: 1 },
+              { name: "课课优默", start: 34, step: 2 },
+              { name: "数学(2)", start: 28, step: 2 },
               "跳绳",
             ];
-      const tt1 = { name: "舒尔特方格(初级)", start: 11, step: 1 };
-      const dy5 = { name: "舒尔特方格(中级)", start: 2, step: 1 };
-      const dy1 = { name: "暑假新启航(语文)", start: 16, step: 3 };
-      const dy2 = { name: "暑假新启航(数学)", start: 52, step: 3 };
-      const dy3 = { name: "暑假新启航(英语)", start: 102, step: 3 };
-      const dy4 = { name: "数学暑假计算练习", start: 2, step: 1 };
+      const tt1 = { name: "舒尔特方格(初级)", start: 17, step: 1 };
+      const dy5 = { name: "舒尔特方格(中级)", start: 7, step: 1 };
+      const dy1 = { name: "暑假新启航(语文)", start: 26, step: 3 };
+      const dy2 = { name: "暑假新启航(数学)", start: 58, step: 3 };
+      const dy3 = { name: "暑假新启航(英语)", start: 105, step: 3 };
+      const dy4 = { name: "数学暑假计算练习", start: 3, step: 1 };
       for (let i = 0; i < total; i++) {
         let work = [],
           key;
