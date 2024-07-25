@@ -163,7 +163,7 @@
           <el-input v-model="form.exchange" placeholder="请输入手动注释" />
         </el-form-item>
         <el-form-item label="音频位置" prop="phAnMp3">
-          <file-upload v-model="form.phAnMp3" :fileType="['mp3']"/>
+          <file-upload v-model="form.phAnMp3" :fileType="['mp3']" uploadType="word"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
