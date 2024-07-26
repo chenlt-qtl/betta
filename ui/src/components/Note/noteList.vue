@@ -213,16 +213,18 @@ export default {
         .then(() => {
           this.$store.dispatch("note/delNotes", ids);
         })
-        .then(() => {
-          this.$modal.msgSuccess("删除成功");
-          //如果包含openedNote，修改url
-          if (ids.includes(this.openedNote.id)) {
-            const newQuery = { ...this.$route.query };
-            delete newQuery["id"];
-            this.$router.push({
-              path: "/n/note",
-              query: newQuery,
-            });
+        .then((res) => {
+          if (res && res.code == 200) {
+            this.$modal.msgSuccess("删除成功");
+            //如果包含openedNote，修改url
+            if (ids.includes(this.openedNote.id)) {
+              const newQuery = { ...this.$route.query };
+              delete newQuery["id"];
+              this.$router.push({
+                path: "/n/note",
+                query: newQuery,
+              });
+            }
           }
         })
         .catch(() => {});
@@ -256,10 +258,14 @@ export default {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #ccc;
+    gap: 5px;
     .label {
       flex: 1;
       font-size: 12px;
       font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

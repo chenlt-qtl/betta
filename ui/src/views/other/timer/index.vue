@@ -54,9 +54,9 @@ export default {
   data() {
     return {
       //上课时长
-      classDuration: 35,
+      classDuration: 30,
       //下课时长
-      afterClassDuration: 8,
+      afterClassDuration: 12,
       //是否上课
       classStatus: false,
       //显示的剩余时间
