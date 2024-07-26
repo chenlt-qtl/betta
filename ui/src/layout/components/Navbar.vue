@@ -17,18 +17,17 @@
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <search id="header-search" class="right-menu-item" />
+        <el-divider direction="vertical"></el-divider>
       </template>
-
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"
         trigger="click"
       >
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar" />
-          <i class="el-icon-caret-bottom" />
+          {{name}}
         </div>
         <el-dropdown-menu slot="dropdown">
-          <div style="text-align:center;padding:10px;">{{name}}</div>
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
@@ -143,6 +142,8 @@ export default {
 
   .right-menu {
     float: right;
+    display: flex;
+    align-items: center;
     height: 100%;
     line-height: 50px;
 
@@ -172,20 +173,14 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 16px;
         .user-avatar {
           cursor: pointer;
           width: 40px;
           height: 40px;
-          border-radius: 10px;
-        }
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          border-radius: 50%;
         }
       }
     }
