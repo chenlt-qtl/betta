@@ -31,10 +31,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectScoreByArticle" resultMap="EngUserScoreResult">
-        select b.id,b.familiarity, a.word_name ,a.ph_am as phAm,a.acceptation,a.exchange,
-               a.ph_an_mp3 as phAnMp3 from eng_word a left join eng_user_score b on a.word_name = b.word_name
-        where exists(select 1 from eng_article_word_rel c where c.article_id = #{articleId} and a.word_name = c.word_name )
-        order by b.familiarity limit #{limit}
+        select c.id as relId, d.* from
+        (select b.familiarity, a.word_name ,a.ph_am as phAm,a.acceptation,a.exchange, a.ph_an_mp3 as phAnMp3
+         from eng_word a left join eng_user_score b on a.word_name = b.word_name) d inner join eng_article_word_rel c
+        on d.word_name = c.word_name
+        where c.article_id = #{articleId} order by d.familiarity limit #{limit}
     </select>
 
     <select id="selectEngUserScoreById" parameterType="Long" resultMap="EngUserScoreResult">

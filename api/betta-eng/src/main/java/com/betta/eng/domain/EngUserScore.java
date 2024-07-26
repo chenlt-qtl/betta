@@ -52,4 +52,6 @@ public class EngUserScore extends BaseEntity
     private String sentence;
 
     private String sentenceAcceptation;
+
+    private Long relId;//关联ID
 }
