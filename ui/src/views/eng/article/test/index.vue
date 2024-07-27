@@ -1,10 +1,16 @@
 <template>
   <div class="test-article" v-loading="loading">
     <section class="test-container">
-      <step1 v-if="step == 1" :wordList="wordList" @next="toStep2"></step1>
+      <step1
+        v-if="step == 1"
+        :wordList="wordList"
+        :questionList="questionList"
+        @next="toStep2"
+      ></step1>
       <step2
         v-if="step == 2"
         :wordList="wordList"
+        :questionList="questionList"
         :result="result"
         @next="toStep3"
       ></step2>
@@ -12,6 +18,7 @@
         v-if="step == 3"
         :wordList="wordList"
         :result="result"
+        :questionList="questionList"
         @next="newLoop"
       ></step3>
     </section>
@@ -23,6 +30,7 @@ import { play } from "@/utils/audio";
 import step1 from "./step1.vue";
 import step2 from "./step2.vue";
 import step3 from "./step3.vue";
+import { getQuestions } from "./utils";
 
 export default {
   components: { step1, step2, step3 },
@@ -31,6 +39,7 @@ export default {
       // 遮罩层
       loading: true,
       wordList: [],
+      questionList: [],
       result: { right: 0, wrong: 0 },
       step: 0,
     };
@@ -50,11 +59,13 @@ export default {
       }
       this.loading = true;
       listByArticle(articleId).then((response) => {
-        this.wordList = response.data;
-        if(this.wordList.length<5){
+        this.wordList = response.data.filter((w) => w.wordName);
+        if (this.wordList.length < 5) {
           this.$message.error(`单词数小于5个，不能测试`);
           this.$router.push("/eng/article");
           return;
+        } else {
+          this.questionList = getQuestions(this.wordList);
         }
         this.start();
         this.loading = false;

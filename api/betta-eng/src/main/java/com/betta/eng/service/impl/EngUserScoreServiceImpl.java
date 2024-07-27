@@ -1,8 +1,6 @@
 package com.betta.eng.service.impl;
 
 import java.util.List;
-import java.util.Objects;
-
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,19 +95,23 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
 
     @Override
     public void batchUpdate(List<EngUserScore> engUserScoreList) {
+        EngUserScore search = new EngUserScore();
+        search.setUser(SecurityUtils.getUsername());
         engUserScoreList.forEach(score -> {
-            if (Objects.isNull(score.getId())) {
-                //新增分数
+            search.setWordName(score.getWordName());
+            List<EngUserScore> engUserScores = engUserScoreMapper.selectEngUserScoreList(search);
+            if(!engUserScores.isEmpty()){
+                //更新分数
+                EngUserScore engUserScore = engUserScores.get(0);
+                engUserScore.setFamiliarity(score.getFamiliarity());
+                updateEngUserScore(engUserScore);
+            }else {
+                //新增
                 EngUserScore engUserScore = new EngUserScore();
                 engUserScore.setUser(SecurityUtils.getUsername());
                 engUserScore.setFamiliarity(score.getFamiliarity());
                 engUserScore.setWordName(score.getWordName());
                 insertEngUserScore(engUserScore);
-            } else {
-                //更新分数
-                EngUserScore engUserScore = selectEngUserScoreById(score.getId());
-                engUserScore.setFamiliarity(score.getFamiliarity());
-                updateEngUserScore(engUserScore);
             }
         });
     }

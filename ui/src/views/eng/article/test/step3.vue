@@ -3,7 +3,7 @@
     <section class="step3-result">
       恭喜您，测试完成！<br />
       最终得分
-      {{ parseInt((result.right * 100) / (wordList.length * 3)) }} 分,答对了
+      {{ parseInt((result.right * 100) / questionList.length) }} 分,答对了
       {{ result.right }}题，答错了 {{ result.wrong }} 题。
     </section>
     <div class="toolbar">
@@ -14,14 +14,13 @@
 </template>
 <script>
 export default {
-  props: ["wordList", "result"],
+  props: ["wordList", "result", "questionList"],
   data() {
     return {
       index: 0,
       userAnswer: -1,
       question: {},
       isStart: false,
-      questionList: [],
       tip: "",
     };
   },

@@ -18,7 +18,6 @@
       </div>
     </div>
     <div v-if="isStart" class="word-detail">
-      <span class="tip">{{ tip }}</span>
       <section class="wordName">{{ word.wordName }}</section>
       <div class="ph" v-if="word.phAnMp3">
         / {{ word.phAm }} /
@@ -44,13 +43,12 @@
 import { play } from "@/utils/audio";
 
 export default {
-  props: ["wordList"],
+  props: ["wordList", "questionList"],
   data() {
     return {
       index: 0,
       word: {},
       isStart: false,
-      tip: "",
     };
   },
   computed: {
@@ -67,7 +65,6 @@ export default {
       if (this.word && this.word.phAnMp3) {
         play(this.word.phAnMp3);
       }
-      this.tip = this.index + 1 + "/" + this.wordList.length * 3;
     },
   },
   methods: {

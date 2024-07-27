@@ -219,7 +219,7 @@ export default {
         pageSize: 1000,
         articleId: this.articleId,
       }).then((response) => {
-        this.sentenceList = response.rows;
+        this.sentenceList = response.rows.filter((i) => i.mp3Time || i.mp3);
         this.loading = false;
       });
     },

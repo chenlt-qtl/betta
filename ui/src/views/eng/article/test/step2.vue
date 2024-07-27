@@ -34,36 +34,17 @@
 import { play } from "@/utils/audio";
 
 export default {
-  props: ["wordList", "result"],
+  props: ["wordList", "result", "questionList"],
   data() {
     return {
       index: 0,
       userAnswer: -1,
       question: {},
       isStart: false,
-      questionList: [],
-      type: 0, //0：词选意思  1：意思选词， 2：句子填空
       tip: "",
     };
   },
   created() {
-    //生成题目
-    const questionList = [];
-    this.wordList.forEach((word) => {
-      questionList.push(this.getQuestion(word, 0));
-      questionList.push(this.getQuestion(word, 1));
-      const question3 = this.getQuestion(word, 2);
-      question3 && questionList.push(question3);
-    });
-    //打乱顺序
-    for (let i = 0; i < questionList.length; i++) {
-      const j = parseInt(Math.random() * questionList.length);
-      const temp = questionList[i];
-
-      questionList[i] = questionList[j];
-      questionList[j] = temp;
-    }
-    this.questionList = questionList;
     this.question = this.questionList[this.index];
   },
   watch: {
@@ -72,7 +53,7 @@ export default {
         play(this.question.word.phAnMp3);
       }
       this.tip =
-        this.index + this.wordList.length + 1 + "/" + this.wordList.length * 4;
+        this.index + 1 + "/" + this.questionList.length;
     },
   },
   methods: {
@@ -91,80 +72,6 @@ export default {
         }
       }
       return "";
-    },
-    getRandomWords(number, word) {
-      const result = [];
-      while (true) {
-        const j = parseInt(Math.random() * this.wordList.length);
-        const randomWord = this.wordList[j];
-        const exist = result.find(
-          (word) => word.wordName && word.wordName == randomWord.wordName
-        );
-        if (!exist && randomWord.wordName != word.wordName) {
-          result.push(randomWord);
-        }
-
-        if (result.length >= number) {
-          break;
-        }
-      }
-      return result;
-    },
-    getExchange(word) {
-      return word.exchange || word.acceptation.split("|").join("");
-    },
-    getWordName(word) {
-      return word.wordName;
-    },
-    //获取题目
-    getQuestion(word, type) {
-      let method, question, sentenceAcceptation;
-      switch (
-        type //0：词选意思  1：意思选词， 2：句子填空
-      ) {
-        case 0:
-          method = this.getExchange;
-          question = this.getWordName(word);
-          break;
-        case 1:
-          method = this.getWordName;
-          question = this.getExchange(word);
-          break;
-        case 2:
-          if (!word.sentence) {
-            return;
-          }
-          method = this.getWordName;
-          question = word.sentence.replace(
-            new RegExp(word.wordName, "i"),
-            "_____"
-          );
-          sentenceAcceptation = word.sentenceAcceptation;
-          break;
-      }
-      const answer = method(word);
-      const answers = [];
-      const answerKey = parseInt(Math.random() * 4);
-      answers[answerKey] = answer;
-      const otherWords = this.getRandomWords(3, word);
-      for (let i = 0; i < 4; i++) {
-        if (i != answerKey) {
-          const randomWord = otherWords.pop();
-          answers[i] = method(randomWord);
-        }
-      }
-      return {
-        type,
-        answerKey,
-        answers,
-        question,
-        sentenceAcceptation,
-        word,
-      };
-    },
-    changeIndex(value) {
-      this.index = this.index + value;
-      this.word = this.wordList[this.index];
     },
     play(url) {
       play(url);
