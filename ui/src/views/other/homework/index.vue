@@ -49,33 +49,35 @@ export default {
   },
   methods: {
     getData() {
-      let start = 724,
-        end = 726;
+      let start = 729,
+        end = 731;
       let total = Math.ceil((end - start) / 4) * 4;
       const newWorkData = {};
+
+      const other = this.person == "dy" ? ["专项练习——周长与面积(第二面)"] : [];
       //豆芽
       const everyday =
         this.person == "dy"
           ? [
-              { name: "计算能手", start: 38, step: 2 },
+              { name: "计算能手", start: 44, step: 2 },
+              { name: "字帖", start: 26, step: 1 },
               "阅读30分钟",
-              { name: "字帖", start: 23, step: 1 },
             ]
           : [
               "读看图写话分三步1篇*3",
               "阅读30分钟",
               "听写12个词语",
-              { name: "字帖", start: 40, step: 1 },
-              { name: "课课优默", start: 34, step: 2 },
-              { name: "数学(2)", start: 28, step: 2 },
+              { name: "字帖", start: 43, step: 1 },
+              { name: "课课优默", start: 42, step: 2 },
+              { name: "数学(3)", start: 9, step: 3 },
               "跳绳",
             ];
-      const tt1 = { name: "舒尔特方格(初级)", start: 17, step: 1 };
-      const dy5 = { name: "舒尔特方格(中级)", start: 7, step: 1 };
-      const dy1 = { name: "暑假新启航(语文)", start: 26, step: 3 };
-      const dy2 = { name: "暑假新启航(数学)", start: 58, step: 3 };
-      const dy3 = { name: "暑假新启航(英语)", start: 105, step: 3 };
-      const dy4 = { name: "数学暑假计算练习", start: 3, step: 1 };
+      const tt1 = { name: "舒尔特方格(初级)", start: 21, step: 1 };
+      const dy5 = { name: "舒尔特方格(中级)", start: 10, step: 1 };
+      const dy1 = { name: "暑假新启航(语文)", start: 29, step: 3 };
+      const dy2 = { name: "暑假新启航(数学)", start: 61, step: 3 };
+      const dy3 = { name: "暑假新启航(科学)", start: 108, step: 3 };
+      const dy4 = { name: "数学暑假计算练习", start: 4, step: 1 };
       for (let i = 0; i < total; i++) {
         let work = [],
           key;
@@ -83,6 +85,9 @@ export default {
           key = Math.floor(start / 100) + "-" + (start % 100);
           everyday.forEach((w) => this.addWork(work, w));
           start++;
+          if (other[i]) {
+            work.push(other[i]);
+          }
           if (this.person == "dy") {
             if ((i + 1) % 3 == 0) {
               this.addWork(work, dy4);
@@ -96,13 +101,16 @@ export default {
             if (i % 3 == 2) {
               this.addWork(work, dy3);
             }
+            if (i % 3 == 3) {
+              this.addWork(work, dy3);
+            }
             if ((i + 10) % 10 == 0) {
-              work.push("作文");
+              // work.push("作文");
             }
             this.addWork(work, dy5);
           } else {
             if ((i + 14) % 14 == 0) {
-              work.push("看图写画");
+              // work.push("看图写画");
             }
             this.addWork(work, tt1);
           }

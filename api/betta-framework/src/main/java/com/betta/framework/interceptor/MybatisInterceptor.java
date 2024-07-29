@@ -49,9 +49,7 @@ public class MybatisInterceptor implements Interceptor {
                         if (localCreateBy == null || "".equals(localCreateBy)) {
                             if (sysUser != null) {
                                 // 登录人账号
-                                field.setAccessible(true);
-                                field.set(parameter, sysUser.getUsername());
-                                field.setAccessible(false);
+                                setFieldValue(field,parameter,sysUser.getUsername());
                             }
                         }
                     }
@@ -61,19 +59,16 @@ public class MybatisInterceptor implements Interceptor {
                         Object localCreateDate = field.get(parameter);
                         field.setAccessible(false);
                         if (localCreateDate == null || "".equals(localCreateDate)) {
-                            field.setAccessible(true);
-                            field.set(parameter, new Date());
-                            field.setAccessible(false);
+                            setFieldValue(field,parameter,new Date());
                         }
                     }
                     //------------------------------------------------------------------------------------------------
-
+                    updateUpdateBy(field,parameter);
                 } catch (Exception e) {
                 }
             }
         }
         if (SqlCommandType.UPDATE == sqlCommandType) {
-            LoginUser sysUser = this.getLoginUser();
             Field[] fields = null;
             if (parameter instanceof ParamMap) {
                 ParamMap<?> p = (ParamMap<?>) parameter;
@@ -100,20 +95,7 @@ public class MybatisInterceptor implements Interceptor {
             for (Field field : fields) {
                 log.debug("------field.name------" + field.getName());
                 try {
-                    if ("updateBy".equals(field.getName())) {
-                        //获取登录用户信息
-                        if (sysUser != null) {
-                            // 登录账号
-                            field.setAccessible(true);
-                            field.set(parameter, sysUser.getUsername());
-                            field.setAccessible(false);
-                        }
-                    }
-                    if ("updateTime".equals(field.getName())) {
-                        field.setAccessible(true);
-                        field.set(parameter, new Date());
-                        field.setAccessible(false);
-                    }
+                    updateUpdateBy(field,parameter);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -166,5 +148,38 @@ public class MybatisInterceptor implements Interceptor {
         Field[] fields = new Field[fieldList.size()];
         fieldList.toArray(fields);
         return fields;
+    }
+
+    /**
+     * 更新字段
+     * @param field
+     * @param parameter
+     * @param object
+     * @throws IllegalAccessException
+     */
+    private void setFieldValue(Field field,Object parameter,Object object) throws IllegalAccessException {
+        field.setAccessible(true);
+        field.set(parameter, object);
+        field.setAccessible(false);
+    }
+
+    /**
+     * 更新update_by和update_time
+     * @param field
+     * @param parameter
+     * @throws IllegalAccessException
+     */
+    private void updateUpdateBy(Field field,Object parameter) throws IllegalAccessException {
+        LoginUser sysUser = this.getLoginUser();
+        if ("updateBy".equals(field.getName())) {
+            //获取登录用户信息
+            if (sysUser != null) {
+                // 登录账号
+                setFieldValue(field,parameter,sysUser.getUsername());
+            }
+        }
+        if ("updateTime".equals(field.getName())) {
+            setFieldValue(field,parameter,new Date());
+        }
     }
 }
