@@ -60,9 +60,10 @@ export function listByArticle(articleId, limit = 5) {
 }
 
 // 查询用户生词本
-export function listByUser() {
+export function listByUser(query) {
   return request({
     url: '/eng/score/list/user',
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
