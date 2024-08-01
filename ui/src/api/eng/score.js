@@ -52,13 +52,14 @@ export function delScore(id) {
   })
 }
 // 根据文章查询生词
-export function listByArticle(articleId, limit = 5) {
+export function listByArticle(articleId, withSentence, limit = 5) {
   const query = {
     pageNum: 1,
     pageSize: limit,
     orderByColumn: "familiarity",
     isAsc: "ascending",
-    articleId
+    articleId,
+    withSentence
   }
   return listByUser(query)
 }

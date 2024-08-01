@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户成绩Controller
@@ -46,13 +47,29 @@ public class EngUserScoreController extends BaseController {
 
     /**
      * 用户单词对应数据
+     *
      * @return
      */
     @PreAuthorize("@ss.hasPermi('eng:score:list')")
     @GetMapping("/list/user")
-    public TableDataInfo listByUser(EngUserScore userScore) {
+    public TableDataInfo listByUser(EngUserScore userScore, boolean withSentence) {
         startPage();
         List<EngUserScore> list = engUserScoreService.selectUserScore(userScore);
+        if (withSentence) {
+            //查询对应的句子
+            EngSentence engSentence = new EngSentence();
+            if (!Objects.isNull(userScore.getArticleId())) {
+                engSentence.setArticleId(userScore.getArticleId());
+            }
+            list.forEach(engUserScore -> {
+                engSentence.setContent(engUserScore.getWordName());
+                List<EngSentence> engSentences = engSentenceService.selectEngSentenceList(engSentence);
+                if (!engSentences.isEmpty()) {
+                    engUserScore.setSentence(engSentences.get(0).getContent());
+                    engUserScore.setSentenceAcceptation(engSentences.get(0).getAcceptation());
+                }
+            });
+        }
         return getDataTable(list);
     }
 

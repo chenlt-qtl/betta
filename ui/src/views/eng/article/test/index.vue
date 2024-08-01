@@ -58,7 +58,7 @@ export default {
         this.$message.error(`请指定文章ID`);
       }
       this.loading = true;
-      listByArticle(articleId).then((response) => {
+      listByArticle(articleId,true).then((response) => {
         this.wordList = response.rows.filter((w) => w.wordName);
         if (this.wordList.length < 5) {
           this.$message.error(`单词数小于5个，不能测试`);

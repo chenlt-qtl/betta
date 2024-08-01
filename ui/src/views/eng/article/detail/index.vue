@@ -390,7 +390,7 @@ export default {
     /** 查询单词列表 */
     getWordList() {
       this.loading = true;
-      listByArticle(this.articleId, 1000).then((response) => {
+      listByArticle(this.articleId,false, 1000).then((response) => {
         this.wordList = response.rows;
         this.wordTotal = response.total;
         this.sentenceWordList = this.wordList.map((word) => word.wordName);
