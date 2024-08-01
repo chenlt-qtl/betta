@@ -391,8 +391,8 @@ export default {
     getWordList() {
       this.loading = true;
       listByArticle(this.articleId, 1000).then((response) => {
-        this.wordList = response.data;
-        this.wordTotal = this.wordList.length;
+        this.wordList = response.rows;
+        this.wordTotal = response.total;
         this.sentenceWordList = this.wordList.map((word) => word.wordName);
         this.loading = false;
       });

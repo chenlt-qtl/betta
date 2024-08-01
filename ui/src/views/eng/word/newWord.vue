@@ -53,6 +53,7 @@
       v-loading="loading"
       :data="wordList"
       @selection-change="handleSelectionChange"
+      @sort-change="handleSortChange"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="单词" align="center" prop="wordName" />
@@ -64,12 +65,14 @@
         :formatter="acceptationFormatter"
       />
       <el-table-column label="注释" align="center" prop="exchange" />
-      <el-table-column label="熟悉度" align="center" prop="familiarity">
-        <template v-if="scope.row.familiarity" slot-scope="scope">
-          {{ familiarity }}
-        </template>
-        <template v-if="!scope.row.familiarity" slot-scope="scope">
-          0
+      <el-table-column
+        label="熟悉度"
+        align="center"
+        prop="familiarity"
+        sortable="custom"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.familiarity ? scope.row.familiarity : 0 }}
         </template>
       </el-table-column>
       <el-table-column label="音频" align="center" prop="phAnMp3">
@@ -175,6 +178,12 @@ export default {
       this.ids = selection.map((item) => item.id);
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
+    },
+        /** 排序触发事件 */
+    handleSortChange(column) {
+      this.queryParams.orderByColumn = column.prop;
+      this.queryParams.isAsc = column.order;
+      this.getList();
     },
     /** 删除按钮操作 */
     handleDelete(row) {

@@ -22,7 +22,7 @@ public interface EngUserScoreMapper
 
     /**
      * 查询用户成绩列表
-     * 
+     *
      * @param engUserScore 用户成绩
      * @return 用户成绩集合
      */
@@ -61,5 +61,5 @@ public interface EngUserScoreMapper
     public int deleteEngUserScoreByIds(Long[] ids);
 
 
-    List<EngUserScore> selectScore(@Param("createBy") String createdBy,@Param("articleId") Long articleId, @Param("limit") Integer limit);
+    List<EngUserScore> selectUserScore(EngUserScore engUserScore);
 }

@@ -2,6 +2,7 @@ package com.betta.eng.service.impl;
 
 import java.util.List;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +91,6 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
     }
 
     @Override
-    public List<EngUserScore> selectScoreByArticle(String username, Long articleId, int limit) {
-        return engUserScoreMapper.selectScore(username, articleId, limit);
-    }
-
-    @Override
     public void batchUpdate(List<EngUserScore> engUserScoreList) {
         EngUserScore search = new EngUserScore();
         search.setUser(SecurityUtils.getUsername());
@@ -118,7 +114,8 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
     }
 
     @Override
-    public List<EngUserScore> selectScoreByUser(String username) {
-        return engUserScoreMapper.selectScore(username, null, null);
+    @CreateByScope("c")
+    public List<EngUserScore> selectUserScore(EngUserScore engUserScore) {
+        return engUserScoreMapper.selectUserScore(engUserScore);
     }
 }

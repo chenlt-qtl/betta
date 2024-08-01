@@ -45,34 +45,15 @@ public class EngUserScoreController extends BaseController {
     }
 
     /**
-     * 用户生词本
+     * 用户单词对应数据
      * @return
      */
     @PreAuthorize("@ss.hasPermi('eng:score:list')")
     @GetMapping("/list/user")
-    public TableDataInfo listByUser() {
+    public TableDataInfo listByUser(EngUserScore userScore) {
         startPage();
-        List<EngUserScore> list = engUserScoreService.selectScoreByUser(SecurityUtils.getUsername());
+        List<EngUserScore> list = engUserScoreService.selectUserScore(userScore);
         return getDataTable(list);
-    }
-
-    @PreAuthorize("@ss.hasPermi('eng:score:list')")
-    @GetMapping("/list/article/{articleId}/{limit}")
-    public AjaxResult listByArticle(@PathVariable Long articleId, @PathVariable int limit) {
-        List<EngUserScore> list = engUserScoreService.selectScoreByArticle(SecurityUtils.getUsername(),articleId, limit);
-
-        //查询对应的句子
-        EngSentence engSentence = new EngSentence();
-        engSentence.setArticleId(articleId);
-        list.forEach(engUserScore -> {
-            engSentence.setContent(engUserScore.getWordName());
-            List<EngSentence> engSentences = engSentenceService.selectEngSentenceList(engSentence);
-            if (!engSentences.isEmpty()) {
-                engUserScore.setSentence(engSentences.get(0).getContent());
-                engUserScore.setSentenceAcceptation(engSentences.get(0).getAcceptation());
-            }
-        });
-        return AjaxResult.success(list);
     }
 
     /**

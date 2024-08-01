@@ -59,9 +59,7 @@ public interface IEngUserScoreService {
      */
     public int deleteEngUserScoreById(Long id);
 
-    List<EngUserScore> selectScoreByArticle(String username, Long articleId, int limit);
-
     void batchUpdate(List<EngUserScore> engUserScoreList);
 
-    List<EngUserScore> selectScoreByUser(String username);
+    List<EngUserScore> selectUserScore(EngUserScore engUserScore);
 }

@@ -53,10 +53,14 @@ export function delScore(id) {
 }
 // 根据文章查询生词
 export function listByArticle(articleId, limit = 5) {
-  return request({
-    url: '/eng/score/list/article/' + articleId + "/" + limit,
-    method: 'get'
-  })
+  const query = {
+    pageNum: 1,
+    pageSize: limit,
+    orderByColumn: "familiarity",
+    isAsc: "ascending",
+    articleId
+  }
+  return listByUser(query)
 }
 
 // 查询用户生词本
