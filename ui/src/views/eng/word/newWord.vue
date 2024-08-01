@@ -64,12 +64,20 @@
         :formatter="acceptationFormatter"
       />
       <el-table-column label="注释" align="center" prop="exchange" />
-      <el-table-column label="音频" align="center" prop="phAnMp3" >
+      <el-table-column label="熟悉度" align="center" prop="familiarity">
+        <template v-if="scope.row.familiarity" slot-scope="scope">
+          {{ familiarity }}
+        </template>
+        <template v-if="!scope.row.familiarity" slot-scope="scope">
+          0
+        </template>
+      </el-table-column>
+      <el-table-column label="音频" align="center" prop="phAnMp3">
         <template v-if="scope.row.phAnMp3" slot-scope="scope">
-            <el-button type="text" @click="() => play(scope.row.phAnMp3)">
-              <svg-icon icon-class="sound" />
-            </el-button>
-          </template>
+          <el-button type="text" @click="() => play(scope.row.phAnMp3)">
+            <svg-icon icon-class="sound" />
+          </el-button>
+        </template>
       </el-table-column>
       <el-table-column
         label="操作"
@@ -100,12 +108,8 @@
 </template>
 
 <script>
-import {
-  listNew,
-  getWord,
-  delWord,
-} from "@/api/eng/word";
-
+import { delWord } from "@/api/eng/word";
+import { listByUser } from "@/api/eng/score";
 import { play } from "@/utils/audio";
 
 export default {
@@ -147,14 +151,14 @@ export default {
     /** 查询单词列表 */
     getList() {
       this.loading = true;
-      listNew(this.queryParams).then((response) => {
+      listByUser(this.queryParams).then((response) => {
         this.wordList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
     },
-    play(url){
-      play(url)      
+    play(url) {
+      play(url);
     },
     /** 搜索按钮操作 */
     handleQuery() {

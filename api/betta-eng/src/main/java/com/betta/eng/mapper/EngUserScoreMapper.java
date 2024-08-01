@@ -61,5 +61,5 @@ public interface EngUserScoreMapper
     public int deleteEngUserScoreByIds(Long[] ids);
 
 
-    List<EngUserScore> selectScoreByArticle(@Param("articleId") Long articleId, @Param("limit") int limit);
+    List<EngUserScore> selectScore(@Param("createBy") String createdBy,@Param("articleId") Long articleId, @Param("limit") Integer limit);
 }

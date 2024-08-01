@@ -101,19 +101,21 @@ export default {
 };
 </script>
 <style lang='scss'>
-.test-article {
+.test-article{
   padding: 24px;
   flex: 1;
-  background: linear-gradient(#e5edf2, #b3d2e6);
+  background: url("../../../../assets/images/cat4.webp") no-repeat center; /* 设置图片路径 */
+  background-size: cover; /* 背景图片覆盖整个元素 */
   height: calc(100vh - 84px);
   .test-container {
+    color: #333;
     background: rgba(255, 255, 255, 0.1);
     width: 400px;
     height: calc(100% - 80px);
     padding: 20px;
     margin: 40px auto;
     border-radius: 10px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(18px);
     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
@@ -128,7 +130,7 @@ export default {
 
   .box-block {
     width: 100%;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     padding: 15px 20px;
     margin-top: 20px;
     border-radius: 35px;
@@ -140,7 +142,7 @@ export default {
   }
 
   .wordName {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 600;
   }
   .phAm {
@@ -152,7 +154,7 @@ export default {
   }
   .block-button {
     background: #fff;
-    color: #666;
+    color: #333;
     width: 120px;
     cursor: pointer;
     font-weight: 600;

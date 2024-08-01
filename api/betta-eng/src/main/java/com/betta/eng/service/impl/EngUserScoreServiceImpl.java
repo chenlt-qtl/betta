@@ -1,6 +1,7 @@
 package com.betta.eng.service.impl;
 
 import java.util.List;
+
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +90,8 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
     }
 
     @Override
-    public List<EngUserScore> selectScoreByArticle(Long articleId, int limit) {
-        return engUserScoreMapper.selectScoreByArticle(articleId, limit);
+    public List<EngUserScore> selectScoreByArticle(String username, Long articleId, int limit) {
+        return engUserScoreMapper.selectScore(username, articleId, limit);
     }
 
     @Override
@@ -100,12 +101,12 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
         engUserScoreList.forEach(score -> {
             search.setWordName(score.getWordName());
             List<EngUserScore> engUserScores = engUserScoreMapper.selectEngUserScoreList(search);
-            if(!engUserScores.isEmpty()){
+            if (!engUserScores.isEmpty()) {
                 //更新分数
                 EngUserScore engUserScore = engUserScores.get(0);
                 engUserScore.setFamiliarity(score.getFamiliarity());
                 updateEngUserScore(engUserScore);
-            }else {
+            } else {
                 //新增
                 EngUserScore engUserScore = new EngUserScore();
                 engUserScore.setUser(SecurityUtils.getUsername());
@@ -114,5 +115,10 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
                 insertEngUserScore(engUserScore);
             }
         });
+    }
+
+    @Override
+    public List<EngUserScore> selectScoreByUser(String username) {
+        return engUserScoreMapper.selectScore(username, null, null);
     }
 }

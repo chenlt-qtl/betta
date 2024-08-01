@@ -62,6 +62,7 @@ export default {
               { name: "计算能手", start: 44, step: 2 },
               { name: "字帖", start: 26, step: 1 },
               "阅读30分钟",
+              "跳绳",
             ]
           : [
               "读看图写话分三步1篇*3",
@@ -71,6 +72,7 @@ export default {
               { name: "课课优默", start: 42, step: 2 },
               { name: "数学(3)", start: 9, step: 3 },
               "跳绳",
+              "每周一题",
             ];
       const tt1 = { name: "舒尔特方格(初级)", start: 21, step: 1 };
       const dy5 = { name: "舒尔特方格(中级)", start: 10, step: 1 };

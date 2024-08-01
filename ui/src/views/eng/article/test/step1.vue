@@ -1,14 +1,12 @@
 <template>
   <div class="test-step1">
     <div v-if="!isStart" class="word-table">
-      <el-table :data="wordList" size="mini" :show-header="false" class="table">
+      <el-table :data="wordList" :show-header="false" class="table">
         <el-table-column label="单词" prop="wordName">
           <template v-if="scope.row.phAnMp3" slot-scope="scope">
             <div class="word-container">
-              <section class="word">
-                {{ scope.row.wordName }}
-                <span> / {{ scope.row.phAm }} /</span>
-              </section>
+              <span class="word"> {{ scope.row.wordName }}</span>
+              <span> / {{ scope.row.phAm }} /</span>
             </div>
           </template>
         </el-table-column>
@@ -18,19 +16,21 @@
       </div>
     </div>
     <div v-if="isStart" class="word-detail">
-      <section class="wordName">{{ word.wordName }}</section>
-      <div class="ph" v-if="word.phAnMp3">
-        / {{ word.phAm }} /
+      <section class="wordName">
+        {{ word.wordName }}
         <el-button
-          style="marginleft: 10px"
+          class="soundBtn"
           type="text"
           @click="() => play(word.phAnMp3)"
           ><svg-icon icon-class="sound" />
         </el-button>
-      </div>
-      <span style="flex: 1">
-        {{ word.exchange ? word.exchange : acceptation.split("|").join("") }}
-      </span>
+      </section>
+      <div class="ph" v-if="word.phAnMp3">/ {{ word.phAm }} /</div>
+      <ul class="acceptations">
+        <li v-for="text in acceptations" :key="text">
+          {{text}}
+        </li>
+      </ul>
       <div class="toolbar">
         <button class="block-button" style="width: 52px" @click="nextStep">
           <i class="el-icon-right"></i>
@@ -52,12 +52,15 @@ export default {
     };
   },
   computed: {
-    acceptation() {
-      if (this.word && this.word.acceptation) {
-        return this.word.acceptation;
-      } else {
-        return "";
+    acceptations() {
+      if(this.word){
+        if(this.word.exchange){
+          return [this.word.exchange]
+        }else{
+          return this.word.acceptation.split("|")
+        }
       }
+      return [];
     },
   },
   watch: {
@@ -99,6 +102,13 @@ export default {
     .table {
       flex: 1;
     }
+    .word-container {
+      color: #333;
+      .word {
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+    }
     .el-table {
       background-color: transparent;
       tr {
@@ -112,7 +122,23 @@ export default {
   .word-detail {
     height: 100%;
     display: flex;
+    gap: 10px;
     flex-direction: column;
+    .wordName {
+      display: flex;
+      align-items: center;
+      //发音按钮
+      .soundBtn {
+        margin-left: 25px;
+        font-size: 1.5rem;
+        color: #333;
+      }
+    }
+    .acceptations{
+      flex: 1;
+      padding: 0;
+      list-style: none;
+    }
   }
   .toolbar {
     text-align: center;

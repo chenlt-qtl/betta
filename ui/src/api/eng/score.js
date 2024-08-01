@@ -51,10 +51,18 @@ export function delScore(id) {
     method: 'delete'
   })
 }
-// 查询用户成绩列表
+// 根据文章查询生词
 export function listByArticle(articleId, limit = 5) {
   return request({
     url: '/eng/score/list/article/' + articleId + "/" + limit,
+    method: 'get'
+  })
+}
+
+// 查询用户生词本
+export function listByUser() {
+  return request({
+    url: '/eng/score/list/user',
     method: 'get'
   })
 }

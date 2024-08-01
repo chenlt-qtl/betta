@@ -30,12 +30,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectScoreByArticle" resultMap="EngUserScoreResult">
+    <select id="selectScore" resultMap="EngUserScoreResult">
         select c.id as relId, d.* from
         (select b.familiarity, a.word_name ,a.ph_am as phAm,a.acceptation,a.exchange, a.ph_an_mp3 as phAnMp3
          from eng_word a left join eng_user_score b on a.word_name = b.word_name) d inner join eng_article_word_rel c
         on d.word_name = c.word_name
-        where c.article_id = #{articleId} order by d.familiarity limit #{limit}
+        <where>
+            <if test="articleId != null  and articleId != ''"> and c.article_id = #{articleId}</if>
+            and c.create_by=#{createBy}
+        </where>
+        order by d.familiarity
+        <if test="limit != null ">limit #{limit}</if>
     </select>
 
     <select id="selectEngUserScoreById" parameterType="Long" resultMap="EngUserScoreResult">
