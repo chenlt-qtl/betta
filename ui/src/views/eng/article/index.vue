@@ -92,7 +92,9 @@
         @queryTable="getList"
       ></right-toolbar>
     </el-row>
-
+    <el-row :gutter="10" class="mb8 group-tags">
+      <groupTags v-model="queryParams.groupId" :groupList=groupList></groupTags>
+    </el-row>
     <el-table
       v-loading="loading"
       :data="articleList"
@@ -235,10 +237,11 @@ import {
 import { listGroup } from "@/api/eng/group";
 import { play } from "@/utils/audio";
 import viewArticleBtn from "@/components/Eng/viewArticle.vue";
+import groupTags from '@/components/Eng/groupTags.vue';
 
 export default {
   name: "Article",
-  components: { viewArticleBtn },
+  components: { viewArticleBtn,groupTags },
   data() {
     return {
       // 遮罩层
