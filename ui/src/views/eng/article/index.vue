@@ -93,7 +93,7 @@
       ></right-toolbar>
     </el-row>
     <el-row :gutter="10" class="mb8 group-tags">
-      <groupTags v-model="queryParams.groupId" :groupList=groupList></groupTags>
+      <groupTags v-model="queryParams.groupId" :groupList=groupList @input="handleQuery"></groupTags>
     </el-row>
     <el-table
       v-loading="loading"
