@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       workData: {},
-      person: "dy",
+      person: "tt",
     };
   },
   watch: {
@@ -49,37 +49,37 @@ export default {
   },
   methods: {
     getData() {
-      let start = 729,
-        end = 731;
-      let total = Math.ceil((end - start) / 4) * 4;
+      let start = 819,
+        end = 823;
+      let total = Math.ceil((end - start + 1) / 4) * 4;
       const newWorkData = {};
 
-      const other = this.person == "dy" ? ["专项练习——周长与面积(第二面)"] : [];
+      const other = [];//this.person == "dy" ? ["专项练习——周长与面积(第二面)"] : [];
       //豆芽
       const everyday =
         this.person == "dy"
           ? [
-              { name: "计算能手", start: 44, step: 2 },
-              { name: "字帖", start: 26, step: 1 },
+              { name: "计算能手", start: 68, step: 2 },
+              { name: "字帖", start: 39, step: 1 },
               "阅读30分钟",
               "跳绳",
+              { name: "舒尔特方格(中级)", start: 20, step: 1 },
             ]
           : [
               "读看图写话分三步1篇*3",
               "阅读30分钟",
               "听写12个词语",
-              { name: "字帖", start: 43, step: 1 },
-              { name: "课课优默", start: 42, step: 2 },
-              { name: "数学(3)", start: 9, step: 3 },
+              { name: "字帖", start: 18, step: 1 },
+              { name: "拼音(2)", start: 13, step: 4 },
+              { name: "数学黄冈小状元", start: 2, step: 1 },
               "跳绳",
               "每周一题",
+              { name: "舒尔特方格(初级)", start: 32, step: 1 },
             ];
-      const tt1 = { name: "舒尔特方格(初级)", start: 21, step: 1 };
-      const dy5 = { name: "舒尔特方格(中级)", start: 10, step: 1 };
-      const dy1 = { name: "暑假新启航(语文)", start: 29, step: 3 };
-      const dy2 = { name: "暑假新启航(数学)", start: 61, step: 3 };
-      const dy3 = { name: "暑假新启航(科学)", start: 108, step: 3 };
-      const dy4 = { name: "数学暑假计算练习", start: 4, step: 1 };
+      // const dy1 = { name: "暑假新启航(语文)", start: 35, step: 3 };
+      const dy2 = { name: "暑假新启航(数学)", start: 70, step: 3 };
+      // const dy3 = { name: "暑假新启航(科学)", start: 112, step: 3 };
+      const dy4 = { name: "数学暑假计算练习", start: 8, step: 1 };
       for (let i = 0; i < total; i++) {
         let work = [],
           key;
@@ -91,30 +91,28 @@ export default {
             work.push(other[i]);
           }
           if (this.person == "dy") {
-            if ((i + 1) % 3 == 0) {
+            // if ((i + 1) % 3 == 0) {
               this.addWork(work, dy4);
-            }
-            if (i % 3 == 0) {
-              this.addWork(work, dy1);
-            }
-            if (i % 3 == 1) {
+            // }
+            // if (i % 3 == 0) {
+            //   this.addWork(work, dy1);
+            // }
+            // if (i % 3 == 1) {
               this.addWork(work, dy2);
-            }
-            if (i % 3 == 2) {
-              this.addWork(work, dy3);
-            }
-            if (i % 3 == 3) {
-              this.addWork(work, dy3);
-            }
+            // }
+            // if (i % 3 == 2) {
+            //   this.addWork(work, dy3);
+            // }
+            // if (i % 3 == 3) {
+            //   this.addWork(work, dy3);
+            // }
             if ((i + 10) % 10 == 0) {
               // work.push("作文");
             }
-            this.addWork(work, dy5);
           } else {
             if ((i + 14) % 14 == 0) {
               // work.push("看图写画");
             }
-            this.addWork(work, tt1);
           }
           work.push("英语作业");
           work.push(" ");

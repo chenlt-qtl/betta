@@ -1,23 +1,40 @@
-import { Message, MessageBox, Notification, Loading } from 'element-ui'
+import {
+  Message,
+  MessageBox,
+  Notification,
+  Loading
+} from 'element-ui'
 
 let loadingInstance;
 
 export default {
   // 消息提示
-  msg(content) {
-    Message.info(content)
+  msg(message) {
+    Message.info({
+      message,
+      showClose: true
+    })
   },
   // 错误消息
-  msgError(content) {
-    Message.error(content)
+  msgError(message) {
+    Message.error({
+      message,
+      showClose: true
+    })
   },
   // 成功消息
-  msgSuccess(content) {
-    Message.success(content)
+  msgSuccess(message) {
+    Message.success({
+      message,
+      showClose: true
+    })
   },
   // 警告消息
-  msgWarning(content) {
-    Message.warning(content)
+  msgWarning(message) {
+    Message.warning({
+      message,
+      showClose: true
+    })
   },
   // 弹出提示
   alert(content) {
@@ -25,15 +42,21 @@ export default {
   },
   // 错误提示
   alertError(content) {
-    MessageBox.alert(content, "系统提示", { type: 'error' })
+    MessageBox.alert(content, "系统提示", {
+      type: 'error'
+    })
   },
   // 成功提示
   alertSuccess(content) {
-    MessageBox.alert(content, "系统提示", { type: 'success' })
+    MessageBox.alert(content, "系统提示", {
+      type: 'success'
+    })
   },
   // 警告提示
   alertWarning(content) {
-    MessageBox.alert(content, "系统提示", { type: 'warning' })
+    MessageBox.alert(content, "系统提示", {
+      type: 'warning'
+    })
   },
   // 通知提示
   notify(content) {
@@ -41,7 +64,7 @@ export default {
   },
   // 错误通知
   notifyError(content) {
-    Notification.error(content);
+    Notification.error("123");
   },
   // 成功通知
   notifySuccess(content) {
