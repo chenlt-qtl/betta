@@ -107,7 +107,6 @@ public class EngWordController extends BaseController {
     /**
      * 新增文章对应的单词
      *
-     * @param map
      * @param articleId
      * @return
      */

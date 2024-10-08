@@ -104,10 +104,7 @@ public class EngWordServiceImpl implements IEngWordService {
         }
 
         //查询自定义例句
-        EngSentence sentence = new EngSentence();
-        sentence.setCreateBy(SecurityUtils.getUsername());
-        sentence.setContent(wordName);
-        List<EngSentence> sentences = sentenceService.selectEngSentenceList(sentence);
+        List<EngSentence> sentences = sentenceService.selectByWordTop10(wordName);
         word.setSentenceList(sentences);
 
         //查询是否已关联
@@ -206,14 +203,15 @@ public class EngWordServiceImpl implements IEngWordService {
     public void addArticleWord(Long articleId, String wordName) {
 
 
+        //先查询单词
+        getWord(wordName);
         //先查询是否已关联
         EngArticleWordRel articleWordRel = new EngArticleWordRel();
         articleWordRel.setArticleId(articleId);
         articleWordRel.setWordName(wordName);
         List<EngArticleWordRel> articleWordRelList = articleWordRelService.selectEngArticleWordRelList(articleWordRel);
         if (articleWordRelList.isEmpty()) {
-            //如果未关联 先查一下单词 再做关联
-            getWord(wordName);
+            //关联单词和文章
             articleWordRel = new EngArticleWordRel();
             articleWordRel.setArticleId(articleId);
             articleWordRel.setWordName(wordName);

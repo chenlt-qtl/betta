@@ -62,4 +62,11 @@ public interface IEngSentenceService {
     int deleteByArticle(Long articleId);
 
     List<EngSentence> selectPlayList(EngSentence engSentence, boolean inPlayList, String username);
+
+    /**
+     * 只取前10句 避免内存溢出
+     * @param wordName
+     * @return
+     */
+    List<EngSentence> selectByWordTop10(String wordName);
 }

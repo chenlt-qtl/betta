@@ -126,4 +126,9 @@ public class EngSentenceServiceImpl implements IEngSentenceService {
         engSentence.setCreateBy(username);
         return engSentenceMapper.selectPlayList(engSentence);
     }
+
+    @Override
+    public List<EngSentence> selectByWordTop10(String wordName) {
+        return engSentenceMapper.selectByWordTop10(wordName,SecurityUtils.getUsername());
+    }
 }

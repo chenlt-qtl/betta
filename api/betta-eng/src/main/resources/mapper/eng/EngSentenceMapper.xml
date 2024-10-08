@@ -39,6 +39,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by idx
     </select>
 
+    <select id="selectByWordTop10" resultMap="EngSentenceResult">
+        <include refid="selectEngSentenceVo"/>
+        <where>
+            <if test="wordName != null  and wordName != ''"> and content like concat('%',#{wordName},'%')</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+        order by idx limit 10
+    </select>
+
+
 
     <select id="selectPlayList" parameterType="EngSentence" resultMap="EngSentenceResult">
         select eng_sentence.id,content,eng_sentence.mp3,eng_article_group.name as group_name,eng_article.title  as article_name

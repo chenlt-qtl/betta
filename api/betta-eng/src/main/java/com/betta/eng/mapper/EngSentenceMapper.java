@@ -2,6 +2,7 @@ package com.betta.eng.mapper;
 
 import java.util.List;
 import com.betta.eng.domain.EngSentence;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 文章句子Mapper接口
@@ -62,4 +63,6 @@ public interface EngSentenceMapper
     int deleteByArticleId(Long articleId);
 
     List<EngSentence> selectPlayList(EngSentence engSentence);
+
+    List<EngSentence> selectByWordTop10(@Param("wordName") String wordName, @Param("createBy") String createBy);
 }
