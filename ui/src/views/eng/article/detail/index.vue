@@ -133,7 +133,7 @@
       <el-divider content-position="center"
         >单词信息 (共 {{ wordTotal }} 条)</el-divider
       >
-      <WordList :articleId="articleId" :data="wordList" :getWordList="getWordList"></WordList>
+      <WordList :play="play" :articleId="articleId" :data="wordList" :getWordList="getWordList"></WordList>
       <!-- 添加或修改文章句子对话框 -->
       <el-dialog
         :title="title"

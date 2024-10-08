@@ -76,7 +76,7 @@ import { addWordByArticle } from "@/api/eng/word";
 import { delArticleWordRel } from "@/api/eng/articleWordRel";
 
 export default {
-  props: ["data", "loading", "canEdit", "articleId", "getWordList"],
+  props: ["data", "loading", "canEdit", "articleId", "getWordList", "play"],
   data() {
     return {
       open: false,
