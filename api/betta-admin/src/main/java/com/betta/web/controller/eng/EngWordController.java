@@ -89,7 +89,7 @@ public class EngWordController extends BaseController {
     }
 
     /**
-     * 新增文章对应的单词
+     * 更新文章对应的单词
      *
      * @param map
      * @param articleId
@@ -98,9 +98,24 @@ public class EngWordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('eng:word:add')")
     @Log(title = "单词", businessType = BusinessType.INSERT)
     @PostMapping("/{articleId}")
-    public AjaxResult addByArticle(@RequestBody Map map, @PathVariable Long articleId) {
+    public AjaxResult updateArticleWord(@RequestBody Map map, @PathVariable Long articleId) {
         List<String> words = (List<String>) map.get("words");
         engWordService.updateByArticle(words, articleId);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 新增文章对应的单词
+     *
+     * @param map
+     * @param articleId
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('eng:word:add')")
+    @Log(title = "单词", businessType = BusinessType.INSERT)
+    @PostMapping("/{articleId}/{wordName}")
+    public AjaxResult addArticleWord(@PathVariable Long articleId,@PathVariable String wordName) {
+        engWordService.addArticleWord(articleId,wordName);
         return AjaxResult.success();
     }
 

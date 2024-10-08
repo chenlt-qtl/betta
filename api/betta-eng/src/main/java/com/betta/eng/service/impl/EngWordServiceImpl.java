@@ -121,6 +121,12 @@ public class EngWordServiceImpl implements IEngWordService {
         return word;
     }
 
+    /**
+     * 更新文章的所有关联单词
+     *
+     * @param wordNames
+     * @param articleId
+     */
     @Override
     @Transactional
     public void updateByArticle(List<String> wordNames, Long articleId) {
@@ -189,5 +195,29 @@ public class EngWordServiceImpl implements IEngWordService {
     public List<EngWord> selectNewList(EngWord engWord) {
         engWord.setCreateBy(SecurityUtils.getUsername());//当前用户的数据
         return engWordMapper.selectRelList(engWord);
+    }
+
+    /**
+     * 增加文章对应的单词
+     * @param articleId
+     * @param wordName
+     */
+    @Override
+    public void addArticleWord(Long articleId, String wordName) {
+
+
+        //先查询是否已关联
+        EngArticleWordRel articleWordRel = new EngArticleWordRel();
+        articleWordRel.setArticleId(articleId);
+        articleWordRel.setWordName(wordName);
+        List<EngArticleWordRel> articleWordRelList = articleWordRelService.selectEngArticleWordRelList(articleWordRel);
+        if (articleWordRelList.isEmpty()) {
+            //如果未关联 先查一下单词 再做关联
+            getWord(wordName);
+            articleWordRel = new EngArticleWordRel();
+            articleWordRel.setArticleId(articleId);
+            articleWordRel.setWordName(wordName);
+            articleWordRelService.insertEngArticleWordRel(articleWordRel);
+        }
     }
 }

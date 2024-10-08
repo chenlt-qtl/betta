@@ -93,7 +93,11 @@
       ></right-toolbar>
     </el-row>
     <el-row :gutter="10" class="mb8 group-tags">
-      <groupTags v-model="queryParams.groupId" :groupList=groupList @input="handleQuery"></groupTags>
+      <groupTags
+        v-model="queryParams.groupId"
+        :groupList="groupList"
+        @input="handleQuery"
+      ></groupTags>
     </el-row>
     <el-table
       v-loading="loading"
@@ -110,10 +114,13 @@
                 :width="50"
                 :height="50"
               />
-              <section class="desc">
+              <router-link
+                class="desc"
+                :to="'/eng/article-detail/' + scope.row.id"
+              >
                 <span class="title">{{ scope.row.title }} </span>
                 <span class="group">{{ scope.row.groupName }}</span>
-              </section>
+              </router-link>
             </section>
             <section class="toolbar">
               <el-button
@@ -122,7 +129,7 @@
                 icon="el-icon-notebook-2"
                 @click="handleViewArticle(scope.row)"
                 v-hasPermi="['eng:article:edit']"
-                >句子</el-button
+                >详情</el-button
               ><el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
@@ -147,8 +154,6 @@
                 @click="handleTest(scope.row)"
                 >测试</el-button
               ><el-divider direction="vertical"></el-divider>
-              <viewArticleBtn :articleId="scope.row.id" />
-              <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
                 type="text"
@@ -236,12 +241,11 @@ import {
 } from "@/api/eng/article";
 import { listGroup } from "@/api/eng/group";
 import { play } from "@/utils/audio";
-import viewArticleBtn from "@/components/Eng/viewArticle.vue";
-import groupTags from '@/components/Eng/groupTags.vue';
+import groupTags from "@/components/Eng/groupTags.vue";
 
 export default {
   name: "Article",
-  components: { viewArticleBtn,groupTags },
+  components: { groupTags },
   data() {
     return {
       // 遮罩层

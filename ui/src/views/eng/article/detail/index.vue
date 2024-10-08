@@ -52,6 +52,9 @@
             >删除</el-button
           >
         </el-col>
+        <el-col :span="1.5">
+          <viewArticleBtn :articleId="articleId" />
+        </el-col>
       </el-row>
       <el-table
         v-loading="loading"
@@ -130,40 +133,7 @@
       <el-divider content-position="center"
         >单词信息 (共 {{ wordTotal }} 条)</el-divider
       >
-      <el-table v-loading="loading" :data="wordList">
-        <el-table-column label="单词" align="center" prop="wordName" />
-        <el-table-column label="音标" align="center" prop="phAm" />
-        <el-table-column
-          label="解释"
-          align="center"
-          prop="acceptation"
-          :formatter="acceptationFormatter"
-        />
-        <el-table-column label="熟悉度" align="center" prop="familiarity" />
-        <el-table-column label="注释" align="center" prop="exchange" />
-        <el-table-column label="音频" align="center" prop="phAnMp3">
-          <template v-if="scope.row.phAnMp3" slot-scope="scope">
-            <el-button type="text" @click="() => play(scope.row.phAnMp3)">
-              <svg-icon icon-class="sound" />
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDeleteRel(scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+      <WordList :articleId="articleId" :data="wordList" :getWordList="getWordList"></WordList>
       <!-- 添加或修改文章句子对话框 -->
       <el-dialog
         :title="title"
@@ -279,6 +249,7 @@
 <script>
 import { getArticle } from "@/api/eng/article";
 import uploadByUrl from "@/components/UploadByUrl";
+import viewArticleBtn from "@/components/Eng/viewArticle.vue";
 
 import {
   listSentence,
@@ -288,16 +259,16 @@ import {
   updateSentence,
 } from "@/api/eng/sentence";
 
-import { addWordByArticle } from "@/api/eng/word";
+import { updateArticleWord } from "@/api/eng/word";
 import { listByArticle } from "@/api/eng/score";
 
-import { delArticleWordRel } from "@/api/eng/articleWordRel";
 import { brReg, splipSentences } from "@/utils/wordUtils";
 import { play } from "@/utils/audio";
+import WordList from "@/components/Eng/wordList.vue";
 
 export default {
   name: "Article",
-  components: { uploadByUrl },
+  components: { uploadByUrl, WordList, viewArticleBtn },
   data() {
     return {
       uploadType: "file",
@@ -358,18 +329,6 @@ export default {
         this.loading = false;
       });
     },
-    handleDeleteRel(row) {
-      this.$modal
-        .confirm("是否确认删除选中的单词？")
-        .then(function () {
-          return delArticleWordRel(row.relId);
-        })
-        .then(() => {
-          this.getWordList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
     play(url, mp3Time) {
       url && play(url, mp3Time);
     },
@@ -390,7 +349,7 @@ export default {
     /** 查询单词列表 */
     getWordList() {
       this.loading = true;
-      listByArticle(this.articleId,false, 1000).then((response) => {
+      listByArticle(this.articleId, false, 1000).then((response) => {
         this.wordList = response.rows;
         this.wordTotal = response.total;
         this.sentenceWordList = this.wordList.map((word) => word.wordName);
@@ -497,7 +456,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.useTopMp3){
+          if (this.useTopMp3) {
             this.form.mp3 = "";
           }
           //处理mp3Time
@@ -518,7 +477,7 @@ export default {
               this.getSentenceList();
             });
           } else {
-            addSentence(this.form).then((response) => {
+            addSentence(this.form).then(() => {
               this.$modal.msgSuccess("新增成功");
               this.openSentence = false;
               this.getSentenceList();
@@ -529,7 +488,7 @@ export default {
     },
     //提交生词
     submitWord() {
-      addWordByArticle(this.articleId, this.sentenceWordList).then(() => {
+      updateArticleWord(this.articleId, this.sentenceWordList).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.openWord = false;
         this.getWordList();
@@ -559,11 +518,6 @@ export default {
       this.form.idx = this.sentenceTotal + 1;
       this.openSentence = true;
       this.title = "添加文章句子";
-    },
-    acceptationFormatter(row, column) {
-      const acceptation = row.acceptation;
-      const strs = acceptation.split("|");
-      return strs[0] + (strs.length > 1 ? "..." : "");
     },
     /** 把格式2的时间转成格式1 */
     transMp3Time(mp3Time) {

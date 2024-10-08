@@ -67,4 +67,6 @@ public interface IEngWordService
     public void deleteEngWordById(Long id);
 
     List<EngWord> selectNewList(EngWord engWord);
+
+    void addArticleWord(Long articleId, String wordName);
 }

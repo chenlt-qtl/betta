@@ -28,7 +28,9 @@ export function listWordByArticle(query) {
 }
 
 // 查询单词详细
-export function getWord({wordName}) {
+export function getWord({
+  wordName
+}) {
   return request({
     url: '/eng/word?wordName=' + wordName,
     method: 'get'
@@ -52,18 +54,26 @@ export function addWord(data) {
     data: data
   })
 }
-// 新增文章对应的单词
-export function addWordByArticle(articleId, wordList) {
+// 更新文章对应的单词
+export function updateArticleWord(articleId, wordList) {
   return request({
     url: '/eng/word/' + articleId,
     method: 'post',
-    contentType:"application/x-www-form-urlencoded",
+    contentType: "application/x-www-form-urlencoded",
     data: {
       words: wordList
     }
   })
 }
 
+
+// 新增文章对应的单词
+export function addWordByArticle(articleId, wordName) {
+  return request({
+    url: '/eng/word/' + articleId + "/" + wordName,
+    method: 'post',
+  })
+}
 
 // 修改单词
 export function updateWord(data) {

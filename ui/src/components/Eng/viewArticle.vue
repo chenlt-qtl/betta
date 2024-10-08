@@ -1,11 +1,9 @@
 <template>
   <div>
-    <el-button
-      size="mini"
-      type="text"
-      icon="el-icon-search"
-      @click="handleViewArticle"
-    ></el-button>
+    <el-button icon="el-icon-search" size="mini" @click="handleViewArticle">
+      查看文章
+    </el-button>
+
     <el-dialog
       title="查看文章内容"
       :visible.sync="open"

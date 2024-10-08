@@ -97,7 +97,7 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="单词内容" align="center" prop="wordName" />
       <el-table-column label="音标" align="center" prop="phAm" />
       <el-table-column label="解释" align="center" prop="acceptation" />
