@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectEngUserScoreVo"/>
         <where>  
             <if test="user != null  and user != ''"> and user = #{user}</if>
-            <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
+            <if test="wordName != null  and wordName != ''"> and word_name = #{wordName}</if>
             <if test="familiarity != null "> and familiarity &gt;= #{familiarity}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>
