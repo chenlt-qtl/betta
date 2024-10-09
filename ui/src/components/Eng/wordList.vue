@@ -59,12 +59,23 @@
           <el-input
             v-model="form.wordName"
             placeholder="请输入单词内容"
-            @keyup.enter.native="submitForm"
+            @keyup.enter.native="searchWord"
           />
+        </el-form-item>
+        <el-form-item>
+          <div v-for="str in acceptations" :key="str">
+            {{ str }}
+          </div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="searchWord">查詢</el-button>
+        <el-button
+          v-if="acceptations && acceptations.length > 0"
+          type="primary"
+          @click="submitForm"
+          >添加</el-button
+        >
         <el-button @click="() => (open = false)">取 消</el-button>
       </div>
     </el-dialog>
@@ -72,7 +83,7 @@
 </template>
 
 <script>
-import { addWordByArticle } from "@/api/eng/word";
+import { addWordByArticle, getWord } from "@/api/eng/word";
 import { delArticleWordRel } from "@/api/eng/articleWordRel";
 
 export default {
@@ -81,6 +92,7 @@ export default {
     return {
       open: false,
       form: {},
+      acceptations: [],
       // 表单校验
       rules: {
         wordName: [
@@ -90,14 +102,30 @@ export default {
     };
   },
   methods: {
-    acceptationFormatter(row, column) {
+    acceptationFormatter(row) {
       const acceptation = row.acceptation;
-      const strs = acceptation.split("|");
-      return strs[0] + (strs.length > 1 ? "..." : "");
+      if (acceptation) {
+        const strs = acceptation.split("|");
+        return strs[0] + (strs.length > 1 ? "..." : "");
+      } else {
+        return "";
+      }
     },
     handleAddWord() {
       this.open = true;
       this.resetForm("form");
+      this.acceptations = [];
+    },
+    searchWord() {
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          getWord({ wordName: this.form.wordName }).then((res) => {
+            if (res.data && res.data.acceptation) {
+              this.acceptations = res.data.acceptation.split("|");
+            }
+          });
+        }
+      });
     },
     submitForm() {
       this.$refs["form"].validate((valid) => {
