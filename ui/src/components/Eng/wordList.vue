@@ -63,6 +63,9 @@
           />
         </el-form-item>
         <el-form-item>
+          <el-button v-if="phAnMp3" type="text" @click="() => play(phAnMp3)">
+            <svg-icon icon-class="sound" />
+          </el-button>
           <div v-for="str in acceptations" :key="str">
             {{ str }}
           </div>
@@ -93,6 +96,7 @@ export default {
       open: false,
       form: {},
       acceptations: [],
+      phAnMp3: "",
       // 表单校验
       rules: {
         wordName: [
@@ -115,6 +119,7 @@ export default {
       this.open = true;
       this.resetForm("form");
       this.acceptations = [];
+      this.phAnMp3 = "";
     },
     searchWord() {
       this.$refs["form"].validate((valid) => {
@@ -122,6 +127,9 @@ export default {
           getWord({ wordName: this.form.wordName }).then((res) => {
             if (res.data && res.data.acceptation) {
               this.acceptations = res.data.acceptation.split("|");
+            }
+            if (res.data && res.data.phAnMp3) {
+              this.phAnMp3 = res.data.phAnMp3;
             }
           });
         }
