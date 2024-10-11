@@ -116,11 +116,13 @@ public class ParseIciba {
         List<Sent> sents = dict.getSent();
 
         List<EngIcibaSentence> isList = new ArrayList();
-        for (Sent sent : sents) {
-            EngIcibaSentence is = new EngIcibaSentence();
-            is.setOrig(sent.getOrig());
-            is.setTrans(sent.getTrans());
-            isList.add(is);
+        if(sents!=null) {
+            for (Sent sent : sents) {
+                EngIcibaSentence is = new EngIcibaSentence();
+                is.setOrig(sent.getOrig());
+                is.setTrans(sent.getTrans());
+                isList.add(is);
+            }
         }
 
         word.setIcibaSentenceList(isList);
