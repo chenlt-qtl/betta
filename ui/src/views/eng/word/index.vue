@@ -99,12 +99,12 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="单词内容" align="center" prop="wordName" />
-      <el-table-column label="音标" align="center" prop="phAm" />
+      <el-table-column label="音标" align="center" prop="phonetics"/>
       <el-table-column label="解释" align="center" prop="acceptation" />
       <el-table-column label="手动注释" align="center" prop="exchange" />
-      <el-table-column label="音频" align="center" prop="phAnMp3">
-        <template v-if="scope.row.phAnMp3" slot-scope="scope">
-          <el-button type="text" @click="() => play(scope.row.phAnMp3)">
+      <el-table-column label="音频" align="center" prop="phMp3">
+        <template v-if="scope.row.phMp3" slot-scope="scope">
+          <el-button type="text" @click="() => play(scope.row.phMp3)">
             <svg-icon icon-class="sound" />
           </el-button>
         </template>
@@ -149,8 +149,8 @@
         <el-form-item label="单词内容" prop="wordName">
           <el-input v-model="form.wordName" placeholder="请输入单词内容" />
         </el-form-item>
-        <el-form-item label="音标" prop="phAm">
-          <el-input v-model="form.phAm" placeholder="请输入音标" />
+        <el-form-item label="音标" prop="phonetics">
+          <el-input v-model="form.phonetics" placeholder="请输入音标" />
         </el-form-item>
         <el-form-item label="解释" prop="acceptation">
           <el-input
@@ -162,8 +162,12 @@
         <el-form-item label="手动注释" prop="exchange">
           <el-input v-model="form.exchange" placeholder="请输入手动注释" />
         </el-form-item>
-        <el-form-item label="音频位置" prop="phAnMp3">
-          <file-upload v-model="form.phAnMp3" :fileType="['mp3']" uploadType="word"/>
+        <el-form-item label="音频位置" prop="phMp3">
+          <file-upload
+            v-model="form.phMp3"
+            :fileType="['mp3']"
+            uploadType="word"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -250,11 +254,11 @@ export default {
       this.form = {
         id: null,
         wordName: null,
-        phAm: null,
+        ph: null,
         acceptation: null,
         exchange: null,
         parts: null,
-        phAnMp3: null,
+        phMp3: null,
         status: null,
         createTime: null,
         createBy: null,

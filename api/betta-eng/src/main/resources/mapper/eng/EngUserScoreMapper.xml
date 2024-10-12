@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectUserScore"  parameterType="EngUserScore"  resultMap="EngUserScoreResult">
         select c.id as relId,c.article_id as articleId, d.* from
-        (select b.familiarity, a.word_name ,a.ph_am as phAm,a.acceptation,a.exchange, a.ph_an_mp3 as phAnMp3,b.user
+        (select b.familiarity, a.word_name ,a.phonetics as phonetics,a.acceptation,a.exchange, a.ph_mp3 as phMp3,b.user
          from eng_word a left join eng_user_score b on a.word_name = b.word_name) d inner join eng_article_word_rel c
         on d.word_name = c.word_name and (d.user = c.create_by or d.user is null)
         <where>

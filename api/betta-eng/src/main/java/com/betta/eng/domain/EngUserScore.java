@@ -11,15 +11,12 @@ import com.betta.common.core.domain.BaseEntity;
  * @date 2024-07-13
  */
 @Data
-public class EngUserScore extends BaseEntity
+public class EngUserScore extends EngWord
 {
     private static final long serialVersionUID = 1L;
 
-    /**  */
     private Long id;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String user;
 
     /** 单词内容 */
@@ -33,21 +30,6 @@ public class EngUserScore extends BaseEntity
     /**  */
     @Excel(name = "")
     private String status;
-
-    @Excel(name = "音标")
-    private String phAm;
-
-    /** 解释 */
-    @Excel(name = "解释")
-    private String acceptation;
-
-    /** 手动注释 */
-    @Excel(name = "手动注释")
-    private String exchange;
-
-    /** 音频位置 */
-    @Excel(name = "音频位置")
-    private String phAnMp3;
 
     private String sentence;
 

@@ -79,13 +79,13 @@
         :show-header="false"
       >
         <el-table-column label="单词" prop="wordName">
-          <template v-if="scope.row.phAnMp3" slot-scope="scope">
+          <template v-if="scope.row.phMp3" slot-scope="scope">
             <div class="word-container">
               <section class="word">
-                <el-button type="text" @click="() => play(scope.row.phAnMp3)">
+                <el-button type="text" @click="() => play(scope.row.phMp3)">
                   {{ scope.row.wordName }}
                 </el-button>
-                <span>{{ scope.row.phAm }}</span>
+                <span>{{ scope.row.ph }}</span>
               </section>
               <span>{{
                 scope.row.exchange

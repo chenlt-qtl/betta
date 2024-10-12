@@ -1,5 +1,6 @@
 package com.betta.eng.domain;
 
+import com.betta.common.utils.StringUtils;
 import lombok.Data;
 import com.betta.common.annotation.Excel;
 import com.betta.common.core.domain.BaseEntity;
@@ -26,9 +27,13 @@ public class EngWord extends BaseEntity
     @Excel(name = "单词内容")
     private String wordName;
 
+    /** 音频位置 */
+    @Excel(name = "音频位置")
+    private String phMp3;
+
     /** 音标 */
     @Excel(name = "音标")
-    private String phAm;
+    private String phonetics;
 
     /** 解释 */
     @Excel(name = "解释")
@@ -40,10 +45,6 @@ public class EngWord extends BaseEntity
 
     /** $column.columnComment */
     private String parts;
-
-    /** 音频位置 */
-    @Excel(name = "音频位置")
-    private String phAnMp3;
 
     /** $column.columnComment */
     private String status;

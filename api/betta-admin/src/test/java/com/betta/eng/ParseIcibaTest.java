@@ -1,23 +1,21 @@
 package com.betta.eng;
 
 import com.betta.eng.domain.EngWord;
-import com.betta.eng.service.IEngWordService;
-import com.betta.eng.utils.ParseIciba;
+import com.betta.eng.utils.dict.IDictUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Map;
 
 @SpringBootTest
 public class ParseIcibaTest {
 
     @Autowired
-    IEngWordService engWordService;
+    IDictUtils dictUtils;
 
     @Test
     void test(){
-        EngWord afford = ParseIciba.getWordFromIciba("afford");
+        EngWord afford = dictUtils.getWord("afford");
         System.out.println(afford);
     }
 }

@@ -26,17 +26,17 @@
         :colon="false"
       >
         <el-descriptions-item label=""
-          ><div class="ph" v-if="form.phAnMp3">
-            {{ form.phAm
+          ><div class="ph" v-if="form.phMp3">
+            {{ form.phonetics
             }}<el-button
               style="marginleft: 10px"
               type="text"
-              @click="() => play(form.phAnMp3)"
+              @click="() => play(form.phMp3)"
               ><svg-icon icon-class="sound" /> </el-button
             ><el-button
               style="marginleft: 10px"
               type="text"
-              @click="() => play(form.phAnMp3, '0,0,0.5')"
+              @click="() => play(form.phMp3, '0,0,0.5')"
               ><svg-icon icon-class="sound" /><span class="slow">慢</span>
             </el-button>
           </div>

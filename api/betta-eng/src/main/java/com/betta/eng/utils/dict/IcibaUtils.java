@@ -1,17 +1,4 @@
-/**
- * @(#)ParseIciba.java 2016年12月1日
- * <p>
- * Copyright 2000-2016 by ChinanetCenter Corporation.
- * <p>
- * All rights reserved.
- * <p>
- * This software is the confidential and proprietary information of
- * ChinanetCenter Corporation ("Confidential Information"). You
- * shall not disclose such Confidential Information and shall use
- * it only in accordance with the terms of the license agreement
- * you entered into with ChinanetCenter.
- */
-package com.betta.eng.utils;
+package com.betta.eng.utils.dict;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -25,27 +12,18 @@ import com.betta.eng.domain.EngWord;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 描述：
- *
- * @author chenlt
- */
 @Slf4j
-public class ParseIciba {
+public class IcibaUtils implements IDictUtils {
 
-    private final static Logger logger = LoggerFactory.getLogger(ParseIciba.class);
     private final static String KEY = "C772DB1F60B2839AD948507D91E7B04A";
 
     private final static String URL = "http://dict-co.iciba.com/api/dictionary.php";
-
-    public static EngWord getWordFromIciba(String wordName) {
+    @Override
+    public EngWord getWord(String wordName) {
         EngWord word;
         try {
             String rspStr = HttpUtils.sendGet(URL, "w=" + wordName + "&key=" + KEY, Constants.UTF8);
@@ -53,11 +31,12 @@ public class ParseIciba {
                 log.error("获取爱词霸单词出错：", wordName);
                 throw new ServiceException("获取爱词霸单词出错：" + wordName);
             }
-            word = ParseIciba.parse(rspStr, wordName);
+            word = parse(rspStr, wordName);
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException("获取爱词霸单词出错：" + wordName);
+            throw new ServiceException("获取爱词霸单词出错：" + wordName+
+                    ",信息:"+e.getMessage());
         }
         return word;
     }
@@ -79,7 +58,7 @@ public class ParseIciba {
         Dict dict = jsonObject.getBean("dict", Dict.class);
         List<String> ps = dict.getPs();//音标
         if (!ps.isEmpty()) {
-            word.setPhAm(ps.get(ps.size() - 1));//最后一个音标是美式音标
+            word.setPhonetics(ps.get(ps.size() - 1));//最后一个音标是美式音标
         }
 
         List<String> pron = dict.getPron();//mp3
@@ -87,7 +66,7 @@ public class ParseIciba {
         if (!pron.isEmpty()) {
             String path = BettaConfig.getWordPath() + "/" + wordName.substring(0, 1);
             String mp3Path = FileUtils.writeBytes(pron.get(pron.size() - 1), path, wordName + ".mp3");
-            word.setPhAnMp3(mp3Path);
+            word.setPhMp3(mp3Path);
         }
 
         List<String> pos = dict.getPos();//词性
@@ -127,13 +106,6 @@ public class ParseIciba {
 
         word.setIcibaSentenceList(isList);
         return word;
-    }
-
-    public static void main(String args[]) throws IOException, Exception {
-//        File file = new File("D://upFiles//a.xml");
-//        Map map = ParseIciba.parse(FileUtils.readFileToString(file, "UTF-8"), "D://upFiles", "identify");
-//        List list2 = (List) map.get("icibaSentence");
-//        System.out.println(list2)
     }
 }
 

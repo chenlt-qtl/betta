@@ -148,7 +148,7 @@ export default {
       if (wordRes.rows && wordRes.rows.length > 0) {
         wordRes.rows.forEach((word) =>
           listData.push({
-            mp3: word.phAnMp3,
+            mp3: word.phMp3,
             title: word.wordName,
           })
         );

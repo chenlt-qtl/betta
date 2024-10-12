@@ -14,7 +14,7 @@
     </el-row>
     <el-table v-loading="loading" :data="data">
       <el-table-column label="单词" align="center" prop="wordName" />
-      <el-table-column label="音标" align="center" prop="phAm" />
+      <el-table-column label="音标" align="center"  prop="phonetics" />
       <el-table-column
         label="解释"
         align="center"
@@ -23,9 +23,9 @@
       />
       <el-table-column label="熟悉度" align="center" prop="familiarity" />
       <el-table-column label="注释" align="center" prop="exchange" />
-      <el-table-column label="音频" align="center" prop="phAnMp3">
-        <template v-if="scope.row.phAnMp3" slot-scope="scope">
-          <el-button type="text" @click="() => play(scope.row.phAnMp3)">
+      <el-table-column label="音频" align="center" prop="phMp3">
+        <template v-if="scope.row.phMp3" slot-scope="scope">
+          <el-button type="text" @click="() => play(scope.row.phMp3)">
             <svg-icon icon-class="sound" />
           </el-button>
         </template>
@@ -63,7 +63,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button v-if="phAnMp3" type="text" @click="() => play(phAnMp3)">
+          <el-button v-if="phMp3" type="text" @click="() => play(phMp3)">
             <svg-icon icon-class="sound" />
           </el-button>
           <div v-for="str in acceptations" :key="str">
@@ -96,7 +96,7 @@ export default {
       open: false,
       form: {},
       acceptations: [],
-      phAnMp3: "",
+      phMp3: "",
       // 表单校验
       rules: {
         wordName: [
@@ -119,7 +119,7 @@ export default {
       this.open = true;
       this.resetForm("form");
       this.acceptations = [];
-      this.phAnMp3 = "";
+      this.phMp3 = "";
     },
     searchWord() {
       this.$refs["form"].validate((valid) => {
@@ -128,8 +128,8 @@ export default {
             if (res.data && res.data.acceptation) {
               this.acceptations = res.data.acceptation.split("|");
             }
-            if (res.data && res.data.phAnMp3) {
-              this.phAnMp3 = res.data.phAnMp3;
+            if (res.data && res.data.phMp3) {
+              this.phMp3 = res.data.phMp3;
             }
           });
         }

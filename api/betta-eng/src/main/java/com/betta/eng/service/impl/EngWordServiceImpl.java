@@ -11,7 +11,7 @@ import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.*;
 import com.betta.eng.service.*;
-import com.betta.eng.utils.ParseIciba;
+import com.betta.eng.utils.dict.IDictUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.betta.eng.mapper.EngWordMapper;
@@ -36,6 +36,9 @@ public class EngWordServiceImpl implements IEngWordService {
 
     @Autowired
     private IEngIcibaSentenceService icibaSentenceService;
+
+    @Autowired
+    private IDictUtils dictUtils;
 
     /**
      * 查询单词
@@ -91,7 +94,7 @@ public class EngWordServiceImpl implements IEngWordService {
             List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
             word.setIcibaSentenceList(icibaSentences);
         } else {//查API
-            word = ParseIciba.getWordFromIciba(lowerCase);
+            word = dictUtils.getWord(lowerCase);
             if (!Objects.isNull(word)) {
                 insertEngWord(word);
                 if (!Objects.isNull(word.getIcibaSentenceList())) {//例句

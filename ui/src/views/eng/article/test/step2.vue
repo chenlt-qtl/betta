@@ -8,10 +8,10 @@
       <section v-if="question.sentenceAcceptation">
         {{ this.question.sentenceAcceptation }}
       </section>
-      <span v-if="!question.type" class="phAm">
-        / {{ this.question.word.phAm }} /
+      <span v-if="!question.type" class="ph">
+        / {{ this.question.word.phonetics }} /
         <svg-icon
-          @click="() => play(this.question.word.phAnMp3)"
+          @click="() => play(this.question.word.phMp3)"
           icon-class="sound"
         />
       </span>
@@ -49,8 +49,8 @@ export default {
   },
   watch: {
     question() {
-      if (this.question.type == 0 && this.question.word.phAnMp3) {
-        play(this.question.word.phAnMp3);
+      if (this.question.type == 0 && this.question.word.phMp3) {
+        play(this.question.word.phMp3);
       }
       this.tip =
         this.index + 1 + "/" + this.questionList.length;
@@ -81,7 +81,7 @@ export default {
         return;
       }
       this.userAnswer = i;
-      play(this.question.word.phAnMp3);
+      play(this.question.word.phMp3);
       //答对了
       if (i == this.question.answerKey) {
         this.question.word.familiarity =

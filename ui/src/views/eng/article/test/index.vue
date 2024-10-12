@@ -145,7 +145,7 @@ export default {
     font-size: 2rem;
     font-weight: 600;
   }
-  .phAm {
+  .ph {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -57,7 +57,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="单词" align="center" prop="wordName" />
-      <el-table-column label="音标" align="center" prop="phAm" />
+      <el-table-column label="音标" align="center" prop="phonetics" />
       <el-table-column
         label="解释"
         align="center"
@@ -75,9 +75,9 @@
           {{ scope.row.familiarity ? scope.row.familiarity : 0 }}
         </template>
       </el-table-column>
-      <el-table-column label="音频" align="center" prop="phAnMp3">
-        <template v-if="scope.row.phAnMp3" slot-scope="scope">
-          <el-button type="text" @click="() => play(scope.row.phAnMp3)">
+      <el-table-column label="音频" align="center" prop="phMp3">
+        <template v-if="scope.row.phMp3" slot-scope="scope">
+          <el-button type="text" @click="() => play(scope.row.phMp3)">
             <svg-icon icon-class="sound" />
           </el-button>
         </template>

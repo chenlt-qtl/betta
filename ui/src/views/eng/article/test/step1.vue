@@ -3,10 +3,10 @@
     <div v-if="!isStart" class="word-table">
       <el-table :data="wordList" :show-header="false" class="table">
         <el-table-column label="单词" prop="wordName">
-          <template v-if="scope.row.phAnMp3" slot-scope="scope">
+          <template v-if="scope.row.phMp3" slot-scope="scope">
             <div class="word-container">
               <span class="word"> {{ scope.row.wordName }}</span>
-              <span> / {{ scope.row.phAm }} /</span>
+              <span> / {{ scope.row.phonetics}} /</span>
             </div>
           </template>
         </el-table-column>
@@ -21,14 +21,14 @@
         <el-button
           class="soundBtn"
           type="text"
-          @click="() => play(word.phAnMp3)"
+          @click="() => play(word.phMp3)"
           ><svg-icon icon-class="sound" />
         </el-button>
       </section>
-      <div class="ph" v-if="word.phAnMp3">/ {{ word.phAm }} /</div>
+      <div class="ph" v-if="word.phonetics">/ {{ word.phonetics }} 888/</div>
       <ul class="acceptations">
         <li v-for="text in acceptations" :key="text">
-          {{text}}
+          {{ text }}
         </li>
       </ul>
       <div class="toolbar">
@@ -53,11 +53,11 @@ export default {
   },
   computed: {
     acceptations() {
-      if(this.word){
-        if(this.word.exchange){
-          return [this.word.exchange]
-        }else{
-          return this.word.acceptation.split("|")
+      if (this.word) {
+        if (this.word.exchange) {
+          return [this.word.exchange];
+        } else {
+          return this.word.acceptation.split("|");
         }
       }
       return [];
@@ -65,8 +65,8 @@ export default {
   },
   watch: {
     word() {
-      if (this.word && this.word.phAnMp3) {
-        play(this.word.phAnMp3);
+      if (this.word && this.word.phMp3) {
+        play(this.word.phMp3);
       }
     },
   },
@@ -134,7 +134,7 @@ export default {
         color: #333;
       }
     }
-    .acceptations{
+    .acceptations {
       flex: 1;
       padding: 0;
       list-style: none;
