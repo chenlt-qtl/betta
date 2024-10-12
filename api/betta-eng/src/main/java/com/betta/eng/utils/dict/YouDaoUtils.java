@@ -77,18 +77,14 @@ public class YouDaoUtils implements IDictUtils {
                     hasUs = true;
                     word.setPhonetics(ph);
                     temp_audio = audio;
-                } else if (audio.matches("[\\d\\D]+\\-uk.mp3")) {
-                    {
-
-                        if (hasUs == false) {
-                            word.setPhonetics(ph);
-                            temp_audio = audio;
-                        }
-                    }
+                } else if (hasUs == false) {
+                    word.setPhonetics(ph);
+                    temp_audio = audio;
                 }
 
-
             }
+
+
         }
         //如果temp_audio不为空 保存到服务器  只保存一个MP3
         if (StringUtils.isNotBlank(temp_audio)) {
