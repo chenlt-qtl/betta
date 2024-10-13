@@ -1,7 +1,7 @@
 package com.betta.eng;
 
 import com.betta.eng.domain.EngWord;
-import com.betta.eng.utils.dict.IDictUtils;
+import com.betta.eng.utils.dict.DictUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class ParseIcibaTest {
 
     @Autowired
-    IDictUtils dictUtils;
+    DictUtils dictUtils;
 
     @Test
     void test(){

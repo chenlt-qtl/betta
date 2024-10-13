@@ -12,17 +12,18 @@ import com.betta.eng.domain.EngWord;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class IcibaUtils implements IDictUtils {
+@Component
+public class IcibaUtils {
 
     private final static String KEY = "C772DB1F60B2839AD948507D91E7B04A";
 
     private final static String URL = "http://dict-co.iciba.com/api/dictionary.php";
-    @Override
     public EngWord getWord(String wordName) {
         EngWord word;
         try {

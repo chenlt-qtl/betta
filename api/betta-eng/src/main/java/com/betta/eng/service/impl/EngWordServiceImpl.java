@@ -11,7 +11,7 @@ import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.*;
 import com.betta.eng.service.*;
-import com.betta.eng.utils.dict.IDictUtils;
+import com.betta.eng.utils.dict.DictUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.betta.eng.mapper.EngWordMapper;
@@ -38,7 +38,7 @@ public class EngWordServiceImpl implements IEngWordService {
     private IEngIcibaSentenceService icibaSentenceService;
 
     @Autowired
-    private IDictUtils dictUtils;
+    private DictUtils dictUtils;
 
     /**
      * 查询单词

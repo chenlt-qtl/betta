@@ -15,12 +15,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class YouDaoUtils implements IDictUtils {
+public class YouDaoUtils {
 
     private static final String YOUDAO_URL = "http://dict.youdao.com/suggest";
     private static final String DICTIONARY_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 
-    @Override
     public EngWord getWord(String wordName) {
 
         EngWord word = null;
@@ -96,7 +95,7 @@ public class YouDaoUtils implements IDictUtils {
 
     public static void main(String[] args) {
         YouDaoUtils youDaoUtils = new YouDaoUtils();
-        EngWord hello = youDaoUtils.getWord("hello");
+        EngWord hello = youDaoUtils.getWord("sledge");
         System.out.println(hello);
     }
 }

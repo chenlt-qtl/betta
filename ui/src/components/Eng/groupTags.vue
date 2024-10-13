@@ -29,6 +29,7 @@ export default {
 <style scoped lang="scss">
 .group-tags {
   display: flex;
+  flex-wrap: wrap;
   gap: 5px;
   span {
     cursor: pointer;
