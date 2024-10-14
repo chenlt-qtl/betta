@@ -75,6 +75,14 @@ export function addWordByArticle(articleId, wordName) {
   })
 }
 
+// 从API获取单词
+export function getWordFromApi(wordName) {
+  return request({
+    url: '/eng/word/api/' + wordName,
+    method: 'get',
+  })
+}
+
 // 修改单词
 export function updateWord(data) {
   return request({

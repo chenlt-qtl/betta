@@ -119,6 +119,11 @@ public class EngWordController extends BaseController {
     }
 
 
+    @PreAuthorize("@ss.hasPermi('eng:word:query')")
+    @GetMapping("/api/{wordName}")
+    public AjaxResult getFromApi(@PathVariable String wordName) {
+        return success(engWordService.getWordFromApi(wordName));
+    }
     /**
      * 修改单词
      */

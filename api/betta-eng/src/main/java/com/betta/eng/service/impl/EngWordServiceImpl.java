@@ -185,6 +185,11 @@ public class EngWordServiceImpl implements IEngWordService {
         return engWordMapper.updateEngWord(engWord);
     }
 
+    @Override
+    public EngWord getWordFromApi(String wordName){
+        return dictUtils.getWord(wordName.toLowerCase());
+    }
+
     /**
      * 删除单词信息
      *

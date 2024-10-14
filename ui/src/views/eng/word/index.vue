@@ -99,7 +99,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="单词内容" align="center" prop="wordName" />
-      <el-table-column label="音标" align="center" prop="phonetics"/>
+      <el-table-column label="音标" align="center" prop="phonetics" />
       <el-table-column label="解释" align="center" prop="acceptation" />
       <el-table-column label="手动注释" align="center" prop="exchange" />
       <el-table-column label="音频" align="center" prop="phMp3">
@@ -147,7 +147,11 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="单词内容" prop="wordName">
-          <el-input v-model="form.wordName" placeholder="请输入单词内容" />
+          <el-input
+            v-model="form.wordName"
+            placeholder="请输入单词内容"
+            disabled
+          />
         </el-form-item>
         <el-form-item label="音标" prop="phonetics">
           <el-input v-model="form.phonetics" placeholder="请输入音标" />
@@ -171,6 +175,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button @click="updateWord">获取API数据</el-button>
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
@@ -185,6 +190,7 @@ import {
   delWord,
   addWord,
   updateWord,
+  getWordFromApi,
 } from "@/api/eng/word";
 import { play } from "@/utils/audio";
 
@@ -317,6 +323,14 @@ export default {
             });
           }
         }
+      });
+    },
+    //更新单词
+    updateWord() {
+      getWordFromApi(this.form.wordName).then((res) => {
+        const word = res.data;
+        const { phonetics, acceptation, phMp3 } = word;
+        this.form = { ...this.form, phonetics, acceptation, phMp3 };
       });
     },
     /** 删除按钮操作 */

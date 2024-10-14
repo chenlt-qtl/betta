@@ -68,7 +68,7 @@ public class YouDaoUtils {
             JSONObject phObj = (JSONObject) phonetics.get(i);
             String ph = "";
             if (phObj.containsKey("text")) {
-                ph = (String) phObj.get("text");
+                ph = ((String) phObj.get("text")).replaceAll("/","");
             }
             if (phObj.containsKey("audio")) {
                 String audio = (String) phObj.get("audio");

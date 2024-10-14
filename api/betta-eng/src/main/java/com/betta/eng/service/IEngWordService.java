@@ -59,6 +59,8 @@ public interface IEngWordService
      */
     public int updateEngWord(EngWord engWord);
 
+    EngWord getWordFromApi(String wordName);
+
     /**
      * 删除单词信息
      *
