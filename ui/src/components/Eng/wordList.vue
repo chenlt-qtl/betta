@@ -56,15 +56,18 @@
         @submit.native.prevent
       >
         <el-form-item label="单词内容" prop="wordName">
-          <el-input
-            v-model="form.wordName"
-            placeholder="请输入单词内容"
-            @keyup.enter.native="searchWord"
-          />
+          <div style="display: flex; gap: 5px">
+            <el-input
+              v-model="form.wordName"
+              placeholder="请输入单词内容"
+              @keyup.enter.native="searchWord"
+              @input="(e) => (word = {})"
+            /><el-button @click="searchWord">查詢</el-button>
+          </div>
         </el-form-item>
-        <el-form-item v-if="form.phonetics">
-          /{{ form.phonetics }}/
-          <el-button type="text" @click="() => play(form.phMp3)">
+        <el-form-item v-if="word.phonetics">
+          /{{ word.phonetics }}/
+          <el-button type="text" @click="() => play(word.phMp3)">
             <svg-icon icon-class="sound" />
           </el-button>
           <div v-for="str in acceptations" :key="str">
@@ -73,7 +76,6 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="searchWord">查詢</el-button>
         <el-button
           v-if="acceptations && acceptations.length > 0"
           type="primary"
@@ -96,6 +98,7 @@ export default {
     return {
       open: false,
       form: {},
+      word: {},
       // 表单校验
       rules: {
         wordName: [
@@ -106,8 +109,8 @@ export default {
   },
   computed: {
     acceptations() {
-      if (this.form.acceptation) {
-        return this.form.acceptation.split("|");
+      if (this.word.acceptation) {
+        return this.word.acceptation.split("|");
       } else {
         return [];
       }
@@ -126,12 +129,13 @@ export default {
     handleAddWord() {
       this.open = true;
       this.resetForm("form");
+      this.word = {};
     },
     searchWord() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           getWord({ wordName: this.form.wordName }).then((res) => {
-            this.form = res.data;
+            this.word = res.data;
           });
         }
       });

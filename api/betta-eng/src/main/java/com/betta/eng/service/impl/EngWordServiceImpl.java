@@ -85,15 +85,22 @@ public class EngWordServiceImpl implements IEngWordService {
         //查询单词
         List<EngWord> list = engWordMapper.selectEngWordByWordName(lowerCase);
         EngWord word = null;
+        boolean getFromApi = true;//是否从API查询数据
         if (!list.isEmpty()) {
             word = list.get(0);//已存在数据库中
+            if (StringUtils.isNotBlank(word.getPhonetics()) && StringUtils.isNotBlank(word.getPhMp3())
+                    && StringUtils.isNotBlank(word.getAcceptation())) {
+                getFromApi = false;
+                //查询爱词霸例句
+                EngIcibaSentence icibaSentence = new EngIcibaSentence();
+                icibaSentence.setWordId(word.getId());
+                List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
+                word.setIcibaSentenceList(icibaSentences);
+            }
 
-            //查询爱词霸例句
-            EngIcibaSentence icibaSentence = new EngIcibaSentence();
-            icibaSentence.setWordId(word.getId());
-            List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
-            word.setIcibaSentenceList(icibaSentences);
-        } else {//查API
+        }
+        //查API
+        if (getFromApi) {
             word = dictUtils.getWord(lowerCase);
             if (!Objects.isNull(word)) {
                 insertEngWord(word);
@@ -199,6 +206,7 @@ public class EngWordServiceImpl implements IEngWordService {
 
     /**
      * 增加文章对应的单词
+     *
      * @param articleId
      * @param wordName
      */
