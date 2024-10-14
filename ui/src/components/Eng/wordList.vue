@@ -14,7 +14,7 @@
     </el-row>
     <el-table v-loading="loading" :data="data">
       <el-table-column label="单词" align="center" prop="wordName" />
-      <el-table-column label="音标" align="center"  prop="phonetics" />
+      <el-table-column label="音标" align="center" prop="phonetics" />
       <el-table-column
         label="解释"
         align="center"
@@ -62,8 +62,9 @@
             @keyup.enter.native="searchWord"
           />
         </el-form-item>
-        <el-form-item>
-          <el-button v-if="phMp3" type="text" @click="() => play(phMp3)">
+        <el-form-item v-if="form.phonetics">
+          /{{ form.phonetics }}/
+          <el-button type="text" @click="() => play(form.phMp3)">
             <svg-icon icon-class="sound" />
           </el-button>
           <div v-for="str in acceptations" :key="str">
@@ -95,8 +96,6 @@ export default {
     return {
       open: false,
       form: {},
-      acceptations: [],
-      phMp3: "",
       // 表单校验
       rules: {
         wordName: [
@@ -104,6 +103,15 @@ export default {
         ],
       },
     };
+  },
+  computed: {
+    acceptations() {
+      if (this.form.acceptation) {
+        return this.form.acceptation.split("|");
+      } else {
+        return [];
+      }
+    },
   },
   methods: {
     acceptationFormatter(row) {
@@ -118,19 +126,12 @@ export default {
     handleAddWord() {
       this.open = true;
       this.resetForm("form");
-      this.acceptations = [];
-      this.phMp3 = "";
     },
     searchWord() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           getWord({ wordName: this.form.wordName }).then((res) => {
-            if (res.data && res.data.acceptation) {
-              this.acceptations = res.data.acceptation.split("|");
-            }
-            if (res.data && res.data.phMp3) {
-              this.phMp3 = res.data.phMp3;
-            }
+            this.form = res.data;
           });
         }
       });

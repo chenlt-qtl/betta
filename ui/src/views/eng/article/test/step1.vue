@@ -25,7 +25,7 @@
           ><svg-icon icon-class="sound" />
         </el-button>
       </section>
-      <div class="ph" v-if="word.phonetics">/ {{ word.phonetics }} 888/</div>
+      <div class="ph" v-if="word.phonetics">/ {{ word.phonetics }} /</div>
       <ul class="acceptations">
         <li v-for="text in acceptations" :key="text">
           {{ text }}
