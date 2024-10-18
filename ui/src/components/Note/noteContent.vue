@@ -88,6 +88,13 @@ export default {
       if (contentId) {
         getContent(contentId).then((res) => {
           this.content = res.data;
+          if (this.content && this.content.text) {
+            const reg = new RegExp("(?<=\\]\\()/profile(?=\\/note)", "g");
+            this.content.text = this.content.text.replaceAll(
+              reg,
+              process.env.VUE_APP_BASE_API + "/profile"
+            );
+          }
         });
       } else {
         this.content = {};
@@ -127,7 +134,19 @@ export default {
     updateText(text) {
       //如果有改动，才保存
       if (!this.isSaved) {
-        updateContent({ ...this.content, text }).then(() => {
+        process.env.VUE_APP_BASE_API;
+        let newText = "";
+        if (text) {
+          newText = text.replaceAll(
+            new RegExp(
+              "(?<=\\]\\()" + process.env.VUE_APP_BASE_API + "/profile(?=\\/note)",
+              "g"
+            ),
+            "/profile"
+          );
+        }
+
+        updateContent({ ...this.content, text: newText }).then(() => {
           this.isSaved = true;
           this.$modal.msgSuccess("修改成功");
         });
