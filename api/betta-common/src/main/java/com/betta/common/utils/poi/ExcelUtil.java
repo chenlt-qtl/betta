@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.betta.common.constant.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -639,7 +641,7 @@ public class ExcelUtil<T>
         {
             writeSheet();
             String filename = encodingFilename(sheetName);
-            out = new FileOutputStream(getAbsoluteFile(filename));
+            out = new FileOutputStream(FileUtils.getAbsoluteProfilePath(Constants.DOWNLOAD_PATH+"/"+filename));
             wb.write(out);
             return AjaxResult.success(filename);
         }
@@ -1384,22 +1386,6 @@ public class ExcelUtil<T>
     {
         filename = UUID.randomUUID() + "_" + filename + ".xlsx";
         return filename;
-    }
-
-    /**
-     * 获取下载路径
-     * 
-     * @param filename 文件名称
-     */
-    public String getAbsoluteFile(String filename)
-    {
-        String downloadPath = BettaConfig.getDownloadPath() + filename;
-        File desc = new File(downloadPath);
-        if (!desc.getParentFile().exists())
-        {
-            desc.getParentFile().mkdirs();
-        }
-        return downloadPath;
     }
 
     /**

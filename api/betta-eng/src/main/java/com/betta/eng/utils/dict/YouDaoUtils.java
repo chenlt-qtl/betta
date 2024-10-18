@@ -3,7 +3,6 @@ package com.betta.eng.utils.dict;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.file.FileUtils;
@@ -87,9 +86,9 @@ public class YouDaoUtils {
         }
         //如果temp_audio不为空 保存到服务器  只保存一个MP3
         if (StringUtils.isNotBlank(temp_audio)) {
-            String path = BettaConfig.getWordPath() + "/" + word.getWordName().substring(0, 1);
-            String mp3Path = FileUtils.writeBytes(temp_audio, path, word.getWordName() + ".mp3");
-            word.setPhMp3(mp3Path);
+            String relativePath = DictUtils.getWordMp3RelativePath(word.getWordName());
+            FileUtils.writeBytes(temp_audio, relativePath);
+            word.setPhMp3(relativePath);
         }
     }
 

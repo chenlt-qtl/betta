@@ -65,9 +65,9 @@ public class IcibaUtils {
         List<String> pron = dict.getPron();//mp3
 
         if (!pron.isEmpty()) {
-            String path = BettaConfig.getWordPath() + "/" + wordName.substring(0, 1);
-            String mp3Path = FileUtils.writeBytes(pron.get(pron.size() - 1), path, wordName + ".mp3");
-            word.setPhMp3(mp3Path);
+            String relativePath = DictUtils.getWordMp3RelativePath(word.getWordName());
+            FileUtils.writeBytes(pron.get(pron.size() - 1), relativePath);
+            word.setPhMp3(relativePath);
         }
 
         List<String> pos = dict.getPos();//词性

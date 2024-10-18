@@ -133,7 +133,7 @@
       <el-divider content-position="center"
         >单词信息 (共 {{ wordTotal }} 条)</el-divider
       >
-      <WordList :play="play" :articleId="articleId" :data="wordList" :getWordList="getWordList"></WordList>
+      <ArticleWordList :play="play" :showScore='true' :articleId="articleId" :listData="wordList" :getWordList="getWordList"></ArticleWordList>
       <!-- 添加或修改文章句子对话框 -->
       <el-dialog
         :title="title"
@@ -264,11 +264,11 @@ import { listByArticle } from "@/api/eng/score";
 
 import { brReg, splipSentences } from "@/utils/wordUtils";
 import { play } from "@/utils/audio";
-import WordList from "@/components/Eng/wordList.vue";
+import ArticleWordList from "@/components/Eng/wordList/articleWordList.vue";
 
 export default {
   name: "Article",
-  components: { uploadByUrl, WordList, viewArticleBtn },
+  components: { uploadByUrl, ArticleWordList, viewArticleBtn },
   data() {
     return {
       uploadType: "file",

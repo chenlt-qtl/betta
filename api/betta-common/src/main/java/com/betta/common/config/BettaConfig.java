@@ -1,5 +1,6 @@
 package com.betta.common.config;
 
+import com.betta.common.constant.Constants;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -53,8 +54,8 @@ public class BettaConfig {
         return profile;
     }
 
-    public static String getVueAppBaseApi() {
-        return vueAppBaseApi;
+    public static String getVueResourcePath() {
+        return vueAppBaseApi+ Constants.RESOURCE_PREFIX;
     }
 
     public void setProfile(String profile) {
@@ -74,61 +75,5 @@ public class BettaConfig {
     }
 
 
-    /**
-     * 获取导入上传路径
-     */
-    public static String getImportPath() {
-        return getProfile() + "/import";
-    }
 
-    /**
-     * 获取头像上传路径
-     */
-    public static String getAvatarPath() {
-        return getProfile() + "/avatar";
-    }
-
-    /**
-     * 获取下载路径
-     */
-    public static String getDownloadPath() {
-        return getProfile() + "/download/";
-    }
-
-    /**
-     * 获取上传路径
-     */
-    public static String getUploadPath() {
-        return getProfile() + "/upload";
-    }
-
-    /**
-     * 单词MP3上传路径
-     */
-    public static String getWordPath() {
-        return getProfile() + "/word";
-    }
-
-    /**
-     * 文章相关上传路径
-     */
-    public static String getArticlePath() {
-        return getProfile() + "/article";
-    }
-
-    /**
-     * 笔记相关
-     *
-     * @return
-     */
-    public static String getNotePath() {
-        return getProfile() + "/note";
-    }
-
-    /**
-     * 公告相关上传路径
-     */
-    public static String getNoticePath() {
-        return getProfile() + "/notice";
-    }
 }

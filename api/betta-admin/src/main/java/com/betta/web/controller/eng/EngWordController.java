@@ -139,9 +139,9 @@ public class EngWordController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('eng:word:remove')")
     @Log(title = "单词", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{id}")
-    public AjaxResult remove(@PathVariable Long id) {
-        engWordService.deleteEngWordById(id);
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
+        engWordService.deleteEngWordByIds(ids);
         return AjaxResult.success();
     }
 }

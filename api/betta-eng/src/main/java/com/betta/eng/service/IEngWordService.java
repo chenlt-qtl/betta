@@ -66,7 +66,7 @@ public interface IEngWordService
      *
      * @param id 单词主键
      */
-    public void deleteEngWordById(Long id);
+    public void deleteEngWordByIds(Long[] id);
 
     List<EngWord> selectNewList(EngWord engWord);
 

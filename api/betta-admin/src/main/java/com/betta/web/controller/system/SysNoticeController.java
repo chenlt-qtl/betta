@@ -54,7 +54,6 @@ public class SysNoticeController extends BaseController
     public AjaxResult getInfo(@PathVariable Long noticeId)
     {
         SysNotice sysNotice = noticeService.selectNoticeById(noticeId);
-        sysNotice.setNoticeContent(ImageUtils.dbToWeb(sysNotice.getNoticeContent(),"html"));
         return success(sysNotice);
     }
 
@@ -66,7 +65,6 @@ public class SysNoticeController extends BaseController
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysNotice notice)
     {
-        notice.setNoticeContent(ImageUtils.webToDb(notice.getNoticeContent(),"html"));
         return toAjax(noticeService.insertNotice(notice));
     }
 
@@ -78,7 +76,6 @@ public class SysNoticeController extends BaseController
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysNotice notice)
     {
-        notice.setNoticeContent(ImageUtils.webToDb(notice.getNoticeContent(),"html"));
         return toAjax(noticeService.updateNotice(notice));
     }
 

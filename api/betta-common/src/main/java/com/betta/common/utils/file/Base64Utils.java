@@ -1,5 +1,7 @@
 package com.betta.common.utils.file;
 
+import com.betta.common.exception.ServiceException;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -50,14 +52,14 @@ public class Base64Utils {
      * @throws IOException
      */
     @SuppressWarnings("finally")
-    public static boolean saveBase64Image(String imgData, String originType, String imgFilePath) throws IOException { // 对字节数组字符串进行Base64解码并生成图片
+    public static void saveBase64Image(String imgData, String originType, String imgFilePath) { // 对字节数组字符串进行Base64解码并生成图片
         if (imgData == null) {// 图像数据为空
-            return false;
+            return;
         }
         Base64.Decoder decoder = Base64.getMimeDecoder();
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(imgFilePath);
+        try (
+                OutputStream out = new FileOutputStream(imgFilePath);
+        ) {
             // Base64解码
             byte[] b = decoder.decode(imgData);
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(b));
@@ -70,20 +72,10 @@ public class Base64Utils {
                         image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 
                 jpgBufferedImage.createGraphics().drawImage(image, 0, 0, Color.WHITE, null);
-
                 ImageIO.write(jpgBufferedImage, "jpg", out);
-
             }
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            out.flush();
-            out.close();
-            return true;
+            throw new ServiceException("保存图片失败");
         }
     }
 

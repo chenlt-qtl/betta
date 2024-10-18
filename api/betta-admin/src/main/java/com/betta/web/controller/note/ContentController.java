@@ -58,7 +58,6 @@ public class ContentController extends BaseController {
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         Content content = contentService.selectcontentById(id);
-        content.setText(ImageUtils.dbToWeb(content.getText(),"md"));
         return success(content);
     }
 
@@ -69,7 +68,6 @@ public class ContentController extends BaseController {
     @Log(title = "笔记内容", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Content content) {
-        content.setText(ImageUtils.webToDb(content.getText(),"md"));
         return toAjax(contentService.insertcontent(content));
     }
 
@@ -80,7 +78,6 @@ public class ContentController extends BaseController {
     @Log(title = "笔记内容", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Content content) {
-        content.setText(ImageUtils.webToDb(content.getText(),"md"));
         return toAjax(contentService.updatecontent(content));
     }
 

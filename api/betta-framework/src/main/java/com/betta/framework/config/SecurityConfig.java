@@ -1,5 +1,6 @@
 package com.betta.framework.config;
 
+import com.betta.common.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -113,7 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 对于登录login 注册register 验证码captchaImage 获取播放列表 允许匿名访问
                 .antMatchers("/login", "/register", "/captchaImage","/eng/sentence/list/play").permitAll()
                 // 静态资源，可匿名访问
-                .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", Constants.RESOURCE_PREFIX+"/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()

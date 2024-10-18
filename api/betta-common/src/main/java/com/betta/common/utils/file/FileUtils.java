@@ -1,20 +1,15 @@
 package com.betta.common.utils.file;
 
+import com.betta.common.config.BettaConfig;
+import com.betta.common.constant.Constants;
+import com.betta.common.utils.DateUtils;
+import com.betta.common.utils.SecurityUtils;
+import org.springframework.util.FileCopyUtils;
+
 import java.io.*;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import com.betta.common.config.BettaConfig;
-import com.betta.common.utils.DateUtils;
-import com.betta.common.utils.StringUtils;
-import com.betta.common.utils.uuid.IdUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.util.FileCopyUtils;
+import java.rmi.ServerException;
+import java.util.Random;
 
 /**
  * 文件处理工具类
@@ -22,35 +17,8 @@ import org.springframework.util.FileCopyUtils;
  * @author ruoyi
  */
 public class FileUtils {
-    public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
 
-    /**
-     * 输出指定文件的byte数组
-     *
-     * @param filePath 文件路径
-     * @param os       输出流
-     * @return
-     */
-    public static void writeBytes(String filePath, OutputStream os) throws IOException {
-        FileInputStream fis = null;
-        try {
-            File file = new File(filePath);
-            if (!file.exists()) {
-                throw new FileNotFoundException(filePath);
-            }
-            fis = new FileInputStream(file);
-            byte[] b = new byte[1024];
-            int length;
-            while ((length = fis.read(b)) > 0) {
-                os.write(b, 0, length);
-            }
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            IOUtils.close(os);
-            IOUtils.close(fis);
-        }
-    }
+    private static Random RANDOM = new Random();
 
     /**
      * 写数据到文件中
@@ -60,54 +28,74 @@ public class FileUtils {
      * @throws IOException IO异常
      */
     public static String writeImportBytes(byte[] data) throws IOException {
-        return writeBytes(data, BettaConfig.getImportPath());
-    }
+        String extension = getFileExtendName(data);
+        String fileUri = Constants.IMPORT_PATH + File.separator + genDateFileName(extension);
 
-    /**
-     * 写数据到文件中
-     *
-     * @param data      数据
-     * @param uploadDir 目标文件
-     * @return 目标文件
-     * @throws IOException IO异常
-     */
-    public static String writeBytes(byte[] data, String uploadDir) throws IOException {
-        FileOutputStream fos = null;
-        String pathName = "";
-        try {
-            String extension = getFileExtendName(data);
-            pathName = DateUtils.datePath() + "/" + IdUtils.fastUUID() + "." + extension;
-            File file = FileUploadUtils.getAbsoluteFile(uploadDir, pathName);
-            fos = new FileOutputStream(file);
+        File file = getFile(fileUri);
+
+        try (
+                BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(file));
+        ) {
             fos.write(data);
-        } finally {
-            IOUtils.close(fos);
+        } catch (Exception e) {
+            throw new ServerException("数据写入失败");
         }
-        return FileUploadUtils.getPathFileName(uploadDir, pathName);
+        return fileUri;
+    }
+
+
+    /**
+     * 生成文件路径和名字
+     *
+     * @param extension
+     * @return
+     */
+    public static String genDateFileName(String extension) {
+        String username = SecurityUtils.getUsername();
+
+        return DateUtils.datePath() + "/" + username + "_" + (System.currentTimeMillis()-1729155670000L) +"_"+RANDOM.nextInt(100)+ "." + extension;
     }
 
     /**
      * 写数据到文件中
      *
-     * @param url      文件URL地址
-     * @param uploadDir 目标文件
+     * @param url       文件URL地址
      * @return 目标文件
      * @throws IOException IO异常
      */
-    public static String writeBytes(String url, String uploadDir,String fileName) throws IOException {
-        FileOutputStream fos = null;
-        InputStream in = null;
-        try {
-            File file = FileUploadUtils.getAbsoluteFile(uploadDir, fileName);
-            fos = new FileOutputStream(file);
+    public static void writeBytes(String url, String relativePath) throws IOException {
 
-            in = new URL(url).openConnection().getInputStream();//创建连接、输入流
-            FileCopyUtils.copy(in, fos);
-        } finally {
-            IOUtils.close(fos);
-            IOUtils.close(in);
+        String absolutePath = FileUtils.getAbsoluteProfilePath(relativePath);
+        try (
+                InputStream in = new URL(url).openConnection().getInputStream();//创建连接、输入流
+                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(absolutePath));
+        ) {
+            FileCopyUtils.copy(in, bos);
+        } catch (Exception e) {
+            throw new ServerException(e.getMessage());
         }
-        return FileUploadUtils.getPathFileName(uploadDir, fileName);
+    }
+
+    public static File getFile(String fileUri) {
+        File file = new File(fileUri);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        return file;
+    }
+
+    /**
+     * 獲取資源絕對路徑，如果目錄不存在則創建
+     * @param relativePath
+     * @return
+     */
+    public static String getAbsoluteProfilePath(String relativePath) {
+        String absolutePath = BettaConfig.getProfile() + relativePath;
+        File file = new File(absolutePath);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        return absolutePath;
     }
 
     /**
@@ -126,96 +114,6 @@ public class FileUtils {
         return flag;
     }
 
-    /**
-     * 文件名称验证
-     *
-     * @param filename 文件名称
-     * @return true 正常 false 非法
-     */
-    public static boolean isValidFilename(String filename) {
-        return filename.matches(FILENAME_PATTERN);
-    }
-
-    /**
-     * 检查文件是否可下载
-     *
-     * @param resource 需要下载的文件
-     * @return true 正常 false 非法
-     */
-    public static boolean checkAllowDownload(String resource) {
-        // 禁止目录上跳级别
-        if (StringUtils.contains(resource, "..")) {
-            return false;
-        }
-
-        // 检查允许下载的文件规则
-        if (ArrayUtils.contains(MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION, FileTypeUtils.getFileType(resource))) {
-            return true;
-        }
-
-        // 不在允许下载的文件规则
-        return false;
-    }
-
-    /**
-     * 下载文件名重新编码
-     *
-     * @param request  请求对象
-     * @param fileName 文件名
-     * @return 编码后的文件名
-     */
-    public static String setFileDownloadHeader(HttpServletRequest request, String fileName) throws UnsupportedEncodingException {
-        final String agent = request.getHeader("USER-AGENT");
-        String filename = fileName;
-        if (agent.contains("MSIE")) {
-            // IE浏览器
-            filename = URLEncoder.encode(filename, "utf-8");
-            filename = filename.replace("+", " ");
-        } else if (agent.contains("Firefox")) {
-            // 火狐浏览器
-            filename = new String(fileName.getBytes(), "ISO8859-1");
-        } else if (agent.contains("Chrome")) {
-            // google浏览器
-            filename = URLEncoder.encode(filename, "utf-8");
-        } else {
-            // 其它浏览器
-            filename = URLEncoder.encode(filename, "utf-8");
-        }
-        return filename;
-    }
-
-    /**
-     * 下载文件名重新编码
-     *
-     * @param response     响应对象
-     * @param realFileName 真实文件名
-     */
-    public static void setAttachmentResponseHeader(HttpServletResponse response, String realFileName) throws UnsupportedEncodingException {
-        String percentEncodedFileName = percentEncode(realFileName);
-
-        StringBuilder contentDispositionValue = new StringBuilder();
-        contentDispositionValue.append("attachment; filename=")
-                .append(percentEncodedFileName)
-                .append(";")
-                .append("filename*=")
-                .append("utf-8''")
-                .append(percentEncodedFileName);
-
-        response.addHeader("Access-Control-Expose-Headers", "Content-Disposition,download-filename");
-        response.setHeader("Content-disposition", contentDispositionValue.toString());
-        response.setHeader("download-filename", percentEncodedFileName);
-    }
-
-    /**
-     * 百分号编码工具方法
-     *
-     * @param s 需要百分号编码的字符串
-     * @return 百分号编码后的字符串
-     */
-    public static String percentEncode(String s) throws UnsupportedEncodingException {
-        String encode = URLEncoder.encode(s, StandardCharsets.UTF_8.toString());
-        return encode.replaceAll("\\+", "%20");
-    }
 
     /**
      * 获取图像后缀
@@ -244,7 +142,7 @@ public class FileUtils {
      * @param fileName 路径名称
      * @return 没有文件路径的名称
      */
-    public static String getName(String fileName) {
+    public static String getFileName(String fileName) {
         if (fileName == null) {
             return null;
         }
@@ -254,17 +152,4 @@ public class FileUtils {
         return fileName.substring(index + 1);
     }
 
-    /**
-     * 获取不带后缀文件名称 /profile/upload/2022/04/16/ruoyi.png -- ruoyi
-     *
-     * @param fileName 路径名称
-     * @return 没有文件路径和后缀的名称
-     */
-    public static String getNameNotSuffix(String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-        String baseName = FilenameUtils.getBaseName(fileName);
-        return baseName;
-    }
 }

@@ -1,32 +1,22 @@
 package com.betta.web.controller.common;
 
-import java.io.IOException;
+import com.betta.common.config.BettaConfig;
+import com.betta.common.constant.Constants;
+import com.betta.common.core.domain.AjaxResult;
+import com.betta.common.exception.ServiceException;
+import com.betta.common.utils.StringUtils;
+import com.betta.common.utils.file.*;
+import com.betta.framework.config.ServerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.betta.common.enums.UploadFileType;
-import com.betta.common.utils.DateUtils;
-import com.betta.common.utils.SecurityUtils;
-import com.betta.common.utils.file.Base64Utils;
-import com.betta.common.utils.file.ImageUtils;
-import com.betta.common.utils.uuid.Seq;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import com.betta.common.config.BettaConfig;
-import com.betta.common.constant.Constants;
-import com.betta.common.core.domain.AjaxResult;
-import com.betta.common.utils.StringUtils;
-import com.betta.common.utils.file.FileUploadUtils;
-import com.betta.common.utils.file.FileUtils;
-import com.betta.framework.config.ServerConfig;
 
 /**
  * 通用请求处理
@@ -36,39 +26,11 @@ import com.betta.framework.config.ServerConfig;
 @RestController
 @RequestMapping("/common")
 public class CommonController {
-    private static final Logger log = LoggerFactory.getLogger(CommonController.class);
 
     @Autowired
     private ServerConfig serverConfig;
 
     private static final String FILE_DELIMETER = ",";
-
-    /**
-     * 通用下载请求
-     *
-     * @param fileName 文件名称
-     * @param delete   是否删除
-     */
-    @GetMapping("/download")
-    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest request) {
-        try {
-            if (!FileUtils.checkAllowDownload(fileName)) {
-                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
-            }
-            String realFileName = System.currentTimeMillis() + fileName.substring(fileName.indexOf("_") + 1);
-            String filePath = BettaConfig.getDownloadPath() + fileName;
-
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            FileUtils.setAttachmentResponseHeader(response, realFileName);
-            FileUtils.writeBytes(filePath, response.getOutputStream());
-            if (delete) {
-                FileUtils.deleteFile(filePath);
-            }
-        } catch (Exception e) {
-            log.error("下载文件失败", e);
-        }
-    }
-
 
     /**
      * 保存笔记中的图片，会转成JPG（有损压缩）
@@ -79,27 +41,20 @@ public class CommonController {
     @PostMapping(value = "/uploadImg/note")
     public AjaxResult uploadNoteImg(@RequestBody Map param) {
         if (param.containsKey("file")) {
-            try {
-                String file = String.valueOf(param.get("file"));
-                Matcher matcher = ImageUtils.BASE64_PATTERN.matcher(file);
-                if (matcher.find()) {
-                    String data = matcher.group(0);//数据
-                    String type = matcher.group(1);//type
-                    String imgData = data.split(",")[1];
-                    String username = SecurityUtils.getUsername();
-                    String fileName = username + "_" + System.currentTimeMillis() + ".jpg";//文件名称
-                    String notePath = BettaConfig.getNotePath() + "/" + DateUtils.datePath();// 路径:note/yyyy/MM/dd
-                    //绝对路径
-                    String absPath = FileUploadUtils.getAbsoluteFile(notePath, fileName).getAbsolutePath();
-                    if (Base64Utils.saveBase64Image(imgData, type, absPath)) {
-                        //返回相对路径
-                        return AjaxResult.success("操作成功", BettaConfig.getVueAppBaseApi() + FileUploadUtils.getPathFileName(notePath, fileName));
-                    }
-                }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                return AjaxResult.error(e.getMessage());
+            String file = String.valueOf(param.get("file"));
+            Matcher matcher = ImageUtils.BASE64_PATTERN.matcher(file);
+            if (matcher.find()) {
+                String data = matcher.group(0);//数据
+                String type = matcher.group(1);//type
+                String imgData = data.split(",")[1];
+
+                String relativePath = Constants.NOTE_PATH + "/" + FileUtils.genDateFileName("jpg");//相对路径
+                String absolutePath =  FileUtils.getAbsoluteProfilePath(relativePath);//绝对路径
+
+                Base64Utils.saveBase64Image(imgData, type, absolutePath);
+                //返回相对路径
+                return AjaxResult.success("操作成功", BettaConfig.getVueResourcePath() + relativePath);
             }
         }
         return AjaxResult.error("没有找到图片信息");
@@ -111,23 +66,14 @@ public class CommonController {
     @PostMapping("/upload/{type}")
     public AjaxResult uploadFile(MultipartFile file, @PathVariable String type) throws Exception {
         try {
-            // 上传文件路径
-            String filePath = BettaConfig.getUploadPath();
-            if (StringUtils.equals(UploadFileType.WORD.getType(), type)) {
-                filePath = BettaConfig.getWordPath();
-            } else if (StringUtils.equals(UploadFileType.ARTICLE.getType(), type)) {
-                filePath = BettaConfig.getArticlePath();
-            } else if (StringUtils.equals(UploadFileType.NOTICE.getType(), type)) {
-                filePath = BettaConfig.getNoticePath();
-            }
 
-            // 上传并返回新文件名称
-            String fileName = FileUploadUtils.upload(filePath, file);
-            String url = serverConfig.getUrl() + fileName;
+
+            // 上传并返回相对路径
+            String relativePath = FileUploadUtils.upload(type, file);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", url);
-            ajax.put("fileName", fileName);
-            ajax.put("newFileName", FileUtils.getName(fileName));
+            ajax.put("url", relativePath);
+            ajax.put("fileName", FileUtils.getFileName(relativePath));
+            ajax.put("newFileName", FileUtils.getFileName(relativePath));
             ajax.put("originalFilename", file.getOriginalFilename());
             return ajax;
         } catch (Exception e) {
@@ -138,21 +84,11 @@ public class CommonController {
     @PostMapping("/upload/url/{type}")
     public AjaxResult uploadFile(String url, @PathVariable String type) throws Exception {
         try {
-            // 上传文件路径
-            String filePath = BettaConfig.getUploadPath();
-            if (StringUtils.equals(UploadFileType.WORD.getType(), type)) {
-                filePath = BettaConfig.getWordPath();
-            } else if (StringUtils.equals(UploadFileType.ARTICLE.getType(), type)) {
-                filePath = BettaConfig.getArticlePath();
-            } else if (StringUtils.equals(UploadFileType.NOTICE.getType(), type)) {
-                filePath = BettaConfig.getNoticePath();
-            }
-
-            // 上传并返回新文件名称
-            String fileUrl = FileUploadUtils.upload(filePath, url);
+            // 上传并返回相对路径
+            String relativePath = FileUploadUtils.upload(type, url);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", fileUrl);
-            ajax.put("fileName", fileUrl.substring(fileUrl.lastIndexOf("/") + 1));
+            ajax.put("url", relativePath);
+            ajax.put("fileName", FileUtils.getFileName(url));
             return ajax;
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -166,18 +102,18 @@ public class CommonController {
     public AjaxResult uploadFiles(List<MultipartFile> files) throws Exception {
         try {
             // 上传文件路径
-            String filePath = BettaConfig.getUploadPath();
+            String filePath = Constants.UPLOAD_PATH;
             List<String> urls = new ArrayList<String>();
             List<String> fileNames = new ArrayList<String>();
             List<String> newFileNames = new ArrayList<String>();
             List<String> originalFilenames = new ArrayList<String>();
             for (MultipartFile file : files) {
-                // 上传并返回新文件名称
-                String fileName = FileUploadUtils.upload(filePath, file);
-                String url = serverConfig.getUrl() + fileName;
+                // 上传并返回相对路径
+                String relativePath = FileUploadUtils.upload(filePath, file);
+                String url = Constants.RESOURCE_PREFIX+relativePath;
                 urls.add(url);
-                fileNames.add(fileName);
-                newFileNames.add(FileUtils.getName(fileName));
+                fileNames.add(relativePath);
+                newFileNames.add(FileUtils.getFileName(relativePath));
                 originalFilenames.add(file.getOriginalFilename());
             }
             AjaxResult ajax = AjaxResult.success();
@@ -195,23 +131,35 @@ public class CommonController {
      * 本地资源通用下载
      */
     @GetMapping("/download/resource")
-    public void resourceDownload(String resource, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void resourceDownload(String fileName, HttpServletRequest request, HttpServletResponse response) {
         try {
-            if (!FileUtils.checkAllowDownload(resource)) {
-                throw new Exception(StringUtils.format("资源文件({})非法，不允许下载。 ", resource));
-            }
-            // 本地资源路径
-            String localPath = BettaConfig.getProfile();
+            DownloadUtils.checkAllowDownload(fileName);//检查是否允许下载
             // 数据库资源地址
-            String downloadPath = localPath + StringUtils.substringAfter(resource, Constants.RESOURCE_PREFIX);
-            // 下载名称
-            String downloadName = StringUtils.substringAfterLast(downloadPath, "/");
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            FileUtils.setAttachmentResponseHeader(response, downloadName);
-            FileUtils.writeBytes(downloadPath, response.getOutputStream());
+            String downloadPath = BettaConfig.getProfile() + StringUtils.substringAfter(fileName, Constants.RESOURCE_PREFIX);
+            DownloadUtils.downloadFile(downloadPath, response);
         } catch (Exception e) {
-            log.error("下载文件失败", e);
+            throw new ServiceException("下载文件失败");
+        }
+    }
+
+    /**
+     * 通用下载请求
+     *
+     * @param fileName 文件名称
+     * @param delete   是否删除
+     */
+    @GetMapping("/download")
+    public void fileDownload(String fileName, Boolean delete, HttpServletResponse response, HttpServletRequest
+            request) {
+        try {
+            DownloadUtils.checkAllowDownload(fileName);//检查是否允许下载
+            String filePath = Constants.DOWNLOAD_PATH + fileName;
+            DownloadUtils.downloadFile(filePath, response);
+            if (delete) {
+                FileUtils.deleteFile(filePath);
+            }
+        } catch (Exception e) {
+            throw new ServiceException("下载文件失败");
         }
     }
 }

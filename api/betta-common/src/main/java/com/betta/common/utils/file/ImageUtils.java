@@ -25,11 +25,7 @@ public class ImageUtils
 {
     private static final Logger log = LoggerFactory.getLogger(ImageUtils.class);
 
-    public static final String DB_PATH_PRE = "/baseUrl";
     public static final Pattern BASE64_PATTERN = Pattern.compile("data\\:image/(jpeg|png|gif|jpg|bmp);base64\\,(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?");
-
-    private static String htmlAppBaseApi = "[\\\\/]?" + BettaConfig.getVueAppBaseApi().replaceAll("^[\\\\/]", "");
-
 
     public static byte[] getImage(String imagePath)
     {
@@ -105,80 +101,5 @@ public class ImageUtils
         }
     }
 
-
-    public static String webToDb(String text) {
-        return webToDb(text, null);
-    }
-
-    /**
-     * 前端地址转成数据库地址
-     *
-     * @param text
-     * @param type
-     * @return
-     */
-    public static String webToDb(String text, String type) {
-        if (StringUtils.isBlank(text)) {
-            return "";
-        }
-
-        log.info("=========≧◔◡◔≦=========text:", text);
-        StringBuffer sbr = new StringBuffer();
-        Pattern imgPattern;
-        if ("html".equals(type)) {
-            imgPattern = Pattern.compile("(?<=<img src=\")(" + htmlAppBaseApi + ")");
-        } else if ("md".equals(type)) {
-            imgPattern = Pattern.compile("(?<=][(])(" + BettaConfig.getVueAppBaseApi() + ")");
-        } else {
-            imgPattern = Pattern.compile("^(" + htmlAppBaseApi + ")");
-        }
-        Matcher matcher = imgPattern.matcher(text);
-        while (matcher.find()) {
-            log.info("============ContextPath:" + matcher.group(0));
-            matcher.appendReplacement(sbr, DB_PATH_PRE);
-        }
-
-        matcher.appendTail(sbr);
-        return sbr.toString();
-    }
-
-    /**
-     * 将数据库里的图片等数据转成前端的地址
-     *
-     * @return
-     */
-    public static String dbToWeb(String text) {
-        return dbToWeb(text, null);
-    }
-
-    /**
-     * 将数据库里的图片等数据转成前端的地址
-     *
-     * @return
-     */
-    public static String dbToWeb(String text, String type) {
-        if (StringUtils.isNotBlank(text)) {
-            StringBuffer sbr = new StringBuffer();
-
-            Pattern imgPattern;
-            if ("html".equals(type)) {
-                imgPattern = Pattern.compile("(?<=<img src=\")" + DB_PATH_PRE);
-            } else if ("md".equals(type)) {
-                imgPattern = Pattern.compile("(?<=][(])" + DB_PATH_PRE);
-            } else {
-                imgPattern = Pattern.compile(DB_PATH_PRE);
-            }
-            Matcher matcher = imgPattern.matcher(text);
-            while (matcher.find()) {
-                matcher.appendReplacement(sbr, BettaConfig.getVueAppBaseApi());
-            }
-
-            matcher.appendTail(sbr);
-            return sbr.toString();
-        } else {
-            return "";
-        }
-
-    }
 
 }

@@ -140,6 +140,26 @@ public class Constants
      */
     public static final String RESOURCE_PREFIX = "/profile";
 
+    //=================路径定义============================
+    public static final String IMPORT_PATH = "/import";
+
+    public static final String AVATAR_PATH = "/avatar";
+
+    public static final String DOWNLOAD_PATH = "/download";
+
+    public static final String UPLOAD_PATH = "/upload";
+
+    public static final String WORD_PATH = "/word";
+
+
+    public static final String ARTICLE_PATH = "/article";
+
+    public static final String NOTE_PATH = "/note";
+
+    public static final String NOTICE_PATH = "/notice";
+
+
+
     /**
      * RMI 远程方法调用
      */

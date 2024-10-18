@@ -2,6 +2,7 @@ package com.betta.common.utils.file;
 
 import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
+import com.betta.common.enums.UploadFileType;
 import com.betta.common.exception.file.FileNameLengthLimitExceededException;
 import com.betta.common.exception.file.FileSizeLimitExceededException;
 import com.betta.common.exception.file.InvalidExtensionException;
@@ -61,16 +62,18 @@ public class FileUploadUtils {
     }
 
     /**
-     * 根据文件路径上传
+     * 根据文件类型上传
      *
-     * @param baseDir 相对应用的基目录
-     * @param file    上传的文件
+     * @param type 文件类型
+     * @param file 上传的文件
      * @return 文件名称
      * @throws IOException
      */
-    public static final String upload(String baseDir, MultipartFile file) throws IOException {
+    public static final String upload(String type, MultipartFile file) throws IOException {
+        // 上传文件文件夹
+        String dir = Constants.RESOURCE_PREFIX + FileUploadUtils.getDir(type);
         try {
-            return upload(baseDir, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
+            return upload(dir, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -79,55 +82,41 @@ public class FileUploadUtils {
     /**
      * 文件上传
      *
-     * @param baseDir          相对应用的基目录
-     * @param file             上传的文件
-     * @param allowedExtension 上传文件类型
-     * @return 返回上传成功的文件名
-     * @throws FileSizeLimitExceededException       如果超出最大大小
-     * @throws FileNameLengthLimitExceededException 文件名太长
-     * @throws IOException                          比如读写文件出错时
-     * @throws InvalidExtensionException            文件校验异常
+     * @param prePath
+     * @param file
+     * @param allowedExtension
+     * @return
+     * @throws InvalidExtensionException
+     * @throws IOException
      */
-    public static final String upload(String baseDir, MultipartFile file, String[] allowedExtension)
-            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
-            InvalidExtensionException {
-        int fileNamelength = Objects.requireNonNull(file.getOriginalFilename()).length();
-        if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
-            throw new FileNameLengthLimitExceededException(FileUploadUtils.DEFAULT_FILE_NAME_LENGTH);
-        }
+    public static final String upload(String prePath, MultipartFile file, String[] allowedExtension)
+            throws InvalidExtensionException, IOException {
 
         assertAllowed(file, allowedExtension);
 
-        String fileName = extractFilename(file);
+        String relativePath = prePath + File.separator + FileUtils.genDateFileName(getExtension(file));
 
-        String absPath = getAbsoluteFile(baseDir, fileName).getAbsolutePath();
-        file.transferTo(Paths.get(absPath));
-        return getPathFileName(baseDir, fileName);
+        String absolutePath = FileUtils.getAbsoluteProfilePath(relativePath);
+        file.transferTo(Paths.get(absolutePath));
+        return relativePath;
     }
 
     /**
-     * 编码文件名
+     * 获取上传的文件夹
+     *
+     * @param type
+     * @return
      */
-    public static final String extractFilename(MultipartFile file) {
-        return StringUtils.format("{}/{}_{}.{}", DateUtils.datePath(),
-                FilenameUtils.getBaseName(file.getOriginalFilename()), Seq.getId(Seq.uploadSeqType), getExtension(file));
-    }
-
-    public static final File getAbsoluteFile(String uploadDir, String fileName) throws IOException {
-        File desc = new File(uploadDir + File.separator + fileName);
-
-        if (!desc.exists()) {
-            if (!desc.getParentFile().exists()) {
-                desc.getParentFile().mkdirs();
-            }
+    public static final String getDir(String type) {
+        String dir = Constants.UPLOAD_PATH;
+        if (StringUtils.equals(UploadFileType.WORD.getType(), type)) {
+            dir = Constants.WORD_PATH;
+        } else if (StringUtils.equals(UploadFileType.ARTICLE.getType(), type)) {
+            dir = Constants.ARTICLE_PATH;
+        } else if (StringUtils.equals(UploadFileType.NOTICE.getType(), type)) {
+            dir = Constants.NOTICE_PATH;
         }
-        return desc;
-    }
-
-    public static final String getPathFileName(String uploadDir, String fileName) throws IOException {
-        int dirLastIndex = BettaConfig.getProfile().length() + 1;
-        String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
-        return Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
+        return dir;
     }
 
     /**
@@ -198,7 +187,6 @@ public class FileUploadUtils {
 
     /**
      * 根据URL上传文件
-     * @param baseDir
      * @param url
      * @return
      * @throws FileSizeLimitExceededException
@@ -206,15 +194,16 @@ public class FileUploadUtils {
      * @throws FileNameLengthLimitExceededException
      * @throws InvalidExtensionException
      */
-    public static final String upload(String baseDir, String url)
+    public static final String upload(String type, String url)
             throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
             InvalidExtensionException {
-        String extension = ".mp3";
+        String extension = "mp3";
         if (url.matches(".m4a")) {
-            extension = ".m4a";
+            extension = "m4a";
         }
-        String filePath = baseDir + "/" + DateUtils.datePath();
-        String fileUrl = FileUtils.writeBytes(url, filePath, Seq.getId(Seq.uploadSeqType) + extension);
-        return fileUrl;
+
+        String relativePath = Constants.RESOURCE_PREFIX + getDir(type) + File.separator + FileUtils.genDateFileName(extension);
+        FileUtils.writeBytes(url, relativePath);
+        return relativePath;
     }
 }

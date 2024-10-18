@@ -1,21 +1,26 @@
 package com.betta.eng.service.impl;
 
+import com.betta.common.annotation.CreateByScope;
+import com.betta.common.utils.SecurityUtils;
+import com.betta.common.utils.StringUtils;
+import com.betta.eng.domain.EngArticleWordRel;
+import com.betta.eng.domain.EngIcibaSentence;
+import com.betta.eng.domain.EngSentence;
+import com.betta.eng.domain.EngWord;
+import com.betta.eng.mapper.EngWordMapper;
+import com.betta.eng.service.IEngArticleWordRelService;
+import com.betta.eng.service.IEngIcibaSentenceService;
+import com.betta.eng.service.IEngSentenceService;
+import com.betta.eng.service.IEngWordService;
+import com.betta.eng.utils.dict.DictUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.betta.common.annotation.CreateByScope;
-import com.betta.common.utils.DateUtils;
-import com.betta.common.utils.SecurityUtils;
-import com.betta.common.utils.StringUtils;
-import com.betta.eng.domain.*;
-import com.betta.eng.service.*;
-import com.betta.eng.utils.dict.DictUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.betta.eng.mapper.EngWordMapper;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 单词Service业务层处理
@@ -75,7 +80,6 @@ public class EngWordServiceImpl implements IEngWordService {
      */
     @Override
     public int insertEngWord(EngWord engWord) {
-        engWord.setCreateTime(DateUtils.getNowDate());
         return engWordMapper.insertEngWord(engWord);
     }
 
@@ -181,8 +185,12 @@ public class EngWordServiceImpl implements IEngWordService {
      */
     @Override
     public int updateEngWord(EngWord engWord) {
-        engWord.setUpdateTime(DateUtils.getNowDate());
-        return engWordMapper.updateEngWord(engWord);
+        EngWord db = getWord(engWord.getWordName());
+        db.setPhonetics(engWord.getPhonetics());
+        db.setPhMp3(engWord.getPhMp3());
+        db.setAcceptation(engWord.getAcceptation());
+        db.setExchange(engWord.getExchange());
+        return engWordMapper.updateEngWord(db);
     }
 
     @Override
@@ -197,9 +205,11 @@ public class EngWordServiceImpl implements IEngWordService {
      */
     @Override
     @Transactional
-    public void deleteEngWordById(Long id) {
-        icibaSentenceService.deleteByWordId(id);
-        engWordMapper.deleteEngWordById(id);
+    public void deleteEngWordByIds(Long[] ids) {
+        for (Long id : ids) {
+            icibaSentenceService.deleteByWordId(id);
+            engWordMapper.deleteEngWordById(id);
+        }
     }
 
     @Override

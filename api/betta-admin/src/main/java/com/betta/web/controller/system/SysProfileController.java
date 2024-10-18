@@ -1,5 +1,6 @@
 package com.betta.web.controller.system;
 
+import com.betta.common.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -121,7 +122,7 @@ public class SysProfileController extends BaseController
         if (!file.isEmpty())
         {
             LoginUser loginUser = getLoginUser();
-            String avatar = FileUploadUtils.upload(BettaConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
+            String avatar = FileUploadUtils.upload(Constants.AVATAR_PATH, file, MimeTypeUtils.IMAGE_EXTENSION);
             if (userService.updateUserAvatar(loginUser.getUsername(), avatar))
             {
                 AjaxResult ajax = AjaxResult.success();
