@@ -24,6 +24,7 @@ public class IcibaUtils {
     private final static String KEY = "C772DB1F60B2839AD948507D91E7B04A";
 
     private final static String URL = "http://dict-co.iciba.com/api/dictionary.php";
+
     public EngWord getWord(String wordName) {
         EngWord word;
         try {
@@ -36,8 +37,8 @@ public class IcibaUtils {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException("获取爱词霸单词出错：" + wordName+
-                    ",信息:"+e.getMessage());
+            throw new ServiceException("获取爱词霸单词出错：" + wordName +
+                    ",信息:" + e.getMessage());
         }
         return word;
     }
@@ -67,7 +68,7 @@ public class IcibaUtils {
         if (!pron.isEmpty()) {
             String relativePath = DictUtils.getWordMp3RelativePath(word.getWordName());
             FileUtils.writeBytes(pron.get(pron.size() - 1), relativePath);
-            word.setPhMp3(relativePath);
+            word.setPhMp3(Constants.RESOURCE_PREFIX + relativePath);
         }
 
         List<String> pos = dict.getPos();//词性
@@ -96,7 +97,7 @@ public class IcibaUtils {
         List<Sent> sents = dict.getSent();
 
         List<EngIcibaSentence> isList = new ArrayList();
-        if(sents!=null) {
+        if (sents != null) {
             for (Sent sent : sents) {
                 EngIcibaSentence is = new EngIcibaSentence();
                 is.setOrig(sent.getOrig());

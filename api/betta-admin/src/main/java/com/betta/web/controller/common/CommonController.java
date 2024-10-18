@@ -54,7 +54,7 @@ public class CommonController {
 
                 Base64Utils.saveBase64Image(imgData, type, absolutePath);
                 //返回相对路径
-                return AjaxResult.success("操作成功", BettaConfig.getVueResourcePath() + relativePath);
+                return AjaxResult.success("操作成功", Constants.RESOURCE_PREFIX + relativePath);
             }
         }
         return AjaxResult.error("没有找到图片信息");
@@ -69,11 +69,11 @@ public class CommonController {
 
 
             // 上传并返回相对路径
-            String relativePath = FileUploadUtils.upload(type, file);
+            String resourceUrl = FileUploadUtils.upload(type, file);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", relativePath);
-            ajax.put("fileName", FileUtils.getFileName(relativePath));
-            ajax.put("newFileName", FileUtils.getFileName(relativePath));
+            ajax.put("url", resourceUrl);
+            ajax.put("fileName", FileUtils.getFileName(resourceUrl));
+            ajax.put("newFileName", FileUtils.getFileName(resourceUrl));
             ajax.put("originalFilename", file.getOriginalFilename());
             return ajax;
         } catch (Exception e) {
@@ -85,9 +85,9 @@ public class CommonController {
     public AjaxResult uploadFile(String url, @PathVariable String type) throws Exception {
         try {
             // 上传并返回相对路径
-            String relativePath = FileUploadUtils.upload(type, url);
+            String resourceUrl = FileUploadUtils.upload(type, url);
             AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", relativePath);
+            ajax.put("url", resourceUrl);
             ajax.put("fileName", FileUtils.getFileName(url));
             return ajax;
         } catch (Exception e) {
@@ -112,7 +112,7 @@ public class CommonController {
                 String relativePath = FileUploadUtils.upload(filePath, file);
                 String url = Constants.RESOURCE_PREFIX+relativePath;
                 urls.add(url);
-                fileNames.add(relativePath);
+                fileNames.add(file.getName());
                 newFileNames.add(FileUtils.getFileName(relativePath));
                 originalFilenames.add(file.getOriginalFilename());
             }

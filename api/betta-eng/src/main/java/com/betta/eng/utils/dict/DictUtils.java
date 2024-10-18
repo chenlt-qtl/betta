@@ -33,6 +33,6 @@ public class DictUtils {
      * @return
      */
     public static String getWordMp3RelativePath(String wordName) {
-        return Constants.RESOURCE_PREFIX + Constants.WORD_PATH + "/" + wordName.substring(0, 1) + "/" + wordName + ".mp3";
+        return Constants.WORD_PATH + "/" + wordName.substring(0, 1) + "/" + wordName + ".mp3";
     }
 }

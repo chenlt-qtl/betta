@@ -71,7 +71,7 @@ public class FileUploadUtils {
      */
     public static final String upload(String type, MultipartFile file) throws IOException {
         // 上传文件文件夹
-        String dir = Constants.RESOURCE_PREFIX + FileUploadUtils.getDir(type);
+        String dir = FileUploadUtils.getDir(type);
         try {
             return upload(dir, file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION);
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class FileUploadUtils {
     }
 
     /**
-     * 文件上传
+     * 文件上传 返回API的资源路径
      *
      * @param prePath
      * @param file
@@ -98,7 +98,7 @@ public class FileUploadUtils {
 
         String absolutePath = FileUtils.getAbsoluteProfilePath(relativePath);
         file.transferTo(Paths.get(absolutePath));
-        return relativePath;
+        return Constants.RESOURCE_PREFIX + relativePath;
     }
 
     /**
@@ -187,6 +187,7 @@ public class FileUploadUtils {
 
     /**
      * 根据URL上传文件
+     *
      * @param url
      * @return
      * @throws FileSizeLimitExceededException
@@ -202,8 +203,8 @@ public class FileUploadUtils {
             extension = "m4a";
         }
 
-        String relativePath = Constants.RESOURCE_PREFIX + getDir(type) + File.separator + FileUtils.genDateFileName(extension);
+        String relativePath = getDir(type) + File.separator + FileUtils.genDateFileName(extension);
         FileUtils.writeBytes(url, relativePath);
-        return relativePath;
+        return Constants.RESOURCE_PREFIX + relativePath;
     }
 }

@@ -67,7 +67,7 @@ public class YouDaoUtils {
             JSONObject phObj = (JSONObject) phonetics.get(i);
             String ph = "";
             if (phObj.containsKey("text")) {
-                ph = ((String) phObj.get("text")).replaceAll("/","");
+                ph = ((String) phObj.get("text")).replaceAll("/", "");
             }
             if (phObj.containsKey("audio")) {
                 String audio = (String) phObj.get("audio");
@@ -88,7 +88,7 @@ public class YouDaoUtils {
         if (StringUtils.isNotBlank(temp_audio)) {
             String relativePath = DictUtils.getWordMp3RelativePath(word.getWordName());
             FileUtils.writeBytes(temp_audio, relativePath);
-            word.setPhMp3(relativePath);
+            word.setPhMp3(Constants.RESOURCE_PREFIX + relativePath);
         }
     }
 
