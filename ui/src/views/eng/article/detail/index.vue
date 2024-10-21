@@ -43,6 +43,12 @@
             >添加</el-button
           >
         </el-col>
+        <batch-add-sentence-btn
+          :sentenceTotal="sentenceTotal"
+          :addSentence="saveSentence"
+          :getSentenceList="getSentenceList"
+          :articleId="articleId"
+        />
         <el-col :span="1.5">
           <el-button
             type="danger"
@@ -133,7 +139,13 @@
       <el-divider content-position="center"
         >单词信息 (共 {{ wordTotal }} 条)</el-divider
       >
-      <ArticleWordList :play="play" :showScore='true' :articleId="articleId" :listData="wordList" :getWordList="getWordList"></ArticleWordList>
+      <ArticleWordList
+        :play="play"
+        :showScore="true"
+        :articleId="articleId"
+        :listData="wordList"
+        :getWordList="getWordList"
+      ></ArticleWordList>
       <!-- 添加或修改文章句子对话框 -->
       <el-dialog
         :title="title"
@@ -265,10 +277,16 @@ import { listByArticle } from "@/api/eng/score";
 import { brReg, splipSentences } from "@/utils/wordUtils";
 import { play } from "@/utils/audio";
 import ArticleWordList from "@/components/Eng/wordList/articleWordList.vue";
+import BatchAddSentenceBtn from "@/components/Eng/batchAddSentenceBtn.vue";
 
 export default {
   name: "Article",
-  components: { uploadByUrl, ArticleWordList, viewArticleBtn },
+  components: {
+    uploadByUrl,
+    ArticleWordList,
+    viewArticleBtn,
+    BatchAddSentenceBtn,
+  },
   data() {
     return {
       uploadType: "file",
@@ -349,12 +367,14 @@ export default {
     /** 查询单词列表 */
     getWordList() {
       this.loading = true;
-      listByArticle(this.articleId, false, 1000,"word_name").then((response) => {
-        this.wordList = response.rows;
-        this.wordTotal = response.total;
-        this.sentenceWordList = this.wordList.map((word) => word.wordName);
-        this.loading = false;
-      });
+      listByArticle(this.articleId, false, 1000, "word_name").then(
+        (response) => {
+          this.wordList = response.rows;
+          this.wordTotal = response.total;
+          this.sentenceWordList = this.wordList.map((word) => word.wordName);
+          this.loading = false;
+        }
+      );
     },
     // 取消按钮
     cancel() {
@@ -459,32 +479,34 @@ export default {
           if (this.useTopMp3) {
             this.form.mp3 = "";
           }
-          //处理mp3Time
-          if (!this.form.mp3Time) {
-            //把[18:10.33]...中的时间解析出来
-            const match = this.form.content.match(/^\[(\d\d:\d\d)/);
-            if (match) {
-              this.form.mp3Time =
-                match[1] + "," + (this.form.content.length < 60 ? 5 : 8);
-            }
-          }
-          this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
-
-          if (this.form.id != null) {
-            updateSentence(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.openSentence = false;
-              this.getSentenceList();
-            });
-          } else {
-            addSentence(this.form).then(() => {
-              this.$modal.msgSuccess("新增成功");
-              this.openSentence = false;
-              this.getSentenceList();
-            });
-          }
+          this.saveSentence(this.form);
         }
       });
+    },
+    saveSentence(sentence) {
+      //处理mp3Time
+      if (!sentence.mp3Time) {
+        //把[18:10.33]...中的时间解析出来
+        const match = sentence.content.match(/^\[(\d\d:\d\d)/);
+        if (match) {
+          sentence.mp3Time = match[1] + "," + (sentence.length < 60 ? 5 : 8);
+        }
+      }
+      sentence.mp3Time = this.transMp3Time(sentence.mp3Time);
+
+      if (sentence.id != null) {
+        updateSentence(sentence).then(() => {
+          this.$modal.msgSuccess("修改成功");
+          this.openSentence = false;
+          this.getSentenceList();
+        });
+      } else {
+        addSentence(sentence).then(() => {
+          this.$modal.msgSuccess("新增成功");
+          this.openSentence = false;
+          this.getSentenceList();
+        });
+      }
     },
     //提交生词
     submitWord() {
