@@ -37,7 +37,6 @@ export default {
   data() {
     return {
       form: {},
-      successCount: 0,
       open: false,
       rules: {
         sentences: [
@@ -50,7 +49,6 @@ export default {
     // 取消按钮
     cancel() {
       this.open = false;
-      this.successCount && this.getSentenceList();
     },
     // 表单重置
     reset() {
@@ -63,21 +61,28 @@ export default {
     /** 批量添加句子 */
     handleBatchAddSentence() {
       this.open = true;
-      this.successCount = 0;
       this.reset();
     },
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          const sentenceArr = this.form.sentences.split("\n");
+          const sentenceArr = this.form.sentences.split("\n").filter((s) => s);
+          let successCount = 0;
           sentenceArr.forEach((sentence, index) => {
-            sentence &&
-              this.addSentence({
+            this.addSentence(
+              {
                 articleId: this.articleId,
                 content: sentence,
                 idx: this.sentenceTotal + index + 1,
-              });
-            this.successCount++;
+              },
+              () => {
+                if (successCount == sentenceArr.length) {
+                  this.$modal.msgSuccess("新增成功");
+                  this.open = false;
+                  this.getSentenceList();
+                }
+              }
+            );
           });
         }
       });

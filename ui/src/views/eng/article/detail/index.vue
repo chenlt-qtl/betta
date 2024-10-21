@@ -479,11 +479,15 @@ export default {
           if (this.useTopMp3) {
             this.form.mp3 = "";
           }
-          this.saveSentence(this.form);
+          this.saveSentence(this.form, () => {
+            this.$modal.msgSuccess("保存成功");
+            this.openSentence = false;
+            this.getSentenceList();
+          });
         }
       });
     },
-    saveSentence(sentence) {
+    saveSentence(sentence, callback=()=>{}) {
       //处理mp3Time
       if (!sentence.mp3Time) {
         //把[18:10.33]...中的时间解析出来
@@ -495,17 +499,9 @@ export default {
       sentence.mp3Time = this.transMp3Time(sentence.mp3Time);
 
       if (sentence.id != null) {
-        updateSentence(sentence).then(() => {
-          this.$modal.msgSuccess("修改成功");
-          this.openSentence = false;
-          this.getSentenceList();
-        });
+        updateSentence(sentence).then(callback);
       } else {
-        addSentence(sentence).then(() => {
-          this.$modal.msgSuccess("新增成功");
-          this.openSentence = false;
-          this.getSentenceList();
-        });
+        addSentence(sentence).then(callback);
       }
     },
     //提交生词
