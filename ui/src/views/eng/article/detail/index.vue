@@ -1,340 +1,94 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="article" label-width="80px">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="标题：">{{ article.title }}</el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="分组：">{{ article.groupName }}</el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="图片：">
-            <img
-              v-if="article.picture"
-              style="width: 200px"
-              :src="baseUrl + article.picture"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="音频：">
-            <el-button
-              v-if="article.mp3"
-              type="text"
-              @click="() => play(article.mp3)"
-            >
-              <svg-icon icon-class="sound" />
-            </el-button>
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
-          <el-form-item label="描述：">{{ article.comment }}</el-form-item>
-        </el-col>
-      </el-row>
-      <el-divider content-position="center">文章句子信息</el-divider>
-      <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            size="mini"
-            @click="handleAddSentence"
-            >添加</el-button
-          >
-        </el-col>
-        <batch-add-sentence-btn
-          :sentenceTotal="sentenceTotal"
-          :addSentence="saveSentence"
-          :getSentenceList="getSentenceList"
-          :articleId="articleId"
-        />
-        <el-col :span="1.5">
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-            @click="handleDeleteSentence"
-            >删除</el-button
-          >
-        </el-col>
-        <el-col :span="1.5">
-          <viewArticleBtn :articleId="articleId" />
-        </el-col>
-      </el-row>
-      <el-table
-        v-loading="loading"
-        :data="sentenceList"
-        @selection-change="handleSentenceSelectionChange"
+    <el-descriptions class="margin-top" title="文章信息" :column="2">
+      <template slot="extra">
+        <play-article-btn :articleId="articleId" />
+        <el-divider direction="vertical" />
+        <read-article-btn :articleId="articleId" />
+        <el-divider direction="vertical" />
+        <test-article-btn :articleId="articleId" />
+      </template>
+      <el-descriptions-item label="标题">{{
+        article.title
+      }}</el-descriptions-item>
+      <el-descriptions-item label="分组"
+        ><el-tag size="small">{{
+          article.groupName
+        }}</el-tag></el-descriptions-item
       >
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="句子内容" align="center" prop="content" />
-        <el-table-column label="解释" align="center" prop="acceptation" />
-        <el-table-column label="序号" align="center" prop="idx" />
-        <!-- <el-table-column label="图片" align="center" prop="picture" width="100">
-          <template v-if="scope.row.picture" slot-scope="scope">
-            <image-preview :src="scope.row.picture" :width="50" :height="50" />
-          </template>
-        </el-table-column> -->
-        <el-table-column label="音频" align="center" prop="mp3">
-          <template
-            v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)"
-            slot-scope="scope"
-          >
-            <el-button
-              type="text"
-              @click="
-                () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
-              "
-            >
-              <svg-icon icon-class="sound" />
-            </el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="MP3开始结束时间" align="center" prop="mp3Time">
-          <template slot-scope="scope">
-            {{ transMp3Time(scope.row.mp3Time) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdateSentence(scope.row)"
-              v-hasPermi="['eng:sentence:edit']"
-              >修改</el-button
-            >
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdateWord(scope.row)"
-              v-hasPermi="['eng:word:edit']"
-              >生词</el-button
-            >
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDeleteSentence(scope.row)"
-              v-hasPermi="['eng:sentence:remove']"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination
-        v-show="sentenceTotal > 0"
-        :total="sentenceTotal"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getSentenceList"
-      />
-      <el-divider content-position="center"
-        >单词信息 (共 {{ wordTotal }} 条)</el-divider
-      >
-      <ArticleWordList
-        :play="play"
-        :showScore="true"
-        :articleId="articleId"
-        :listData="wordList"
-        :getWordList="getWordList"
-      ></ArticleWordList>
-      <!-- 添加或修改文章句子对话框 -->
-      <el-dialog
-        :title="title"
-        :visible.sync="openSentence"
-        width="500px"
-        append-to-body
-      >
-        <el-form
-          ref="form"
-          :model="form"
-          :rules="sentenceRules"
-          label-width="80px"
-        >
-          <el-form-item label="句子内容" prop="content">
-            <el-input
-              v-model="form.content"
-              type="textarea"
-              placeholder="请输入内容"
-            />
-          </el-form-item>
-          <el-form-item label="解释" prop="acceptation">
-            <el-input
-              v-model="form.acceptation"
-              type="textarea"
-              placeholder="请输入内容"
-            />
-          </el-form-item>
-          <el-form-item label="序号" prop="idx">
-            <el-input v-model="form.idx" placeholder="请输入序号" />
-          </el-form-item>
-          <!-- <el-form-item label="图片" prop="picture" uploadType="article">
-            <image-upload v-model="form.picture" />
-          </el-form-item> -->
-          <el-form-item v-if="article.mp3" label="独立音频" prop="useTopMp3">
-            <el-radio-group v-model="useTopMp3">
-              <el-radio-button :label="0">是</el-radio-button>
-              <el-radio-button :label="1">否</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-          <div v-if="!useTopMp3">
-            <el-form-item label="上传方式" prop="uploadType">
-              <el-radio-group v-model="uploadType">
-                <el-radio label="file">文件</el-radio>
-                <el-radio label="url">URL</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="音频" prop="mp3">
-              <file-upload
-                v-if="uploadType == 'file'"
-                :fileType="['mp3', 'm4a']"
-                v-model="form.mp3"
-                uploadType="article"
-              />
-              <uploadByUrl
-                v-if="uploadType == 'url'"
-                v-model="form.mp3"
-                uploadType="article"
-              />
-            </el-form-item>
-          </div>
-          <el-form-item label="MP3时间" prop="mp3Time">
-            <el-input v-model="form.mp3Time" placeholder="请输入MP3时间" />
-            格式1: 开始时间(int),持续时间(float),倍速 例: 5,8.5,0.8<br />
-            格式2: 开始时间(分:秒),持续时间(float),倍速 例: 02:55,8.5,0.8<br />
-            <el-button
-              type="text"
-              @click="
-                () => play(useTopMp3 ? article.mp3 : form.mp3, form.mp3Time)
-              "
-            >
-              <!-- <svg-icon icon-class="sound" /> -->试听
-            </el-button>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </el-dialog>
-
-      <!-- 添加或修改单词对话框 -->
-      <el-dialog
-        :title="title"
-        :visible.sync="openWord"
-        width="500px"
-        append-to-body
-      >
-        <div
-          style="display: inline-block"
-          v-for="({ text, isWord, style }, index) of splitWordList"
-          :key="index"
-        >
-          <el-button
-            v-if="isWord"
-            size="mini"
-            type="text"
-            :style="style"
-            @click="handleClickWord(text)"
-            >{{ text }}</el-button
-          >
-          <div :style="style" v-if="!isWord">{{ text }}</div>
-        </div>
-
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitWord">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </el-dialog>
-    </el-form>
+      <el-descriptions-item label="图片">
+        <img
+          v-if="article.picture"
+          style="width: 200px"
+          :src="baseUrl + article.picture"
+      /></el-descriptions-item>
+      <el-descriptions-item label="音频">
+        <el-link :underline="false" type="primary">
+          <svg-icon icon-class="sound" @click="() => play(article.mp3)"
+        /></el-link>
+      </el-descriptions-item>
+      <el-descriptions-item label="描述">{{
+        article.comment
+      }}</el-descriptions-item>
+    </el-descriptions>
+    <el-descriptions class="margin-top" title="句子信息" />
+    <sentence-list
+      :article="article"
+      :play="play"
+      :getWordList="getWordList"
+      :wordList="wordList"
+    ></sentence-list>
+    <el-descriptions
+      class="margin-top"
+      :title="`单词信息 (共` + wordTotal + `条)`"
+    />
+    <ArticleWordList
+      :play="play"
+      :showScore="true"
+      :articleId="articleId"
+      :listData="wordList"
+      :getWordList="getWordList"
+    ></ArticleWordList>
   </div>
 </template>
 
 <script>
 import { getArticle } from "@/api/eng/article";
-import uploadByUrl from "@/components/UploadByUrl";
-import viewArticleBtn from "@/components/Eng/viewArticle.vue";
 
-import {
-  listSentence,
-  getSentence,
-  delSentence,
-  addSentence,
-  updateSentence,
-} from "@/api/eng/sentence";
-
-import { updateArticleWord } from "@/api/eng/word";
 import { listByArticle } from "@/api/eng/score";
 
-import { brReg, splipSentences } from "@/utils/wordUtils";
 import { play } from "@/utils/audio";
 import ArticleWordList from "@/components/Eng/wordList/articleWordList.vue";
-import BatchAddSentenceBtn from "@/components/Eng/batchAddSentenceBtn.vue";
+import SentenceList from "@/components/Eng/sentenceList.vue";
+import TestArticleBtn from "@/components/Eng/btns/testArticleBtn.vue";
+import ReadArticleBtn from "@/components/Eng/btns/readArticleBtn.vue";
+import PlayArticleBtn from "@/components/Eng/btns/playArticleBtn.vue";
 
 export default {
   name: "Article",
   components: {
-    uploadByUrl,
     ArticleWordList,
-    viewArticleBtn,
-    BatchAddSentenceBtn,
+    SentenceList,
+    TestArticleBtn,
+    ReadArticleBtn,
+    PlayArticleBtn,
   },
   data() {
     return {
-      uploadType: "file",
-      useTopMp3: 1,
       articleId: 0,
       article: {},
       baseUrl: process.env.VUE_APP_BASE_API,
       // 遮罩层
       loading: true,
-      // 选中数组
-      sentenceIds: [],
-      // 子表选中数据
-      checkedEngSentence: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 总条数
-      sentenceTotal: 0,
       wordTotal: 0,
-      // 英语文章表格数据
-      sentenceList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      openSentence: false,
-      openWord: false,
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        articleId: null,
-      },
       form: {},
-      // 表单校验
-      sentenceRules: {},
       wordList: [],
-      //句子对应的生词
-      sentenceWordList: [],
-      //句子切割后的单词
-      splitWordList: [],
     };
   },
   created() {
     this.articleId = this.$route.params && this.$route.params.articleId;
     if (this.articleId) {
       this.getArticle();
-      this.getSentenceList();
       this.getWordList();
     }
   },
@@ -350,20 +104,6 @@ export default {
     play(url, mp3Time) {
       url && play(url, mp3Time);
     },
-    /** 查询英语句子列表 */
-    getSentenceList() {
-      this.loading = true;
-      const newQueryParams = {
-        ...this.queryParams,
-        articleId: this.articleId,
-      };
-      this.queryParams = newQueryParams;
-      listSentence(newQueryParams).then((response) => {
-        this.sentenceList = response.rows;
-        this.sentenceTotal = response.total;
-        this.loading = false;
-      });
-    },
     /** 查询单词列表 */
     getWordList() {
       this.loading = true;
@@ -371,184 +111,18 @@ export default {
         (response) => {
           this.wordList = response.rows;
           this.wordTotal = response.total;
-          this.sentenceWordList = this.wordList.map((word) => word.wordName);
           this.loading = false;
         }
       );
     },
-    // 取消按钮
-    cancel() {
-      this.openSentence = false;
-      this.openWord = false;
-    },
-    // 表单重置
-    resetSentence() {
-      this.form = {
-        id: null,
-        articleId: this.articleId,
-        content: null,
-        acceptation: null,
-        idx: null,
-        picture: null,
-        mp3: null,
-        mp3Time: null,
-        status: null,
-      };
-      this.uploadType = "file";
-      this.useTopMp3 = this.article.mp3 ? 1 : 0;
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getSentenceList();
-    },
-    /** 重置按钮操作 */
-    resetSentenceQuery() {
-      this.resetSentence("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSentenceSelectionChange(selection) {
-      this.sentenceIds = selection.map((item) => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
-    },
-    /** 修改按钮操作 */
-    handleUpdateSentence(row) {
-      this.resetSentence();
-      const id = row.id || this.sentenceIds;
-      getSentence(id).then((response) => {
-        this.form = response.data;
-        this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
-        this.useTopMp3 = !this.article.mp3 ? 0 : this.form.mp3 ? 0 : 1;
-        this.uploadType = "file";
-        this.openSentence = true;
-        this.title = "修改句子";
-      });
-    },
-    //修改生词时
-    handleUpdateWord(row) {
-      this.form = row;
-      this.splitWordList = this.getSplitWordList();
-      this.openWord = true;
-      this.title = "修改生词";
-    },
-    //根据句子获取单词
-    getSplitWordList() {
-      const content = this.form.content;
-      const allWords = splipSentences(content.split(brReg))[0].allWords;
-      allWords.forEach((element) => {
-        if (
-          this.sentenceWordList.find(
-            (word) => word == element.text.toLowerCase()
-          )
-        ) {
-          element.style = {
-            padding: "5px",
-            margin: "0 5px",
-            backgroundColor: "rgba(241, 196, 15, 0.3)",
-            borderColor: "rgba(211, 84, 0, 0.5)",
-          };
-        } else if (element.isWord) {
-          element.style = {
-            display: "inline-block",
-            padding: "5px",
-            margin: "0 5px",
-          };
-        }
-      });
-      return allWords;
-    },
-    /**点击单词时 */
-    handleClickWord(text) {
-      var index = this.sentenceWordList.indexOf(text.toLowerCase());
-      const newWordList = [...this.sentenceWordList];
-      if (index > -1) {
-        newWordList.splice(index, 1);
-      } else {
-        newWordList.push(text.toLowerCase());
-      }
-      this.sentenceWordList = newWordList;
-      this.splitWordList = this.getSplitWordList();
-    },
-    /** 提交句子按钮 */
-    submitForm() {
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.useTopMp3) {
-            this.form.mp3 = "";
-          }
-          this.saveSentence(this.form, () => {
-            this.$modal.msgSuccess("保存成功");
-            this.openSentence = false;
-            this.getSentenceList();
-          });
-        }
-      });
-    },
-    saveSentence(sentence, callback=()=>{}) {
-      //处理mp3Time
-      if (!sentence.mp3Time) {
-        //把[18:10.33]...中的时间解析出来
-        const match = sentence.content.match(/^\[(\d\d:\d\d)/);
-        if (match) {
-          sentence.mp3Time = match[1] + "," + (sentence.length < 60 ? 5 : 8);
-        }
-      }
-      sentence.mp3Time = this.transMp3Time(sentence.mp3Time);
-
-      if (sentence.id != null) {
-        updateSentence(sentence).then(callback);
-      } else {
-        addSentence(sentence).then(callback);
-      }
-    },
-    //提交生词
-    submitWord() {
-      updateArticleWord(this.articleId, this.sentenceWordList).then(() => {
-        this.$modal.msgSuccess("修改成功");
-        this.openWord = false;
-        this.getWordList();
-      });
-    },
-    /** 删除按钮操作 */
-    handleDeleteSentence(row) {
-      const sentenceIds = row.id || this.sentenceIds;
-      this.$modal
-        .confirm("是否确认删除选中的句子？")
-        .then(function () {
-          return delSentence(sentenceIds);
-        })
-        .then(() => {
-          this.getSentenceList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
-    },
-    /** 文章句子序号 */
-    rowEngSentenceIndex({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
-    /** 文章句子添加按钮操作 */
-    handleAddSentence() {
-      this.resetSentence();
-      this.form.idx = this.sentenceTotal + 1;
-      this.openSentence = true;
-      this.title = "添加文章句子";
-    },
-    /** 把格式2的时间转成格式1 */
-    transMp3Time(mp3Time) {
-      const timeArr = (mp3Time || "").split(",");
-      if (timeArr.length == 2 && /^\d+:\d+$/.test(timeArr[0])) {
-        //格式2
-        const arr = timeArr[0].split(":");
-        const startTime = parseInt(arr[0]) * 60 + parseInt(arr[1]);
-        return startTime + "," + timeArr[1];
-      } else {
-        return mp3Time;
-      }
-    },
   },
 };
 </script>
+<style scoped>
+.app-container {
+  padding: 12px 48px;
+}
+.margin-top {
+  margin-top: 24px;
+}
+</style>

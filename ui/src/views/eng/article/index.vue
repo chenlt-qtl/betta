@@ -131,29 +131,12 @@
                 v-hasPermi="['eng:article:edit']"
                 >详情</el-button
               ><el-divider direction="vertical"></el-divider>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-chat-line-square"
-                @click="handleReadArticle(scope.row)"
-                v-hasPermi="['eng:article:edit']"
-                >跟读</el-button
-              ><el-divider direction="vertical"></el-divider>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-service"
-                @click="handlePlayArticle(scope.row)"
-                v-hasPermi="['eng:article:edit']"
-                >播放</el-button
-              ><el-divider direction="vertical"></el-divider>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-coordinate"
-                @click="handleTest(scope.row)"
-                >测试</el-button
-              ><el-divider direction="vertical"></el-divider>
+              <read-article-btn :articleId="scope.row.id" />
+              <el-divider direction="vertical" />
+              <play-article-btn :articleId="scope.row.id" />
+              <el-divider direction="vertical" />
+              <test-article-btn :articleId="scope.row.id" />
+              <el-divider direction="vertical"></el-divider>
               <el-button
                 size="mini"
                 type="text"
@@ -242,10 +225,13 @@ import {
 import { listGroup } from "@/api/eng/group";
 import { play } from "@/utils/audio";
 import groupTags from "@/components/Eng/groupTags.vue";
+import TestArticleBtn from "@/components/Eng/btns/testArticleBtn.vue";
+import ReadArticleBtn from "@/components/Eng/btns/readArticleBtn.vue";
+import PlayArticleBtn from "@/components/Eng/btns/playArticleBtn.vue";
 
 export default {
   name: "Article",
-  components: { groupTags },
+  components: { groupTags, TestArticleBtn, ReadArticleBtn, PlayArticleBtn },
   data() {
     return {
       // 遮罩层
@@ -338,20 +324,6 @@ export default {
       const articleId = row.id;
       this.$router.push("/eng/article-detail/" + articleId);
     },
-    /** 跟读文章操作 */
-    handleReadArticle: function (row) {
-      const articleId = row.id;
-      this.$router.push("/eng/article/read/" + articleId);
-    },
-    /** 测试操作 */
-    handleTest: function (row) {
-      const articleId = row.id;
-      this.$router.push("/eng/article/test/" + articleId);
-    },
-    handlePlayArticle: function (row) {
-      const articleId = row.id;
-      this.$router.push("/eng/playlist?article=" + articleId);
-    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -419,38 +391,6 @@ export default {
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});
-    },
-    /** 文章句子序号 */
-    rowEngSentenceIndex({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
-    /** 文章句子添加按钮操作 */
-    handleAddEngSentence() {
-      let obj = {};
-      obj.content = "";
-      obj.acceptation = "";
-      obj.idx = "";
-      obj.picture = "";
-      obj.mp3 = "";
-      obj.mp3Time = "";
-      obj.status = "";
-      this.engSentenceList.push(obj);
-    },
-    /** 文章句子删除按钮操作 */
-    handleDeleteEngSentence() {
-      if (this.checkedEngSentence.length == 0) {
-        this.$modal.msgError("请先选择要删除的文章句子数据");
-      } else {
-        const engSentenceList = this.engSentenceList;
-        const checkedEngSentence = this.checkedEngSentence;
-        this.engSentenceList = engSentenceList.filter(function (item) {
-          return checkedEngSentence.indexOf(item.index) == -1;
-        });
-      }
-    },
-    /** 复选框选中数据 */
-    handleEngSentenceSelectionChange(selection) {
-      this.checkedEngSentence = selection.map((item) => item.index);
     },
     /** 导出按钮操作 */
     handleExport() {

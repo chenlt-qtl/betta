@@ -40,7 +40,7 @@ public interface IEngWordService
      * @param engWord 单词
      * @return 结果
      */
-    public int insertEngWord(EngWord engWord);
+    public int addEngWord(EngWord engWord);
 
     EngWord getWord(String wordName);
 

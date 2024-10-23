@@ -85,7 +85,7 @@ public class EngWordController extends BaseController {
     @Log(title = "单词", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody EngWord engWord) {
-        return toAjax(engWordService.insertEngWord(engWord));
+        return toAjax(engWordService.addEngWord(engWord));
     }
 
     /**

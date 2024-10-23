@@ -10,6 +10,7 @@
       :visible.sync="open"
       width="500px"
       append-to-body
+      v-loading="loading"
     >
       <el-form ref="form" :model="form" :rules="rules">
         <el-form-item label="句子内容" prop="sentences">
@@ -36,6 +37,7 @@ export default {
   props: ["addSentence", "sentenceTotal", "getSentenceList", "articleId"],
   data() {
     return {
+      loading: false,
       form: {},
       open: false,
       rules: {
@@ -66,6 +68,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          this.loading = true;
           const sentenceArr = this.form.sentences.split("\n").filter((s) => s);
           let successCount = 0;
           sentenceArr.forEach((sentence, index) => {
@@ -76,10 +79,12 @@ export default {
                 idx: this.sentenceTotal + index + 1,
               },
               () => {
+                successCount++;
                 if (successCount == sentenceArr.length) {
                   this.$modal.msgSuccess("新增成功");
                   this.open = false;
                   this.getSentenceList();
+                  this.loading = false;
                 }
               }
             );

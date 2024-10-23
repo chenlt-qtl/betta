@@ -1,6 +1,7 @@
 package com.betta.eng.service.impl;
 
 import com.betta.common.annotation.CreateByScope;
+import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngArticleWordRel;
@@ -79,7 +80,12 @@ public class EngWordServiceImpl implements IEngWordService {
      * @return 结果
      */
     @Override
-    public int insertEngWord(EngWord engWord) {
+    public int addEngWord(EngWord engWord) {
+        //先检查重复
+        List<EngWord> engWords = engWordMapper.selectEngWordByWordName(engWord.getWordName());
+        if(!Objects.isNull(engWords)&&!engWords.isEmpty()){
+            throw new ServiceException("单词 "+engWord.getWordName()+" 已存在");
+        }
         return engWordMapper.insertEngWord(engWord);
     }
 
@@ -107,7 +113,7 @@ public class EngWordServiceImpl implements IEngWordService {
         if (getFromApi) {
             word = dictUtils.getWord(lowerCase);
             if (!Objects.isNull(word)) {
-                insertEngWord(word);
+                engWordMapper.insertEngWord(word);
                 if (!Objects.isNull(word.getIcibaSentenceList())) {//例句
                     for (EngIcibaSentence icibaSentence : word.getIcibaSentenceList()) {
                         icibaSentence.setWordId(word.getId());
