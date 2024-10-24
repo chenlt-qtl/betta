@@ -109,7 +109,8 @@ export default {
       this.loading = true;
       listByArticle(this.articleId, false, 1000, "word_name").then(
         (response) => {
-          this.wordList = response.rows;
+          //按熟悉度排序由小到大
+          this.wordList = response.rows.sort((i,j)=>i.familiarity-j.familiarity);
           this.wordTotal = response.total;
           this.loading = false;
         }
