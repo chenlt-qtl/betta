@@ -31,14 +31,15 @@
       </div>
 
       <div v-if="content.id == null" class="blank">
-        <i style="color: gray;font-size:80px;" class="el-icon-monitor"></i>
+        <i style="color: gray; font-size: 80px" class="el-icon-monitor"></i>
       </div>
-      <MdEditor
-        v-if="content.id != null"
-        :value="content.text"
-        @blur="updateText"
-        @change="onChange"
-      ></MdEditor>
+      <div :style="{ display: content.id == null ? 'none' : 'block' }">
+        <MdEditor
+          :value="content.text"
+          @blur="updateText"
+          @change="onChange"
+        ></MdEditor>
+      </div>
     </div>
     <el-empty v-if="!openedNote.id" description=""></el-empty>
   </div>
@@ -54,7 +55,13 @@ import NoteHistorySaveBtn from "./noteHistorySaveBtn.vue";
 import NoteHistoryListBtn from "./noteHistoryListBtn.vue";
 
 export default {
-  components: { MdEditor, OpenedTab, NoteHistorySaveBtn, NoteHistoryListBtn },
+  components: {
+    MdEditor,
+    OpenedTab,
+    NoteHistorySaveBtn,
+    NoteHistoryListBtn,
+    Data,
+  },
   data() {
     return {
       title: "",
@@ -213,7 +220,7 @@ export default {
       }
     }
   }
-  .blank{
+  .blank {
     height: 400px;
     display: flex;
     justify-content: center;
