@@ -181,19 +181,11 @@ export default {
     },
     // 选中数据
     handleRowClick(selection) {
-      if (selection.isLeaf) {
-        this.$router.push({
-          path: "/n/note",
-          query: { ...this.$route.query, id: selection.id },
-        });
-      } else {
-        this.searchStr = "";
-        this.$router.push({
-          path: "/n/note",
-          query: { ...this.$route.query, search: "" },
-        });
-        this.$store.dispatch("note/setSelectedNoteId", selection.id);
-      }
+      //修改url
+      this.$router.push({
+        path: "/n/note",
+        query: { ...this.$route.query, id: selection.id },
+      });
     },
     onSearch() {
       this.$store.dispatch("note/setSelectedNoteId", 0);

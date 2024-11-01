@@ -29,7 +29,12 @@
         ></i>
         <i v-if="!isSaved" class="el-icon-warning-outline orange icon"></i>
       </div>
+
+      <div v-if="content.id == null" class="blank">
+        <i style="color: gray;font-size:80px;" class="el-icon-monitor"></i>
+      </div>
       <MdEditor
+        v-if="content.id != null"
         :value="content.text"
         @blur="updateText"
         @change="onChange"
@@ -139,7 +144,9 @@ export default {
         if (text) {
           newText = text.replaceAll(
             new RegExp(
-              "(?<=\\]\\()" + process.env.VUE_APP_BASE_API + "/profile(?=\\/note)",
+              "(?<=\\]\\()" +
+                process.env.VUE_APP_BASE_API +
+                "/profile(?=\\/note)",
               "g"
             ),
             "/profile"
@@ -205,6 +212,13 @@ export default {
         box-shadow: none;
       }
     }
+  }
+  .blank{
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: solid 2px #dfe4ed;
   }
 }
 </style>

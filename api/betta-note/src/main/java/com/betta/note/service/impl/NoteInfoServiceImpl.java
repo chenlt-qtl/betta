@@ -73,16 +73,19 @@ public class NoteInfoServiceImpl implements INoteInfoService {
     }
 
     /**
-     * 新增文件夹
+     * 新增文件夹或笔记
      *
-     * @param noteInfo 文件夹
+     * @param noteInfo 文件夹或笔记
      * @return 结果
      */
     @Override
     public Long insertNoteInfo(NoteInfo noteInfo) {
-        Content noteContent = new Content();
-        contentService.insertcontent(noteContent);
-        noteInfo.setContentId(noteContent.getId());
+        //如果是笔记，创建content
+        if(noteInfo.getIsLeaf()){
+            Content noteContent = new Content();
+            contentService.insertcontent(noteContent);
+            noteInfo.setContentId(noteContent.getId());
+        }
         noteInfoMapper.insertNoteInfo(noteInfo);
         return noteInfo.getId();
     }

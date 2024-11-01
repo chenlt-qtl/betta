@@ -131,11 +131,16 @@ const actions = {
     return new Promise((resolve, reject) => {
       if (id) {
         getNoteInfo(id).then(res => {
-          commit('SET_OPENED_NOTE', res.data)
-          openedNotes.set(id, res.data)
+          const openedNote = res.data;
+          commit('SET_OPENED_NOTE', openedNote)
+          openedNotes.set(id, openedNote)
           commit('SET_OPENED_NOTES', openedNotes)
           if (!search) {
-            dispatch('setSelectedNoteId', res.data.parentId)
+            if (openedNote.isLeaf) {
+              dispatch('setSelectedNoteId', openedNote.parentId)
+            } else {
+              dispatch('setSelectedNoteId', openedNote.id)
+            }
           }
           resolve(res)
         }).catch(error => {
