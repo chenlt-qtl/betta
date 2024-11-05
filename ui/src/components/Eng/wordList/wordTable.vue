@@ -272,7 +272,7 @@ export default {
       });
     },
     saveWordSubmit() {
-      if (this.form.id) {
+      if (this.isEdit) {
         updateWord(this.form).then(() => {
           this.$modal.msgSuccess("修改成功");
           this.openEdit = false;
