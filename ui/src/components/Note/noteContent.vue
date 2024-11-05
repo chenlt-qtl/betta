@@ -60,7 +60,6 @@ export default {
     OpenedTab,
     NoteHistorySaveBtn,
     NoteHistoryListBtn,
-    Data,
   },
   data() {
     return {
