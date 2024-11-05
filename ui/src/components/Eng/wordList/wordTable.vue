@@ -146,7 +146,9 @@
           />
         </el-form-item>
         <el-form-item label="手动注释" prop="exchange">
-          <el-input v-model="form.exchange" placeholder="请输入手动注释" />
+          <el-input v-model="form.exchange" placeholder="请输入手动注释">
+            <el-button slot="append" @click="()=>this.form.exchange = this.form.acceptation">复制解释</el-button>
+          </el-input>
         </el-form-item>
         <el-form-item label="音频位置" prop="phMp3">
           <file-upload
