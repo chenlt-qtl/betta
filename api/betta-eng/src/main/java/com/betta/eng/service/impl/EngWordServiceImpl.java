@@ -9,10 +9,7 @@ import com.betta.eng.domain.EngIcibaSentence;
 import com.betta.eng.domain.EngSentence;
 import com.betta.eng.domain.EngWord;
 import com.betta.eng.mapper.EngWordMapper;
-import com.betta.eng.service.IEngArticleWordRelService;
-import com.betta.eng.service.IEngIcibaSentenceService;
-import com.betta.eng.service.IEngSentenceService;
-import com.betta.eng.service.IEngWordService;
+import com.betta.eng.service.*;
 import com.betta.eng.utils.dict.DictUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +33,9 @@ public class EngWordServiceImpl implements IEngWordService {
 
     @Autowired
     private IEngArticleWordRelService articleWordRelService;
+
+    @Autowired
+    private IEngUserScoreService userScoreService;
 
     @Autowired
     private IEngSentenceService sentenceService;
@@ -207,7 +207,7 @@ public class EngWordServiceImpl implements IEngWordService {
     /**
      * 删除单词信息
      *
-     * @param id 单词主键
+     * @param ids 单词主键
      */
     @Override
     @Transactional
@@ -248,6 +248,8 @@ public class EngWordServiceImpl implements IEngWordService {
             articleWordRel.setArticleId(articleId);
             articleWordRel.setWordName(wordName);
             articleWordRelService.insertEngArticleWordRel(articleWordRel);
+        }else{
+            userScoreService.updateEngUserScore(wordName,-1);
         }
     }
 }

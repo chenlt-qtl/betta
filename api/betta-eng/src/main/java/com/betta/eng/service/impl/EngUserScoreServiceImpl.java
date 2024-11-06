@@ -1,10 +1,12 @@
 package com.betta.eng.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
+import com.betta.eng.domain.EngUserScoreVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.betta.eng.mapper.EngUserScoreMapper;
@@ -21,28 +23,6 @@ import com.betta.eng.service.IEngUserScoreService;
 public class EngUserScoreServiceImpl implements IEngUserScoreService {
     @Autowired
     private EngUserScoreMapper engUserScoreMapper;
-
-    /**
-     * 查询用户成绩
-     *
-     * @param id 用户成绩主键
-     * @return 用户成绩
-     */
-    @Override
-    public EngUserScore selectEngUserScoreById(Long id) {
-        return engUserScoreMapper.selectEngUserScoreById(id);
-    }
-
-    /**
-     * 查询用户成绩列表
-     *
-     * @param engUserScore 用户成绩
-     * @return 用户成绩
-     */
-    @Override
-    public List<EngUserScore> selectEngUserScoreList(EngUserScore engUserScore) {
-        return engUserScoreMapper.selectEngUserScoreList(engUserScore);
-    }
 
     /**
      * 新增用户成绩
@@ -64,7 +44,6 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
      */
     @Override
     public int updateEngUserScore(EngUserScore engUserScore) {
-        engUserScore.setUpdateTime(DateUtils.getNowDate());
         return engUserScoreMapper.updateEngUserScore(engUserScore);
     }
 
@@ -115,7 +94,41 @@ public class EngUserScoreServiceImpl implements IEngUserScoreService {
 
     @Override
     @CreateByScope("c")
-    public List<EngUserScore> selectUserScore(EngUserScore engUserScore) {
-        return engUserScoreMapper.selectUserScore(engUserScore);
+    public List<EngUserScore> selectEngUserScoreList(EngUserScore engUserScore) {
+        return engUserScoreMapper.selectEngUserScoreList(engUserScore);
+    }
+
+    /**
+     * 查询用户成绩 包括单词明细信息
+     * @param engUserScore
+     * @return
+     */
+    @Override
+    @CreateByScope("c")
+    public List<EngUserScoreVo> selectEngUserScoreVoList(EngUserScore engUserScore) {
+        return engUserScoreMapper.selectEngUserScoreVo(engUserScore);
+    }
+
+    /**
+     * 更新分数
+     * @param wordName
+     * @param i  增减的分数
+     */
+    @Override
+    public void updateEngUserScore(String wordName, int i) {
+        String username = SecurityUtils.getUsername();
+        EngUserScore engUserScore = engUserScoreMapper.getByWordName(wordName,username);
+        if(!Objects.isNull(engUserScore)){
+            //如果数据库里有数据 更新熟悉度
+            engUserScore.setFamiliarity(engUserScore.getFamiliarity()+i);
+            updateEngUserScore(engUserScore);
+        }else {
+            //增加数据
+            engUserScore = new EngUserScore();
+            engUserScore.setFamiliarity(i);
+            engUserScore.setWordName(wordName);
+            engUserScore.setUser(username);
+            insertEngUserScore(engUserScore);
+        }
     }
 }

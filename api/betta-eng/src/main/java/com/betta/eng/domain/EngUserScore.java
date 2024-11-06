@@ -2,7 +2,6 @@ package com.betta.eng.domain;
 
 import lombok.Data;
 import com.betta.common.annotation.Excel;
-import com.betta.common.core.domain.BaseEntity;
 
 /**
  * 用户成绩对象 eng_user_score
@@ -25,17 +24,10 @@ public class EngUserScore extends EngWord
 
     /** 熟悉度越高越熟悉，0为最低 */
     @Excel(name = "熟悉度越高越熟悉，0为最低")
-    private Long familiarity;
+    private int familiarity = 0;
 
     /**  */
     @Excel(name = "")
     private String status;
 
-    private String sentence;
-
-    private String sentenceAcceptation;
-
-    private Long relId;//关联ID
-
-    private Long articleId;//文章ID
 }

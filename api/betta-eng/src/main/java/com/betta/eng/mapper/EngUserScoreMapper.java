@@ -2,6 +2,7 @@ package com.betta.eng.mapper;
 
 import java.util.List;
 import com.betta.eng.domain.EngUserScore;
+import com.betta.eng.domain.EngUserScoreVo;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -12,13 +13,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface EngUserScoreMapper 
 {
-    /**
-     * 查询用户成绩
-     * 
-     * @param id 用户成绩主键
-     * @return 用户成绩
-     */
-    public EngUserScore selectEngUserScoreById(Long id);
 
     /**
      * 查询用户成绩列表
@@ -61,5 +55,7 @@ public interface EngUserScoreMapper
     public int deleteEngUserScoreByIds(Long[] ids);
 
 
-    List<EngUserScore> selectUserScore(EngUserScore engUserScore);
+    List<EngUserScoreVo> selectEngUserScoreVo(EngUserScore engUserScore);
+
+    public EngUserScore getByWordName(@Param("wordName") String wordName,@Param("user") String user);
 }

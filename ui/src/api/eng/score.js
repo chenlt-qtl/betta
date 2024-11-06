@@ -9,13 +9,6 @@ export function listScore(query) {
   })
 }
 
-// 查询用户成绩详细
-export function getScore(id) {
-  return request({
-    url: '/eng/score/' + id,
-    method: 'get'
-  })
-}
 
 // 新增用户成绩
 export function addScore(data) {

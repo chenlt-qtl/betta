@@ -3,6 +3,7 @@ package com.betta.eng.service;
 import java.util.List;
 
 import com.betta.eng.domain.EngUserScore;
+import com.betta.eng.domain.EngUserScoreVo;
 
 /**
  * 用户成绩Service接口
@@ -11,13 +12,6 @@ import com.betta.eng.domain.EngUserScore;
  * @date 2024-07-13
  */
 public interface IEngUserScoreService {
-    /**
-     * 查询用户成绩
-     *
-     * @param id 用户成绩主键
-     * @return 用户成绩
-     */
-    public EngUserScore selectEngUserScoreById(Long id);
 
     /**
      * 查询用户成绩列表
@@ -61,5 +55,7 @@ public interface IEngUserScoreService {
 
     void batchUpdate(List<EngUserScore> engUserScoreList);
 
-    List<EngUserScore> selectUserScore(EngUserScore engUserScore);
+    List<EngUserScoreVo> selectEngUserScoreVoList(EngUserScore engUserScore);
+
+    void updateEngUserScore(String wordName, int i);
 }
