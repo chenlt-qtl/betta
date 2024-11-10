@@ -2,6 +2,7 @@ package com.betta.eng.service;
 
 import java.util.List;
 import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.EngWordVo;
 
 /**
  * 单词Service接口
@@ -41,6 +42,8 @@ public interface IEngWordService
      * @return 结果
      */
     public int addEngWord(EngWord engWord);
+
+    EngWordVo getWordVo(String wordName);
 
     EngWord getWord(String wordName);
 

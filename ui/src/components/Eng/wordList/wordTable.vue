@@ -111,7 +111,7 @@
           @click="addWordSubmit"
           >添加</el-button
         >
-        <el-button @click="() => (open = false)">取 消</el-button>
+        <el-button @click="() => (openAdd = false)">取 消</el-button>
       </div>
     </el-dialog>
 

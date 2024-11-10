@@ -8,6 +8,7 @@ import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.file.FileUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.EngWordVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +20,9 @@ public class YouDaoUtils {
     private static final String YOUDAO_URL = "http://dict.youdao.com/suggest";
     private static final String DICTIONARY_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 
-    public EngWord getWord(String wordName) {
+    public EngWordVo getWord(String wordName) {
 
-        EngWord word = null;
+        EngWordVo word = null;
         try {
             word = getMeans(wordName);
             getMp3(word);
@@ -36,7 +37,7 @@ public class YouDaoUtils {
      *
      * @return
      */
-    private EngWord getMeans(String wordName) {
+    private EngWordVo getMeans(String wordName) {
 
         String rspStr = HttpUtils.sendGet(YOUDAO_URL, "q=" + wordName + "&num=1&doctype=json", Constants.UTF8);
         JSONObject jsonObject = JSON.parseObject(rspStr);
@@ -45,7 +46,7 @@ public class YouDaoUtils {
         JSONObject obj = (JSONObject) entries.get(0);
         String explain = (String) obj.get("explain");
 
-        EngWord word = new EngWord();
+        EngWordVo word = new EngWordVo();
         word.setWordName(wordName);
         word.setAcceptation(explain);
         return word;

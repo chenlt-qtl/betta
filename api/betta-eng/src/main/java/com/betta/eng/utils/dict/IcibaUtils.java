@@ -8,7 +8,7 @@ import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.file.FileUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngIcibaSentence;
-import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.EngWordVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,8 +25,8 @@ public class IcibaUtils {
 
     private final static String URL = "http://dict-co.iciba.com/api/dictionary.php";
 
-    public EngWord getWord(String wordName) {
-        EngWord word;
+    public EngWordVo getWord(String wordName) {
+        EngWordVo word;
         try {
             String rspStr = HttpUtils.sendGet(URL, "w=" + wordName + "&key=" + KEY, Constants.UTF8);
             if (StringUtils.isEmpty(rspStr)) {
@@ -51,8 +51,8 @@ public class IcibaUtils {
      * @return
      * @throws Exception
      */
-    private static EngWord parse(String data, String wordName) throws Exception {
-        EngWord word = new EngWord();
+    private static EngWordVo parse(String data, String wordName) throws Exception {
+        EngWordVo word = new EngWordVo();
         word.setWordName(wordName);
 
         //设置xml的值都以String类型显示

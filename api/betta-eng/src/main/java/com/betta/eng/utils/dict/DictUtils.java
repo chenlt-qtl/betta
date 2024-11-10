@@ -1,7 +1,7 @@
 package com.betta.eng.utils.dict;
 
 import com.betta.common.constant.Constants;
-import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.EngWordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +15,9 @@ public class DictUtils {
     private YouDaoUtils youDaoUtils;
 
 
-    public EngWord getWord(String wordName) {
+    public EngWordVo getWord(String wordName) {
         //先查爱词霸再查有道
-        EngWord word = null;
+        EngWordVo word = null;
         try {
             word = icibaUtils.getWord(wordName);
         } catch (Exception e) {

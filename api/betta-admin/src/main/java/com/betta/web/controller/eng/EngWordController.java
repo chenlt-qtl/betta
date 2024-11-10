@@ -75,7 +75,7 @@ public class EngWordController extends BaseController {
     @PreAuthorize("@ss.hasPermi('eng:word:query')")
     @GetMapping
     public AjaxResult getInfo(String wordName) {
-        return success(engWordService.getWord(wordName));
+        return success(engWordService.getWordVo(wordName));
     }
 
     /**

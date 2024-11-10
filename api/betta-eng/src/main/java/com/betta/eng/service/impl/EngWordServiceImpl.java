@@ -4,10 +4,7 @@ import com.betta.common.annotation.CreateByScope;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
-import com.betta.eng.domain.EngArticleWordRel;
-import com.betta.eng.domain.EngIcibaSentence;
-import com.betta.eng.domain.EngSentence;
-import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.*;
 import com.betta.eng.mapper.EngWordMapper;
 import com.betta.eng.service.*;
 import com.betta.eng.utils.dict.DictUtils;
@@ -83,10 +80,34 @@ public class EngWordServiceImpl implements IEngWordService {
     public int addEngWord(EngWord engWord) {
         //先检查重复
         List<EngWord> engWords = engWordMapper.selectEngWordByWordName(engWord.getWordName());
-        if(!Objects.isNull(engWords)&&!engWords.isEmpty()){
-            throw new ServiceException("单词 "+engWord.getWordName()+" 已存在");
+        if (!Objects.isNull(engWords) && !engWords.isEmpty()) {
+            throw new ServiceException("单词 " + engWord.getWordName() + " 已存在");
         }
         return engWordMapper.insertEngWord(engWord);
+    }
+
+    @Override
+    public EngWordVo getWordVo(String wordName) {
+        EngWordVo word = (EngWordVo) getWord(wordName);
+        //查询爱词霸例句
+        EngIcibaSentence icibaSentence = new EngIcibaSentence();
+        icibaSentence.setWordId(word.getId());
+        List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
+        word.setIcibaSentenceList(icibaSentences);
+
+        //查询自定义例句
+        List<EngSentence> sentences = sentenceService.selectByWordTop10(wordName);
+        word.setSentenceList(sentences);
+
+        //查询是否已关联
+        EngArticleWordRel engArticleWordRel = new EngArticleWordRel();
+        engArticleWordRel.setWordName(word.getWordName());
+        engArticleWordRel.setCreateBy(SecurityUtils.getUsername());
+        List<EngArticleWordRel> engArticleWordRels = articleWordRelService.selectEngArticleWordRelList(engArticleWordRel);
+        if (!engArticleWordRels.isEmpty()) {
+            word.setRelId(engArticleWordRels.get(0).getId());
+        }
+        return word;
     }
 
     @Override
@@ -101,39 +122,21 @@ public class EngWordServiceImpl implements IEngWordService {
             if (StringUtils.isNotBlank(word.getPhonetics()) && StringUtils.isNotBlank(word.getPhMp3())
                     && StringUtils.isNotBlank(word.getAcceptation())) {
                 getFromApi = false;
-                //查询爱词霸例句
-                EngIcibaSentence icibaSentence = new EngIcibaSentence();
-                icibaSentence.setWordId(word.getId());
-                List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
-                word.setIcibaSentenceList(icibaSentences);
             }
-
         }
         //查API
         if (getFromApi) {
-            word = dictUtils.getWord(lowerCase);
-            if (!Objects.isNull(word)) {
+            EngWordVo wordVo = dictUtils.getWord(lowerCase);
+            word = wordVo;
+            if (!Objects.isNull(wordVo)) {
                 engWordMapper.insertEngWord(word);
-                if (!Objects.isNull(word.getIcibaSentenceList())) {//例句
-                    for (EngIcibaSentence icibaSentence : word.getIcibaSentenceList()) {
+                if (!Objects.isNull(wordVo.getIcibaSentenceList())) {//例句
+                    for (EngIcibaSentence icibaSentence : wordVo.getIcibaSentenceList()) {
                         icibaSentence.setWordId(word.getId());
                         icibaSentenceService.insertEngIcibaSentence(icibaSentence);
                     }
                 }
             }
-        }
-
-        //查询自定义例句
-        List<EngSentence> sentences = sentenceService.selectByWordTop10(wordName);
-        word.setSentenceList(sentences);
-
-        //查询是否已关联
-        EngArticleWordRel engArticleWordRel = new EngArticleWordRel();
-        engArticleWordRel.setWordName(word.getWordName());
-        engArticleWordRel.setCreateBy(SecurityUtils.getUsername());
-        List<EngArticleWordRel> engArticleWordRels = articleWordRelService.selectEngArticleWordRelList(engArticleWordRel);
-        if (!engArticleWordRels.isEmpty()) {
-            word.setRelId(engArticleWordRels.get(0).getId());
         }
         return word;
     }
@@ -153,25 +156,26 @@ public class EngWordServiceImpl implements IEngWordService {
         List<Long> keptIds = new ArrayList<>();
 
         for (String wordName : wordNames) {
-            Long wordId = null;
-            try {
-                EngWord word = getWord(wordName);
-                wordId = word.getId();
+            String wordNameLowerCase = wordName.toLowerCase();
+            List<EngArticleWordRel> exists = articleWordRelList.stream().filter(engArticleWordRel -> StringUtils.endsWithIgnoreCase(engArticleWordRel.getWordName(), wordNameLowerCase)).collect(Collectors.toList());
+            //如果未关联，增加关联
+            if (exists.isEmpty()) {
+                Long wordId = null;
+                try {
+                    EngWord word = getWord(wordNameLowerCase);
+                    wordId = word.getId();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (wordId != null) {
-                //与文章关联
-                List<EngArticleWordRel> exists = articleWordRelList.stream().filter(engArticleWordRel -> StringUtils.equals(engArticleWordRel.getWordName(), wordName)).collect(Collectors.toList());
-                if (exists.isEmpty()) {
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (wordId != null) {
                     articleWordRel = new EngArticleWordRel();
                     articleWordRel.setArticleId(articleId);
-                    articleWordRel.setWordName(wordName);
+                    articleWordRel.setWordName(wordNameLowerCase);
                     articleWordRelService.insertEngArticleWordRel(articleWordRel);
-                } else {
-                    keptIds.add(exists.get(0).getId());
                 }
+            } else {
+                keptIds.add(exists.get(0).getId());
             }
         }
 
@@ -200,7 +204,7 @@ public class EngWordServiceImpl implements IEngWordService {
     }
 
     @Override
-    public EngWord getWordFromApi(String wordName){
+    public EngWord getWordFromApi(String wordName) {
         return dictUtils.getWord(wordName.toLowerCase());
     }
 
@@ -248,8 +252,8 @@ public class EngWordServiceImpl implements IEngWordService {
             articleWordRel.setArticleId(articleId);
             articleWordRel.setWordName(wordName);
             articleWordRelService.insertEngArticleWordRel(articleWordRel);
-        }else{
-            userScoreService.updateEngUserScore(wordName,-1);
+        } else {
+            userScoreService.updateEngUserScore(wordName, -1);
         }
     }
 }

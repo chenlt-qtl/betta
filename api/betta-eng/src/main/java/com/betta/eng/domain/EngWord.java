@@ -21,8 +21,6 @@ public class EngWord extends BaseEntity
     /** $column.columnComment */
     private Long id;
 
-    private Long relId;
-
     /** 单词内容 */
     @Excel(name = "单词内容")
     private String wordName;
@@ -48,15 +46,5 @@ public class EngWord extends BaseEntity
 
     /** $column.columnComment */
     private String status;
-
-    /**
-     * 爱词霸例句
-     */
-    private List<EngIcibaSentence> icibaSentenceList;
-
-    /**
-     * 自定义例句
-     */
-    private List<EngSentence> sentenceList;
 
 }
