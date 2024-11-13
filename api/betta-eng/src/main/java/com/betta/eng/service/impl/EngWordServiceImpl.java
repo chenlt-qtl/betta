@@ -8,6 +8,7 @@ import com.betta.eng.domain.*;
 import com.betta.eng.mapper.EngWordMapper;
 import com.betta.eng.service.*;
 import com.betta.eng.utils.dict.DictUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,16 +89,19 @@ public class EngWordServiceImpl implements IEngWordService {
 
     @Override
     public EngWordVo getWordVo(String wordName) {
-        EngWordVo word = (EngWordVo) getWord(wordName);
+        EngWord word = getWord(wordName);
+        //构建engWordVo并将word的内容复制过来
+        EngWordVo engWordVo = new EngWordVo();
+        BeanUtils.copyProperties(word,engWordVo);
         //查询爱词霸例句
         EngIcibaSentence icibaSentence = new EngIcibaSentence();
         icibaSentence.setWordId(word.getId());
         List<EngIcibaSentence> icibaSentences = icibaSentenceService.selectEngIcibaSentenceList(icibaSentence);
-        word.setIcibaSentenceList(icibaSentences);
+        engWordVo.setIcibaSentenceList(icibaSentences);
 
         //查询自定义例句
         List<EngSentence> sentences = sentenceService.selectByWordTop10(wordName);
-        word.setSentenceList(sentences);
+        engWordVo.setSentenceList(sentences);
 
         //查询是否已关联
         EngArticleWordRel engArticleWordRel = new EngArticleWordRel();
@@ -105,9 +109,9 @@ public class EngWordServiceImpl implements IEngWordService {
         engArticleWordRel.setCreateBy(SecurityUtils.getUsername());
         List<EngArticleWordRel> engArticleWordRels = articleWordRelService.selectEngArticleWordRelList(engArticleWordRel);
         if (!engArticleWordRels.isEmpty()) {
-            word.setRelId(engArticleWordRels.get(0).getId());
+            engWordVo.setRelId(engArticleWordRels.get(0).getId());
         }
-        return word;
+        return engWordVo;
     }
 
     @Override
