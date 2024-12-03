@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
+import com.betta.eng.domain.dojo.BatchAddSentences;
 import com.betta.eng.service.IEngSentenceService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,16 @@ public class EngSentenceController extends BaseController {
     @PostMapping
     public AjaxResult add(@RequestBody EngSentence engSentence) {
         return toAjax(engSentenceService.insertEngSentence(engSentence));
+    }
+
+    /**
+     * 新增文章句子
+     */
+    @PreAuthorize("@ss.hasPermi('eng:sentence:add')")
+    @Log(title = "批量添加句子", businessType = BusinessType.INSERT)
+    @PostMapping("/batch")
+    public AjaxResult addBatch(@RequestBody BatchAddSentences batchAddSentences) {
+        return toAjax(engSentenceService.insertEngSentenceBatch(batchAddSentences));
     }
 
     /**
