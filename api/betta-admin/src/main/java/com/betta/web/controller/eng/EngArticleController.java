@@ -9,6 +9,7 @@ import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngSentence;
 import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.vo.EngWordVo;
 import com.betta.eng.service.IEngSentenceService;
 import com.betta.eng.service.IEngWordService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -138,7 +139,7 @@ public class EngArticleController extends BaseController {
         engSentence.setArticleId(id);
         List<EngSentence> sentenceList = engSentenceService.selectEngSentenceList(engSentence);
 
-        List<EngWord> engWords = engWordService.selectWordListByArticle(id);
+        List<EngWordVo> engWords = engWordService.selectWordListByArticle(id);
         List<String> result = new ArrayList<>();
         sentenceList.forEach(s->result.add(s.getContent()));
         engWords.forEach(w->result.add(w.getWordName()));

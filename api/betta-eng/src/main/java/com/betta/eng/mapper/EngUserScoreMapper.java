@@ -2,7 +2,7 @@ package com.betta.eng.mapper;
 
 import java.util.List;
 import com.betta.eng.domain.EngUserScore;
-import com.betta.eng.domain.EngUserScoreVo;
+import com.betta.eng.domain.vo.EngUserScoreVo;
 import org.apache.ibatis.annotations.Param;
 
 /**

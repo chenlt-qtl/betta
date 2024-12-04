@@ -2,9 +2,10 @@ package com.betta.system.domain;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.betta.common.core.domain.BaseEntity;
 import com.betta.common.xss.Xss;
 
 /**
@@ -12,7 +13,7 @@ import com.betta.common.xss.Xss;
  * 
  * @author ruoyi
  */
-public class SysNotice extends BaseEntity
+public class SysNotice extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

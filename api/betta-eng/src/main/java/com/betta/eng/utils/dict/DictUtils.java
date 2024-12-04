@@ -1,7 +1,7 @@
 package com.betta.eng.utils.dict;
 
 import com.betta.common.constant.Constants;
-import com.betta.eng.domain.EngWordVo;
+import com.betta.eng.domain.vo.EngWordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

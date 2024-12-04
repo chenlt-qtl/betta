@@ -2,18 +2,19 @@ package com.betta.system.domain;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.betta.common.annotation.Excel;
 import com.betta.common.annotation.Excel.ColumnType;
-import com.betta.common.core.domain.BaseEntity;
 
 /**
  * 参数配置表 sys_config
  * 
  * @author ruoyi
  */
-public class SysConfig extends BaseEntity
+public class SysConfig extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

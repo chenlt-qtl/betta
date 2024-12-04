@@ -1,7 +1,7 @@
 package com.betta.eng.domain;
 
 import com.betta.common.annotation.Excel;
-import com.betta.common.core.domain.BaseEntity;
+import com.betta.common.core.domain.SysBaseEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2024-05-31
  */
 @Data
-public class EngArticle extends BaseEntity
+public class EngArticle extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

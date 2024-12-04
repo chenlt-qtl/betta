@@ -1,5 +1,6 @@
-package com.betta.eng.domain;
+package com.betta.eng.domain.vo;
 
+import com.betta.eng.domain.EngUserScore;
 import lombok.Data;
 
 /**

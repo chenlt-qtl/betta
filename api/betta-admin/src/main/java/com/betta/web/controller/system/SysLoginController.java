@@ -3,6 +3,7 @@ package com.betta.web.controller.system;
 import java.util.List;
 import java.util.Set;
 
+import io.swagger.annotations.Api;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import com.betta.system.service.ISysMenuService;
  */
 @RestController
 @Slf4j
+@Api(tags = "登录验证")
 public class SysLoginController
 {
     @Autowired

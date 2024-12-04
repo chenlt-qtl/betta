@@ -32,9 +32,11 @@
 </template>
 
 <script>
+import { batchAddSentence } from "@/api/eng/sentence";
+
 export default {
   name: "BatchAddSentenceBtn",
-  props: ["addSentence", "sentenceTotal", "getSentenceList", "articleId"],
+  props: ["sentenceTotal", "getSentenceList", "articleId"],
   data() {
     return {
       loading: false,
@@ -69,25 +71,14 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           this.loading = true;
-          const sentenceArr = this.form.sentences.split("\n").filter((s) => s);
-          let successCount = 0;
-          sentenceArr.forEach((sentence, index) => {
-            this.addSentence(
-              {
-                articleId: this.articleId,
-                content: sentence,
-                idx: this.sentenceTotal + index + 1,
-              },
-              () => {
-                successCount++;
-                if (successCount == sentenceArr.length) {
-                  this.$modal.msgSuccess("新增成功");
-                  this.open = false;
-                  this.getSentenceList();
-                  this.loading = false;
-                }
-              }
-            );
+          batchAddSentence({
+            sentenceStr: this.form.sentences,
+            articleId: this.articleId,
+          }).then(() => {
+            this.$modal.msgSuccess("新增成功");
+            this.open = false;
+            this.getSentenceList();
+            this.loading = false;
           });
         }
       });

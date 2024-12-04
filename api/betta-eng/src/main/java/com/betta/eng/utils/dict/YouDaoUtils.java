@@ -8,7 +8,7 @@ import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.file.FileUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngWord;
-import com.betta.eng.domain.EngWordVo;
+import com.betta.eng.domain.vo.EngWordVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

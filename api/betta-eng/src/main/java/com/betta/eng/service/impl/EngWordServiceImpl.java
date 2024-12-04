@@ -5,6 +5,7 @@ import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.*;
+import com.betta.eng.domain.vo.EngWordVo;
 import com.betta.eng.mapper.EngWordMapper;
 import com.betta.eng.service.*;
 import com.betta.eng.utils.dict.DictUtils;
@@ -62,12 +63,12 @@ public class EngWordServiceImpl implements IEngWordService {
      * @return 单词
      */
     @Override
-    public List<EngWord> selectEngWordList(EngWord engWord) {
+    public List<EngWordVo> selectEngWordList(EngWord engWord) {
         return engWordMapper.selectEngWordList(engWord);
     }
 
     @Override
-    public List<EngWord> selectWordListByArticle(Long articleId) {
+    public List<EngWordVo> selectWordListByArticle(Long articleId) {
         return engWordMapper.selectWordListByArticleId(articleId);
     }
 

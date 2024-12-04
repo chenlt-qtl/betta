@@ -2,7 +2,7 @@ package com.betta.eng.service;
 
 import java.util.List;
 import com.betta.eng.domain.EngWord;
-import com.betta.eng.domain.EngWordVo;
+import com.betta.eng.domain.vo.EngWordVo;
 
 /**
  * 单词Service接口
@@ -26,14 +26,14 @@ public interface IEngWordService
      * @param engWord 单词
      * @return 单词集合
      */
-    public List<EngWord> selectEngWordList(EngWord engWord);
+    public List<EngWordVo> selectEngWordList(EngWord engWord);
 
     /**
      * 根据文章查询
      *
      * @return 单词集合
      */
-    public List<EngWord> selectWordListByArticle(Long articleId);
+    public List<EngWordVo> selectWordListByArticle(Long articleId);
 
     /**
      * 新增单词

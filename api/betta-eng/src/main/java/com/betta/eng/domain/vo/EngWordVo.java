@@ -1,5 +1,8 @@
-package com.betta.eng.domain;
+package com.betta.eng.domain.vo;
 
+import com.betta.eng.domain.EngIcibaSentence;
+import com.betta.eng.domain.EngSentence;
+import com.betta.eng.domain.EngWord;
 import lombok.Data;
 
 import java.util.List;

@@ -3,7 +3,7 @@ package com.betta.eng.service;
 import java.util.List;
 
 import com.betta.eng.domain.EngUserScore;
-import com.betta.eng.domain.EngUserScoreVo;
+import com.betta.eng.domain.vo.EngUserScoreVo;
 
 /**
  * 用户成绩Service接口

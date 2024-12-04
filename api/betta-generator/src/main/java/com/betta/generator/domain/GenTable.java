@@ -3,9 +3,10 @@ package com.betta.generator.domain;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.ArrayUtils;
 import com.betta.common.constant.GenConstants;
-import com.betta.common.core.domain.BaseEntity;
 import com.betta.common.utils.StringUtils;
 
 /**
@@ -13,7 +14,7 @@ import com.betta.common.utils.StringUtils;
  * 
  * @author ruoyi
  */
-public class GenTable extends BaseEntity
+public class GenTable extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

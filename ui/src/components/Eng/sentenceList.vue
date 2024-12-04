@@ -12,7 +12,6 @@
       </el-col>
       <batch-add-sentence-btn
         :sentenceTotal="sentenceTotal"
-        :addSentence="saveSentence"
         :getSentenceList="getSentenceList"
         :articleId="article.id"
       />
@@ -58,7 +57,7 @@
       </el-table-column>
       <el-table-column label="MP3开始结束时间" align="center" prop="mp3Time">
         <template slot-scope="scope">
-          {{ transMp3Time(scope.row.mp3Time) }}
+          {{ scope.row.mp3Time }}
         </template>
       </el-table-column>
       <el-table-column
@@ -344,7 +343,6 @@ export default {
       const id = row.id || this.sentenceIds;
       getSentence(id).then((response) => {
         this.form = response.data;
-        this.form.mp3Time = this.transMp3Time(this.form.mp3Time);
         this.useTopMp3 = !this.article.mp3 ? 0 : this.form.mp3 ? 0 : 1;
         this.uploadType = "file";
         this.openSentence = true;
@@ -412,16 +410,6 @@ export default {
       });
     },
     saveSentence(sentence, callback = () => {}) {
-      //处理mp3Time
-      if (!sentence.mp3Time) {
-        //把[18:10.33]...中的时间解析出来
-        const match = sentence.content.match(/^\[(\d\d:\d\d)/);
-        if (match) {
-          sentence.mp3Time = match[1] + "," + (sentence.length < 60 ? 5 : 8);
-        }
-      }
-      sentence.mp3Time = this.transMp3Time(sentence.mp3Time);
-
       if (sentence.id != null) {
         updateSentence(sentence).then(callback);
       } else {
@@ -460,18 +448,6 @@ export default {
       this.form.idx = this.sentenceTotal + 1;
       this.openSentence = true;
       this.title = "添加文章句子";
-    },
-    /** 把格式2的时间转成格式1 */
-    transMp3Time(mp3Time) {
-      const timeArr = (mp3Time || "").split(",");
-      if (timeArr.length == 2 && /^\d+:\d+$/.test(timeArr[0])) {
-        //格式2
-        const arr = timeArr[0].split(":");
-        const startTime = parseInt(arr[0]) * 60 + parseInt(arr[1]);
-        return startTime + "," + timeArr[1];
-      } else {
-        return mp3Time;
-      }
     },
   },
 };

@@ -7,7 +7,7 @@ import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
 import com.betta.eng.domain.EngSentence;
 import com.betta.eng.domain.EngUserScore;
-import com.betta.eng.domain.EngUserScoreVo;
+import com.betta.eng.domain.vo.EngUserScoreVo;
 import com.betta.eng.service.IEngSentenceService;
 import com.betta.eng.service.IEngUserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package com.betta.note.domain;
 
+import com.betta.common.core.domain.SysBaseEntity;
 import lombok.Data;
 import com.betta.common.annotation.Excel;
-import com.betta.common.core.domain.BaseEntity;
 
 /**
  * 历史对象 note_info_history
@@ -11,7 +11,7 @@ import com.betta.common.core.domain.BaseEntity;
  * @date 2024-06-13
  */
 @Data
-public class History extends BaseEntity
+public class History extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

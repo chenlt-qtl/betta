@@ -2,13 +2,12 @@ package com.betta.eng.utils.dict;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.exception.ServiceException;
 import com.betta.common.utils.file.FileUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngIcibaSentence;
-import com.betta.eng.domain.EngWordVo;
+import com.betta.eng.domain.vo.EngWordVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

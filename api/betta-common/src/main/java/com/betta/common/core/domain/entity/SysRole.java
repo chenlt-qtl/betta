@@ -4,18 +4,19 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.betta.common.annotation.Excel;
 import com.betta.common.annotation.Excel.ColumnType;
-import com.betta.common.core.domain.BaseEntity;
 
 /**
  * 角色表 sys_role
  * 
  * @author ruoyi
  */
-public class SysRole extends BaseEntity
+public class SysRole extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

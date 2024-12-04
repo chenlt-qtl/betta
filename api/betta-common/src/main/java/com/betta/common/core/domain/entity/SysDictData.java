@@ -2,19 +2,20 @@ package com.betta.common.core.domain.entity;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.betta.common.annotation.Excel;
 import com.betta.common.annotation.Excel.ColumnType;
 import com.betta.common.constant.UserConstants;
-import com.betta.common.core.domain.BaseEntity;
 
 /**
  * 字典数据表 sys_dict_data
  * 
  * @author ruoyi
  */
-public class SysDictData extends BaseEntity
+public class SysDictData extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

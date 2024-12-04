@@ -36,6 +36,15 @@ export function addSentence(data) {
   })
 }
 
+// 批量新增文章句子
+export function batchAddSentence(data) {
+  return request({
+    url: '/eng/sentence/batch',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改文章句子
 export function updateSentence(data) {
   return request({

@@ -6,6 +6,7 @@ import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
 import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.vo.EngWordVo;
 import com.betta.eng.service.IEngWordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +34,7 @@ public class EngWordController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(EngWord engWord) {
         startPage();
-        List<EngWord> list = engWordService.selectEngWordList(engWord);
+        List<EngWordVo> list = engWordService.selectEngWordList(engWord);
         return getDataTable(list);
     }
 
@@ -65,7 +66,7 @@ public class EngWordController extends BaseController {
     @GetMapping("/list/{articleId}")
     public TableDataInfo list(@PathVariable Long articleId) {
         startPage();
-        List<EngWord> list = engWordService.selectWordListByArticle(articleId);
+        List<EngWordVo> list = engWordService.selectWordListByArticle(articleId);
         return getDataTable(list);
     }
 

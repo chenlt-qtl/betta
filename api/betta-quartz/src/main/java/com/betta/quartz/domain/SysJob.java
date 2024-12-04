@@ -3,13 +3,14 @@ package com.betta.quartz.domain;
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.betta.common.annotation.Excel;
 import com.betta.common.annotation.Excel.ColumnType;
 import com.betta.common.constant.ScheduleConstants;
-import com.betta.common.core.domain.BaseEntity;
 import com.betta.common.utils.StringUtils;
 import com.betta.quartz.util.CronUtils;
 
@@ -18,7 +19,7 @@ import com.betta.quartz.util.CronUtils;
  * 
  * @author ruoyi
  */
-public class SysJob extends BaseEntity
+public class SysJob extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

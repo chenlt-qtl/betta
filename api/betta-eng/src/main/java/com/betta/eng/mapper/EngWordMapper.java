@@ -2,6 +2,7 @@ package com.betta.eng.mapper;
 
 import java.util.List;
 import com.betta.eng.domain.EngWord;
+import com.betta.eng.domain.vo.EngWordVo;
 
 /**
  * 单词Mapper接口
@@ -25,7 +26,7 @@ public interface EngWordMapper
      * @param engWord 单词
      * @return 单词集合
      */
-    public List<EngWord> selectEngWordList(EngWord engWord);
+    public List<EngWordVo> selectEngWordList(EngWord engWord);
 
     public List<EngWord> selectEngWordByWordName(String wordName);
 
@@ -34,7 +35,7 @@ public interface EngWordMapper
      * @param articleId
      * @return
      */
-    public List<EngWord> selectWordListByArticleId(Long articleId);
+    public List<EngWordVo> selectWordListByArticleId(Long articleId);
 
     /**
      * 新增单词

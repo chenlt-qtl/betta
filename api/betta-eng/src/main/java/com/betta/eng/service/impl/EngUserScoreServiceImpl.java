@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
-import com.betta.eng.domain.EngUserScoreVo;
+import com.betta.eng.domain.vo.EngUserScoreVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.betta.eng.mapper.EngUserScoreMapper;

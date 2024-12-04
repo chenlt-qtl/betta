@@ -3,13 +3,14 @@ package com.betta.common.core.domain.entity;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.*;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.betta.common.annotation.Excel;
 import com.betta.common.annotation.Excel.ColumnType;
 import com.betta.common.annotation.Excel.Type;
 import com.betta.common.annotation.Excels;
-import com.betta.common.core.domain.BaseEntity;
 import com.betta.common.xss.Xss;
 
 /**
@@ -17,7 +18,7 @@ import com.betta.common.xss.Xss;
  * 
  * @author ruoyi
  */
-public class SysUser extends BaseEntity
+public class SysUser extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 

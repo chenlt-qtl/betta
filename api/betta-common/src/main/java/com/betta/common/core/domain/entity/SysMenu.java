@@ -5,16 +5,17 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.betta.common.core.domain.SysBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.betta.common.core.domain.BaseEntity;
 
 /**
  * 菜单权限表 sys_menu
  * 
  * @author ruoyi
  */
-public class SysMenu extends BaseEntity
+public class SysMenu extends SysBaseEntity
 {
     private static final long serialVersionUID = 1L;
 
