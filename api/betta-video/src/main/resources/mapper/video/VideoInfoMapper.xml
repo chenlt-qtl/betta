@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betta.video.mapper.VideoInfoMapper">
+    
+    <resultMap type="VideoInfo" id="VideoInfoResult">
+        <result property="id"    column="id"    />
+        <result property="pid"    column="pid"    />
+        <result property="pTitle"    column="p_title"    />
+        <result property="title"    column="title"    />
+        <result property="url"    column="url"    />
+        <result property="img"    column="img"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectVideoInfoVo">
+        select id, pid, title, url, img, status, create_time, create_by, update_time, update_by from video_info
+    </sql>
+
+    <select id="selectVideoInfoList">
+        select a.id, b.title as p_title, a.title, a.url, a.img from video_info a left join video_info b on a.pid = b.id
+        ${ew.customSqlSegment}
+    </select>
+    
+    <select id="selectVideoInfoById" parameterType="Long" resultMap="VideoInfoResult">
+        <include refid="selectVideoInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertVideoInfo" parameterType="VideoInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into video_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pid != null">pid,</if>
+            <if test="title != null">title,</if>
+            <if test="url != null">url,</if>
+            <if test="img != null">img,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pid != null">#{pid},</if>
+            <if test="title != null">#{title},</if>
+            <if test="url != null">#{url},</if>
+            <if test="img != null">#{img},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVideoInfo" parameterType="VideoInfo">
+        update video_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="img != null">img = #{img},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVideoInfoById" parameterType="Long">
+        delete from video_info where id = #{id}
+    </delete>
+
+    <delete id="deleteVideoInfoByIds" parameterType="String">
+        delete from video_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

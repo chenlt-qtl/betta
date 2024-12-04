@@ -6,9 +6,7 @@ import com.betta.common.enums.UploadFileType;
 import com.betta.common.exception.file.FileNameLengthLimitExceededException;
 import com.betta.common.exception.file.FileSizeLimitExceededException;
 import com.betta.common.exception.file.InvalidExtensionException;
-import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.StringUtils;
-import com.betta.common.utils.uuid.Seq;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -115,6 +113,8 @@ public class FileUploadUtils {
             dir = Constants.ARTICLE_PATH;
         } else if (StringUtils.equals(UploadFileType.NOTICE.getType(), type)) {
             dir = Constants.NOTICE_PATH;
+        } else if (StringUtils.equals(UploadFileType.VIDEO.getType(), type)) {
+            dir = Constants.VIDEO_PATH;
         }
         return dir;
     }

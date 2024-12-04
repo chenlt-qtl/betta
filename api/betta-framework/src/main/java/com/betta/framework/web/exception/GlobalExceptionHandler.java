@@ -14,7 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import com.betta.common.constant.HttpStatus;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.exception.DemoModeException;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.StringUtils;
 
 /**
@@ -53,8 +53,8 @@ public class GlobalExceptionHandler
     /**
      * 业务异常
      */
-    @ExceptionHandler(ServiceException.class)
-    public AjaxResult handleServiceException(ServiceException e, HttpServletRequest request)
+    @ExceptionHandler(ApiException.class)
+    public AjaxResult handleServiceException(ApiException e, HttpServletRequest request)
     {
         log.error(e.getMessage(), e);
         Integer code = e.getCode();

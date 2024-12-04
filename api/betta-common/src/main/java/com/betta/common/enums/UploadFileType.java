@@ -24,7 +24,12 @@ public enum UploadFileType
     /**
      * 文章
      */
-    ARTICLE("article");
+    ARTICLE("article"),
+
+    /**
+     * 视频
+     */
+    VIDEO("video");
 
     private String type;
     UploadFileType(String type){

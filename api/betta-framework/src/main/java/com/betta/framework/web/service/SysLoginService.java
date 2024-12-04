@@ -13,7 +13,7 @@ import com.betta.common.constant.UserConstants;
 import com.betta.common.core.domain.entity.SysUser;
 import com.betta.common.core.domain.model.LoginUser;
 import com.betta.common.core.redis.RedisCache;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.exception.user.BlackListException;
 import com.betta.common.exception.user.CaptchaException;
 import com.betta.common.exception.user.CaptchaExpireException;
@@ -86,7 +86,7 @@ public class SysLoginService
             else
             {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
-                throw new ServiceException(e.getMessage());
+                throw new ApiException(e.getMessage());
             }
         }
         finally

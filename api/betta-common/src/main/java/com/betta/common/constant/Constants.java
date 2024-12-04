@@ -158,6 +158,8 @@ public class Constants
 
     public static final String NOTICE_PATH = "/notice";
 
+    public static final String VIDEO_PATH = "/video";
+
 
 
     /**

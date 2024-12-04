@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.betta.common.constant.UserConstants;
 import com.betta.common.core.domain.entity.SysDictData;
 import com.betta.common.core.domain.entity.SysDictType;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.DictUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.system.mapper.SysDictDataMapper;
@@ -124,7 +124,7 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService
             SysDictType dictType = selectDictTypeById(dictId);
             if (dictDataMapper.countDictDataByType(dictType.getDictType()) > 0)
             {
-                throw new ServiceException(String.format("%1$s已分配,不能删除", dictType.getDictName()));
+                throw new ApiException(String.format("%1$s已分配,不能删除", dictType.getDictName()));
             }
             dictTypeMapper.deleteDictTypeById(dictId);
             DictUtils.removeDictCache(dictType.getDictType());

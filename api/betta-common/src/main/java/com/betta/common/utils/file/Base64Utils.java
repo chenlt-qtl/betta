@@ -1,6 +1,6 @@
 package com.betta.common.utils.file;
 
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -75,7 +75,7 @@ public class Base64Utils {
                 ImageIO.write(jpgBufferedImage, "jpg", out);
             }
         } catch (IOException e) {
-            throw new ServiceException("保存图片失败");
+            throw new ApiException("保存图片失败");
         }
     }
 

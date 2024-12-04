@@ -2,7 +2,7 @@ package com.betta.note.service.impl;
 
 import com.betta.common.annotation.CreateByScope;
 import com.betta.common.core.domain.TreeSelect;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.TreeUtil;
@@ -121,7 +121,7 @@ public class NoteInfoServiceImpl implements INoteInfoService {
                 query.setParentId(id);
                 List<NoteInfo> children = noteInfoMapper.selectNoteInfoList(query);
                 if (!children.isEmpty()) {
-                    throw new ServiceException("删除的文件夹有子文件，请先删除子文件");
+                    throw new ApiException("删除的文件夹有子文件，请先删除子文件");
                 }
             }
 
@@ -160,7 +160,7 @@ public class NoteInfoServiceImpl implements INoteInfoService {
     public void updateParent(String[] ids, Long parentId) {
         NoteInfo parent = selectNoteInfoById(parentId);
         if (parentId!= 0 && parent == null) {
-            throw new ServiceException("父节点不合法");
+            throw new ApiException("父节点不合法");
         } else {
             noteInfoMapper.updateParent(ids, parentId);
         }

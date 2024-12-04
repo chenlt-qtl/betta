@@ -6,7 +6,7 @@ import com.betta.common.core.controller.BaseController;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.poi.ExcelUtil;
@@ -59,7 +59,7 @@ public class EngSentenceController extends BaseController {
             username = SecurityUtils.getUsername();
         }
         if(!StringUtils.hasText(username)){
-            throw new ServiceException("请输入用户名");
+            throw new ApiException("请输入用户名");
         }
         List<EngSentence> list = engSentenceService.selectPlayList(engSentence, inPlayList,username);
         return getDataTable(list);

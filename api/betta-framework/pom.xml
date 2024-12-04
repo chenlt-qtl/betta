@@ -71,6 +71,12 @@
             <artifactId>betta-note</artifactId>
         </dependency>
 
+        <!-- 视频模块-->
+        <dependency>
+            <groupId>com.betta</groupId>
+            <artifactId>betta-video</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

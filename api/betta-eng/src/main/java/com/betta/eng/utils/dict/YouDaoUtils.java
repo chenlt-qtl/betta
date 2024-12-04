@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.betta.common.constant.Constants;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.file.FileUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngWord;
@@ -27,7 +27,7 @@ public class YouDaoUtils {
             word = getMeans(wordName);
             getMp3(word);
         } catch (Exception e) {
-            throw new ServiceException("获取有道词典出错：" + wordName);
+            throw new ApiException("获取有道词典出错：" + wordName);
         }
         return word;
     }

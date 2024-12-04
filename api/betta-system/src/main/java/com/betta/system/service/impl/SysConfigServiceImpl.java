@@ -11,7 +11,7 @@ import com.betta.common.constant.UserConstants;
 import com.betta.common.core.redis.RedisCache;
 import com.betta.common.core.text.Convert;
 import com.betta.common.enums.DataSourceType;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.StringUtils;
 import com.betta.system.domain.SysConfig;
 import com.betta.system.mapper.SysConfigMapper;
@@ -161,7 +161,7 @@ public class SysConfigServiceImpl implements ISysConfigService
             SysConfig config = selectConfigById(configId);
             if (StringUtils.equals(UserConstants.YES, config.getConfigType()))
             {
-                throw new ServiceException(String.format("内置参数【%1$s】不能删除 ", config.getConfigKey()));
+                throw new ApiException(String.format("内置参数【%1$s】不能删除 ", config.getConfigKey()));
             }
             configMapper.deleteConfigById(configId);
             redisCache.deleteObject(getCacheKey(config.getConfigKey()));

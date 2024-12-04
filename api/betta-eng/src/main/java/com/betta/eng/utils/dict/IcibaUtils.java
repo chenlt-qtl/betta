@@ -3,7 +3,7 @@ package com.betta.eng.utils.dict;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.betta.common.constant.Constants;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.file.FileUtils;
 import com.betta.common.utils.http.HttpUtils;
 import com.betta.eng.domain.EngIcibaSentence;
@@ -30,13 +30,13 @@ public class IcibaUtils {
             String rspStr = HttpUtils.sendGet(URL, "w=" + wordName + "&key=" + KEY, Constants.UTF8);
             if (StringUtils.isEmpty(rspStr)) {
                 log.error("获取爱词霸单词出错：", wordName);
-                throw new ServiceException("获取爱词霸单词出错：" + wordName);
+                throw new ApiException("获取爱词霸单词出错：" + wordName);
             }
             word = parse(rspStr, wordName);
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException("获取爱词霸单词出错：" + wordName +
+            throw new ApiException("获取爱词霸单词出错：" + wordName +
                     ",信息:" + e.getMessage());
         }
         return word;
@@ -73,7 +73,7 @@ public class IcibaUtils {
         List<String> pos = dict.getPos();//词性
         List<String> acceptation = dict.getAcceptation();//词性对应的解释
         if (pos.size() != acceptation.size()) {
-            throw new ServiceException("意思和时态配对失败");
+            throw new ApiException("意思和时态配对失败");
         }
 
         String acceptationStr = "";

@@ -5,7 +5,7 @@ package com.betta.common.exception;
  * 
  * @author ruoyi
  */
-public final class ServiceException extends RuntimeException
+public final class ApiException extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
 
@@ -29,16 +29,16 @@ public final class ServiceException extends RuntimeException
     /**
      * 空构造方法，避免反序列化问题
      */
-    public ServiceException()
+    public ApiException()
     {
     }
 
-    public ServiceException(String message)
+    public ApiException(String message)
     {
         this.message = message;
     }
 
-    public ServiceException(String message, Integer code)
+    public ApiException(String message, Integer code)
     {
         this.message = message;
         this.code = code;
@@ -60,13 +60,13 @@ public final class ServiceException extends RuntimeException
         return code;
     }
 
-    public ServiceException setMessage(String message)
+    public ApiException setMessage(String message)
     {
         this.message = message;
         return this;
     }
 
-    public ServiceException setDetailMessage(String detailMessage)
+    public ApiException setDetailMessage(String detailMessage)
     {
         this.detailMessage = detailMessage;
         return this;

@@ -3,7 +3,7 @@ package com.betta.eng.service.impl;
 import java.util.List;
 
 import com.betta.common.annotation.CreateByScope;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngArticleGroup;
 import com.betta.eng.mapper.EngArticleGroupMapper;
@@ -88,7 +88,7 @@ public class EngArticleGroupServiceImpl implements IEngArticleGroupService {
             article.setGroupId(id);
             List<EngArticle> engArticles = articleService.selectEngArticleList(article);
             if(!engArticles.isEmpty()){
-                throw new ServiceException("此分组下有文章数据，请先删除文章");
+                throw new ApiException("此分组下有文章数据，请先删除文章");
             }
         }
 

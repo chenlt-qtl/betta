@@ -1,7 +1,7 @@
 package com.betta.eng.service.impl;
 
 import com.betta.common.annotation.CreateByScope;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.*;
@@ -83,7 +83,7 @@ public class EngWordServiceImpl implements IEngWordService {
         //先检查重复
         List<EngWord> engWords = engWordMapper.selectEngWordByWordName(engWord.getWordName());
         if (!Objects.isNull(engWords) && !engWords.isEmpty()) {
-            throw new ServiceException("单词 " + engWord.getWordName() + " 已存在");
+            throw new ApiException("单词 " + engWord.getWordName() + " 已存在");
         }
         return engWordMapper.insertEngWord(engWord);
     }

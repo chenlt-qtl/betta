@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngSentence;
-import com.betta.eng.domain.EngWord;
 import com.betta.eng.domain.vo.EngWordVo;
 import com.betta.eng.service.IEngSentenceService;
 import com.betta.eng.service.IEngWordService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -126,7 +124,7 @@ public class EngArticleController extends BaseController {
             username = SecurityUtils.getUsername();
         }
         if (!StringUtils.hasText(username)) {
-            throw new ServiceException("请输入用户名");
+            throw new ApiException("请输入用户名");
         }
         List<EngSentence> list = engArticleService.selectPlayList(engArticle, inPlayList, username);
         return getDataTable(list);

@@ -11,7 +11,7 @@ import com.betta.common.constant.Constants;
 import com.betta.common.constant.HttpStatus;
 import com.betta.common.core.domain.entity.SysRole;
 import com.betta.common.core.domain.model.LoginUser;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 
 /**
  * 安全服务工具类
@@ -32,7 +32,7 @@ public class SecurityUtils
         }
         catch (Exception e)
         {
-            throw new ServiceException("获取用户ID异常", HttpStatus.UNAUTHORIZED);
+            throw new ApiException("获取用户ID异常", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -47,7 +47,7 @@ public class SecurityUtils
         }
         catch (Exception e)
         {
-            throw new ServiceException("获取部门ID异常", HttpStatus.UNAUTHORIZED);
+            throw new ApiException("获取部门ID异常", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -62,7 +62,7 @@ public class SecurityUtils
         }
         catch (Exception e)
         {
-            throw new ServiceException("获取用户账户异常", HttpStatus.UNAUTHORIZED);
+            throw new ApiException("获取用户账户异常", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -77,7 +77,7 @@ public class SecurityUtils
         }
         catch (Exception e)
         {
-            throw new ServiceException("获取用户信息异常", HttpStatus.UNAUTHORIZED);
+            throw new ApiException("获取用户信息异常", HttpStatus.UNAUTHORIZED);
         }
     }
 

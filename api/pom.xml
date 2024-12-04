@@ -178,6 +178,13 @@
                 <version>1.0.0</version>
             </dependency>
 
+            <!-- 视频模块-->
+            <dependency>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-video</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+
             <!-- es模块-->
 <!--            <dependency>-->
 <!--                <groupId>com.betta</groupId>-->
@@ -203,6 +210,7 @@
         <module>betta-common</module>
         <module>betta-eng</module>
         <module>betta-note</module>
+        <module>betta-video</module>
 <!--        <module>betta-es</module>-->
         <module>betta-other</module>
     </modules>

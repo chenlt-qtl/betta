@@ -1,6 +1,6 @@
 package com.betta.common.utils.file;
 
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.MediaType;
@@ -55,12 +55,12 @@ public class DownloadUtils {
     public static void checkAllowDownload(String resource) {
         // 禁止目录上跳级别
         if (StringUtils.contains(resource, "..")) {
-            throw new ServiceException(StringUtils.format("资源文件({})名字非法，不允许下载。 ", resource));
+            throw new ApiException(StringUtils.format("资源文件({})名字非法，不允许下载。 ", resource));
         }
 
         // 检查允许下载的文件规则
         if (!ArrayUtils.contains(MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION, FileTypeUtils.getFileType(resource))) {
-            throw new ServiceException(StringUtils.format("资源文件({})类型非法，不允许下载。 ", resource));
+            throw new ApiException(StringUtils.format("资源文件({})类型非法，不允许下载。 ", resource));
         }
     }
 

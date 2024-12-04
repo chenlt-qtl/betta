@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
 
-import com.betta.common.annotation.CreateByScope;
-import com.betta.common.core.domain.entity.SysDept;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -81,7 +79,7 @@ public class NoteInfoController extends BaseController {
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         NoteInfo noteInfo = noteInfoService.selectNoteInfoById(id);
         if (Objects.isNull(noteInfo)) {
-            throw new ServiceException(String.format("ID为%d的笔记不存在", id));
+            throw new ApiException(String.format("ID为%d的笔记不存在", id));
         }
         return success(noteInfo);
     }
@@ -115,7 +113,7 @@ public class NoteInfoController extends BaseController {
     public AjaxResult edit(@PathVariable Long id, @RequestBody NoteInfo noteInfo) {
         NoteInfo old = noteInfoService.selectNoteInfoById(id);
         if (Objects.isNull(old)) {
-            throw new ServiceException(String.format("ID为%d的笔记不存在", id));
+            throw new ApiException(String.format("ID为%d的笔记不存在", id));
         }
         old.setName(noteInfo.getName());
         return toAjax(noteInfoService.updateNoteInfo(old));

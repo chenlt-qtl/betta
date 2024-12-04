@@ -3,7 +3,7 @@ package com.betta.web.controller.common;
 import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.Constants;
 import com.betta.common.core.domain.AjaxResult;
-import com.betta.common.exception.ServiceException;
+import com.betta.common.exception.ApiException;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.file.*;
 import com.betta.framework.config.ServerConfig;
@@ -138,7 +138,7 @@ public class CommonController {
             String downloadPath = BettaConfig.getProfile() + StringUtils.substringAfter(fileName, Constants.RESOURCE_PREFIX);
             DownloadUtils.downloadFile(downloadPath, response);
         } catch (Exception e) {
-            throw new ServiceException("下载文件失败");
+            throw new ApiException("下载文件失败");
         }
     }
 
@@ -159,7 +159,7 @@ public class CommonController {
                 FileUtils.deleteFile(filePath);
             }
         } catch (Exception e) {
-            throw new ServiceException("下载文件失败");
+            throw new ApiException("下载文件失败");
         }
     }
 }
