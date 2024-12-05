@@ -159,6 +159,9 @@
         <el-form-item label="图片" prop="img">
           <image-upload v-model="form.img" uploadType="video" />
         </el-form-item>
+        <el-form-item label="时长" prop="duration">
+          <el-input v-model="form.duration" placeholder="请输入时长" />
+        </el-form-item>
         <el-form-item label="是否叶子" prop="isLeaf">
           <el-select v-model="form.isLeaf" placeholder="请选择">
             <el-option

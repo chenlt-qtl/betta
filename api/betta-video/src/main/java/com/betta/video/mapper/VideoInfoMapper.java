@@ -17,13 +17,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface VideoInfoMapper extends BaseMapper<VideoInfo>
 {
-    /**
-     * 查询视频信息
-     * 
-     * @param id 视频信息主键
-     * @return 视频信息
-     */
-    public VideoInfo selectVideoInfoById(Long id);
 
     /**
      * 查询视频信息列表

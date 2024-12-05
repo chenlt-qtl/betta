@@ -37,17 +37,6 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
     private VideoInfoMapper videoInfoMapper;
 
     /**
-     * 查询视频信息
-     *
-     * @param id 视频信息主键
-     * @return 视频信息
-     */
-    @Override
-    public VideoInfo selectVideoInfoById(Long id) {
-        return videoInfoMapper.selectVideoInfoById(id);
-    }
-
-    /**
      * 查询视频信息列表
      *
      * @param videoInfo 视频信息
@@ -135,7 +124,7 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
             return false;
         }
         //1. 检查父视频
-        VideoInfo parent = videoInfoMapper.selectVideoInfoById(dto.getPid());
+        VideoInfo parent = getById(dto.getPid());
         if (parent == null) {
             throw new ApiException("父视频不存在");
         }

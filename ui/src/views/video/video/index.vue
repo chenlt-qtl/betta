@@ -122,6 +122,9 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      &:hover{
+        border-bottom: solid 1px #ddd;
+      }
     }
     .duration {
       padding-left: 10px;

@@ -2,6 +2,7 @@ package com.betta.video.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.betta.video.domain.VideoChildDto;
 import com.betta.video.domain.VideoInfo;
 import com.betta.video.domain.VideoListVo;
@@ -12,15 +13,8 @@ import com.betta.video.domain.VideoListVo;
  * @author ruoyi
  * @date 2024-12-04
  */
-public interface IVideoInfoService 
+public interface IVideoInfoService  extends IService<VideoInfo>
 {
-    /**
-     * 查询视频信息
-     * 
-     * @param id 视频信息主键
-     * @return 视频信息
-     */
-    public VideoInfo selectVideoInfoById(Long id);
 
     /**
      * 查询视频信息列表

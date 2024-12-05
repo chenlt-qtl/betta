@@ -66,7 +66,7 @@ public class VideoInfoController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(videoInfoService.selectVideoInfoById(id));
+        return success(videoInfoService.getById(id));
     }
 
     /**
