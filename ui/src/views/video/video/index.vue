@@ -87,6 +87,7 @@ export default {
     border-right: solid 1px #ddd;
   }
   .list {
+    overflow: auto;
     .top{
       display: flex;
       flex-direction: column;
@@ -100,6 +101,9 @@ export default {
     display: flex;
     gap: 10px;
     flex-direction: column;
+    a:hover{
+      color: #00AEEC;
+    }
   }
 }
 </style>
