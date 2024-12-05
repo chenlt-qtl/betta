@@ -5,6 +5,7 @@
       :data="treeOptions"
       @node-click="handleNodeClick"
       :props="defaultProps"
+      :default-expand-all="true"
     ></el-tree>
     <div class="list">
       <div class="top" v-if="video && video.id">
