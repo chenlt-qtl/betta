@@ -43,4 +43,9 @@ public class VideoInfo extends BaseEntity
      */
     private String isLeaf;
 
+    /**
+     * 时长
+     */
+    private String duration;
+
 }

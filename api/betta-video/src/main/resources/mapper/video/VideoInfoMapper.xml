@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectVideoInfoList">
-        select a.id, b.title as p_title, a.title, a.url, a.img, a.is_leaf from video_info a left join video_info b on a.pid = b.id
+        select a.id, b.title as p_title, a.title, a.url, a.img, a.is_leaf, a.duration from video_info a left join video_info b on a.pid = b.id
         ${ew.customSqlSegment}
     </select>
     

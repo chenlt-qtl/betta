@@ -103,6 +103,7 @@
           <dict-tag :options="dict.type.sys_yes_no" :value="scope.row.isLeaf"/>
         </template>
       </el-table-column>
+      <el-table-column label="时长" align="center" prop="duration" />
       <el-table-column
         label="操作"
         align="center"

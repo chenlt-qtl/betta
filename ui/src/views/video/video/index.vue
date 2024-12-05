@@ -7,20 +7,26 @@
       :props="defaultProps"
     ></el-tree>
     <div class="list">
-      <div class="top" v-if="video.id">
+      <div class="top" v-if="video && video.id">
         <image-preview :src="video.img" :width="250" :height="150" />
         <a :href="video.url" target="_blank">
           {{ video.title }}
         </a>
       </div>
-      <a
-        v-for="video in videoList"
-        :key="video.id"
-        :href="video.url"
-        target="_blank"
-      >
-        {{ video.title }}
-      </a>
+      <ol>
+        <li v-for="video in videoList" :key="video.id">
+          <div class="item">
+            <a
+              @click="() => onLinkClick(video)"
+              :class="lastClickId == video.id ? 'lastClick' : ''"
+              href="#"
+            >
+              {{ video.title }}
+            </a>
+            <div class="duration">{{ video.duration }}</div>
+          </div>
+        </li>
+      </ol>
     </div>
   </div>
 </template>
@@ -43,6 +49,7 @@ export default {
       loading: true,
       // 视频信息数据
       videoList: [],
+      lastClickId: -1,
     };
   },
   created() {
@@ -57,13 +64,14 @@ export default {
         const root = { id: 0, title: "根节点", children: [] };
         root.children = this.handleTree(response.data, "id", "pid");
         this.treeOptions.push(root);
-        console.log(this.treeOptions);
         this.loading = false;
       });
     },
     handleNodeClick(node) {
       this.videoList = [];
       this.video = {};
+      this.lastClickId = localStorage.getItem("video_" + node.id);
+      console.log(this.lastClickId);
       //获取子节点
       getChildren(node.id).then((res) => {
         this.videoList = res.data.filter((d) => d.url);
@@ -72,6 +80,11 @@ export default {
       getVideo(node.id).then((response) => {
         this.video = response.data;
       });
+    },
+    onLinkClick({ url, id, pid }) {
+      localStorage.setItem("video_" + pid, id);
+      this.lastClickId = id;
+      window.open(url, "_blank");
     },
   },
 };
@@ -88,7 +101,7 @@ export default {
   }
   .list {
     overflow: auto;
-    .top{
+    .top {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -101,8 +114,30 @@ export default {
     display: flex;
     gap: 10px;
     flex-direction: column;
-    a:hover{
-      color: #00AEEC;
+    a:hover {
+      color: #00aeec;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .duration {
+      padding-left: 10px;
+      color: #bbb;
+    }
+    .lastClick {
+      color: #048ec0;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .video-container {
+    flex-direction: column;
+    .tree {
+      width: 100%;
+      border-bottom: solid 1px #ddd;
     }
   }
 }

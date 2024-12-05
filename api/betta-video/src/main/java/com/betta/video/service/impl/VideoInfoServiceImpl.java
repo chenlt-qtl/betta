@@ -3,6 +3,8 @@ package com.betta.video.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
@@ -151,9 +153,18 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
         String[] texts = dto.getText().split("\n");
         List<VideoInfo> list = new ArrayList<>();
         for (int i = 0; i < texts.length; i++) {
+            String title = texts[i];
             VideoInfo videoInfo = new VideoInfo();
+            //提取时长
+            Pattern pattern = Pattern.compile("^(\\d+:\\d+(?::\\d+)*)[,，]([\\w\\W]+)");
+            Matcher matcher = pattern.matcher(title);
+            if (matcher.find()) {
+                videoInfo.setDuration(matcher.group(1));
+                title = matcher.group(2);
+            }
+
             videoInfo.setUrl(parent.getUrl() + "&p=" + ++start);
-            videoInfo.setTitle(texts[i]);
+            videoInfo.setTitle(title);
             videoInfo.setPid(dto.getPid());
             videoInfo.setIsLeaf(UserConstants.YES);
             list.add(videoInfo);
