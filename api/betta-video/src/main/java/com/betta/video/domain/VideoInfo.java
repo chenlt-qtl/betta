@@ -38,4 +38,9 @@ public class VideoInfo extends BaseEntity
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private String status;
 
+    /**
+     * 是:Y  否：N
+     */
+    private String isLeaf;
+
 }

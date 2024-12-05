@@ -5,6 +5,7 @@ CREATE TABLE `video_info`
     `title`       VARCHAR(200) NULL DEFAULT NULL COMMENT '名称',
     `url`         VARCHAR(300) NULL DEFAULT NULL COMMENT '网址',
     `img`         VARCHAR(100) NULL DEFAULT NULL COMMENT '图片',
+    `is_leaf`     VARCHAR(1) NULL DEFAULT 0,
     `status`      VARCHAR(1) NULL DEFAULT NULL,
     `create_time` DATETIME NULL DEFAULT NULL,
     `create_by`   VARCHAR(32) NULL DEFAULT NULL,

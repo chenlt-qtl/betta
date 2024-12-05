@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.betta.common.constant.UserConstants;
 import com.betta.common.exception.ApiException;
 import com.betta.common.utils.DateUtils;
 import com.betta.common.utils.SecurityUtils;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import com.betta.video.mapper.VideoInfoMapper;
 import com.betta.video.domain.VideoInfo;
 import com.betta.video.service.IVideoInfoService;
+
+import static com.betta.common.constant.UserConstants.YES;
 
 /**
  * 视频信息Service业务层处理
@@ -67,7 +71,7 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
         if (videoInfo.getId() != null && (long) videoInfo.getId() == videoInfo.getPid()) {
             throw new ApiException("上级不是能自己");
         }
-        return videoInfoMapper.insertVideoInfo(videoInfo);
+        return videoInfoMapper.insert(videoInfo);
     }
 
     /**
@@ -79,7 +83,7 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
     @Override
     public int updateVideoInfo(VideoInfo videoInfo) {
         videoInfo.setUpdateTime(DateUtils.getNowDate());
-        return videoInfoMapper.updateVideoInfo(videoInfo);
+        return videoInfoMapper.updateById(videoInfo);
     }
 
     /**
@@ -115,9 +119,10 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
     }
 
     @Override
-    public List<VideoInfo> selectVideoInfoBrief() {
+    public List<VideoInfo> selectVideoInfoBrief(char isLeaf) {
         LambdaQueryWrapper<VideoInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.select(VideoInfo::getPid, VideoInfo::getTitle, VideoInfo::getId);
+        wrapper.eq(!CharUtil.isBlankChar(isLeaf),VideoInfo::getIsLeaf,isLeaf);
         return videoInfoMapper.selectList(wrapper);
     }
 
@@ -150,6 +155,7 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
             videoInfo.setUrl(parent.getUrl() + "&p=" + ++start);
             videoInfo.setTitle(texts[i]);
             videoInfo.setPid(dto.getPid());
+            videoInfo.setIsLeaf(UserConstants.YES);
             list.add(videoInfo);
         }
 

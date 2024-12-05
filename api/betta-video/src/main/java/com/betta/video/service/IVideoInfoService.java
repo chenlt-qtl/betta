@@ -57,7 +57,7 @@ public interface IVideoInfoService
 
     List<VideoInfo> listChildren(Long pid);
 
-    List<VideoInfo> selectVideoInfoBrief();
+    List<VideoInfo> selectVideoInfoBrief(char isLeaf);
 
     boolean addChildren(VideoChildDto videoInfo);
 }

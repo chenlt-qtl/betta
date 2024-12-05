@@ -32,21 +32,6 @@ public interface VideoInfoMapper extends BaseMapper<VideoInfo>
      */
     public List<VideoListVo> selectVideoInfoList(@Param(Constants.WRAPPER) QueryWrapper<VideoListVo> wrapper);
 
-    /**
-     * 新增视频信息
-     * 
-     * @param videoInfo 视频信息
-     * @return 结果
-     */
-    public int insertVideoInfo(VideoInfo videoInfo);
-
-    /**
-     * 修改视频信息
-     * 
-     * @param videoInfo 视频信息
-     * @return 结果
-     */
-    public int updateVideoInfo(VideoInfo videoInfo);
 
     /**
      * 删除视频信息

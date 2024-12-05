@@ -5,7 +5,6 @@ import com.betta.common.core.controller.BaseController;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.page.TableDataInfo;
 import com.betta.common.enums.BusinessType;
-import com.betta.common.utils.poi.ExcelUtil;
 import com.betta.video.domain.VideoChildDto;
 import com.betta.video.domain.VideoInfo;
 import com.betta.video.domain.VideoListVo;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -46,9 +44,9 @@ public class VideoInfoController extends BaseController
     @ApiOperation("列出所有title和pid")
     @PreAuthorize("@ss.hasPermi('video:video:list')")
     @GetMapping("/list/brief")
-    public AjaxResult listTitle()
+    public AjaxResult listTitle(@RequestParam(required = false) char isLeaf)
     {
-        List<VideoInfo> list = videoInfoService.selectVideoInfoBrief();
+        List<VideoInfo> list = videoInfoService.selectVideoInfoBrief(isLeaf);
         return success(list);
     }
 
