@@ -125,6 +125,7 @@ public class VideoInfoServiceImpl extends ServiceImpl<VideoInfoMapper, VideoInfo
         LambdaQueryWrapper<VideoInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.select(VideoInfo::getPid, VideoInfo::getTitle, VideoInfo::getId);
         wrapper.eq(!CharUtil.isBlankChar(isLeaf),VideoInfo::getIsLeaf,isLeaf);
+        wrapper.eq(VideoInfo::getCreateBy,SecurityUtils.getUsername());
         return videoInfoMapper.selectList(wrapper);
     }
 
