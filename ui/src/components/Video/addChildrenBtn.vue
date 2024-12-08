@@ -27,7 +27,7 @@
             type="textarea"
             :rows="8"
             v-model="form.text"
-            placeholder="请输入子视频名称，多个子视频请换行"
+            placeholder="请输入子视频名称，多个子视频请换行，例如：11:37，19-dubbo高级特性-集群容错"
           />
         </el-form-item>
       </el-form>

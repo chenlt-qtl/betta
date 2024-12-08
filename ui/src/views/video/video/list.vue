@@ -243,11 +243,7 @@ export default {
     getTreeselect() {
       this.loading = true;
       getBrife('N').then((response) => {
-        this.treeOptions = [];
-        const root = { id: 0, title: "根节点", children: [] };
-        root.children = this.handleTree(response.data, "id","pid");
-        this.treeOptions.push(root);
-        console.log(this.treeOptions)
+        this.treeOptions=[{ id: 0, title: "无" },...this.handleTree(response.data, "id","pid")];
         this.loading = false;
       });
     },

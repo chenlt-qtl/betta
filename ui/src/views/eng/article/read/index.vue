@@ -16,6 +16,13 @@
       <el-radio-button label="word">单词</el-radio-button>
     </el-radio-group>
 
+    <el-radio-group v-model="rate">
+      <el-radio :label="0.5">X0.5</el-radio>
+      <el-radio :label="0.7">X0.7</el-radio>
+      <el-radio :label="1">X1</el-radio>
+      <el-radio :label="1.2">X1.2</el-radio>
+    </el-radio-group>
+
     <div v-if="type == 'sentence'">
       <el-table
         v-loading="loading"
@@ -25,14 +32,15 @@
       >
         <el-table-column prop="content">
           <template slot-scope="scope">
-            <section class="sentence">
-              <a
-                v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)"
-                @click="
-                  () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
-                "
-                >{{ scope.row.content }}</a
-              >
+            <section
+              class="sentence"
+              @click="
+                () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
+              "
+            >
+              <a v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)">{{
+                scope.row.content
+              }}</a>
               <div v-if="!scope.row.mp3 && !(scope.row.mp3Time && article.mp3)">
                 {{ scope.row.content }}
               </div>
@@ -59,9 +67,6 @@
                       <el-dropdown-item command="c">D+0.5</el-dropdown-item>
                       <el-dropdown-item command="d">D-0.5</el-dropdown-item>
                       <el-dropdown-item command="e">D-1</el-dropdown-item>
-                      <el-dropdown-item command="f">X1</el-dropdown-item>
-                      <el-dropdown-item command="g">X0.7</el-dropdown-item>
-                      <el-dropdown-item command="h">X0.5</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </span>
@@ -80,12 +85,12 @@
       >
         <el-table-column label="单词" prop="wordName">
           <template v-if="scope.row.phMp3" slot-scope="scope">
-            <div class="word-container">
+            <div class="word-container" @click="() => play(scope.row.phMp3)">
               <section class="word">
-                <el-button type="text" @click="() => play(scope.row.phMp3)">
+                <el-button type="text">
                   {{ scope.row.wordName }}
                 </el-button>
-                <span>{{ scope.row.ph }}</span>
+                <span>{{ scope.row.phonetics }}</span>
               </section>
               <span>{{
                 scope.row.exchange
@@ -120,15 +125,6 @@
           :precision="1"
           size="mini"
         />
-        ,
-        <el-input-number
-          v-model="time3"
-          placeholder="请输入倍速"
-          :min="0.3"
-          :step="0.1"
-          :precision="1"
-          size="mini"
-        />
         <div
           style="padding-top: 10px; display: flex; gap: 2px; flex-wrap: wrap"
         >
@@ -143,12 +139,6 @@
           >
           <el-button size="mini" type="primary" @click="() => addDuration(0.5)"
             >D+0.5</el-button
-          >
-          <el-button size="mini" type="success" @click="() => (time3 = 0.7)"
-            >X0.7</el-button
-          >
-          <el-button size="mini" type="success" @click="() => (time3 = 0.5)"
-            >X0.5</el-button
           >
         </div>
         <el-button
@@ -188,7 +178,7 @@ export default {
       sentence: {},
       time1: 0,
       time2: 0,
-      time3: 1,
+      rate: 0.7,
     };
   },
   created() {
@@ -209,7 +199,7 @@ export default {
       });
     },
     play(url, mp3Time) {
-      play(url, mp3Time);
+      play(url, mp3Time + "," + this.rate);
     },
     /** 查询英语句子列表 */
     getSentenceList() {
@@ -245,11 +235,10 @@ export default {
       const mp3Time = (this.sentence.mp3Time || ",").split(",");
       this.time1 = mp3Time[0];
       this.time2 = mp3Time[1];
-      this.time3 = mp3Time[2] || 1;
       this.open = true;
     },
     onSubmit() {
-      this.sentence.mp3Time = this.time1 + "," + this.time2 + "," + this.time3;
+      this.sentence.mp3Time = this.time1 + "," + this.time2;
       updateSentence(this.sentence).then(() => {
         this.$modal.msgSuccess("修改成功");
         this.open = false;
@@ -270,16 +259,11 @@ export default {
       this.time2 = this.time2 + num;
       this.onSubmit();
     },
-    updateRate(rate) {
-      this.time3 = rate;
-      this.onSubmit();
-    },
     handleCommand(row, command) {
       this.sentence = row;
       const mp3Time = (this.sentence.mp3Time || ",").split(",");
       this.time1 = parseInt(mp3Time[0]);
       this.time2 = parseFloat(mp3Time[1]);
-      this.time3 = mp3Time[2] || 1;
       switch (command) {
         case "a":
           this.updateStart(1);
@@ -295,15 +279,6 @@ export default {
           break;
         case "e":
           this.updateDuration(-1);
-          break;
-        case "f":
-          this.updateRate(1);
-          break;
-        case "g":
-          this.updateRate(0.7);
-          break;
-        case "h":
-          this.updateRate(0.5);
           break;
       }
     },
@@ -343,6 +318,7 @@ export default {
     }
   }
   .sentence {
+    cursor: pointer;
     span {
       padding-top: 5px;
       display: block;
@@ -355,6 +331,7 @@ export default {
     }
   }
   .word-container {
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
