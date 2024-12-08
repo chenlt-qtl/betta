@@ -35,7 +35,11 @@
             <section
               class="sentence"
               @click="
-                () => play(scope.row.mp3 || article.mp3, scope.row.mp3Time)
+                () =>
+                  play(
+                    scope.row.mp3 || article.mp3,
+                    scope.row.mp3Time + ',' + rate
+                  )
               "
             >
               <a v-if="scope.row.mp3 || (scope.row.mp3Time && article.mp3)">{{
@@ -199,7 +203,7 @@ export default {
       });
     },
     play(url, mp3Time) {
-      play(url, mp3Time + "," + this.rate);
+      play(url, mp3Time);
     },
     /** 查询英语句子列表 */
     getSentenceList() {
