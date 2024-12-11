@@ -159,7 +159,8 @@ export default {
           );
         }
 
-        updateContent({ ...this.content, text: newText }).then(() => {
+        this.content = { ...this.content, text: newText };
+        updateContent(this.content).then(() => {
           this.isSaved = true;
           this.$modal.msgSuccess("修改成功");
         });

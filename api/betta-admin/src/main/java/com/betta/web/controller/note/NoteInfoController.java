@@ -85,10 +85,10 @@ public class NoteInfoController extends BaseController {
     }
 
     /**
-     * 新增文件夹
+     * 新增文件或文件夹
      */
     @PreAuthorize("@ss.hasPermi('note:noteInfo:add')")
-    @Log(title = "文件夹", businessType = BusinessType.INSERT)
+    @Log(title = "新增文件或文件夹", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody NoteInfo noteInfo) {
         return AjaxResult.success(noteInfoService.insertNoteInfo(noteInfo));

@@ -34,7 +34,7 @@ export function getNoteInfo(id) {
   })
 }
 
-// 新增文件夹
+// 新增文件或文件夹
 export function addNoteInfo(data) {
   return request({
     url: '/note/noteInfo',
