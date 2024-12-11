@@ -5,6 +5,7 @@
       :data="treeOptions"
       @node-click="handleNodeClick"
       :props="defaultProps"
+      highlight-current
       :default-expand-all="true"
     ></el-tree>
     <div class="list">
