@@ -100,16 +100,17 @@ export default {
         getContent(contentId).then((res) => {
           this.content = res.data;
           if (this.content && this.content.text) {
-            const reg = new RegExp("(?<=\\]\\()/profile(?=\\/note)", "g");
-            this.content.text = this.content.text.replaceAll(
-              reg,
-              process.env.VUE_APP_BASE_API + "/profile"
-            );
+            this.content.text = this.replaceUrl(this.content.text);
           }
         });
       } else {
         this.content = {};
       }
+    },
+    //替换URL前缀
+    replaceUrl(text) {
+      const reg = new RegExp("(?<=\\]\\()/profile(?=\\/note)", "g");
+      return text.replaceAll(reg, process.env.VUE_APP_BASE_API + "/profile");
     },
     getFav() {
       getFavorite().then(({ data }) => {
@@ -159,8 +160,8 @@ export default {
           );
         }
 
-        this.content = { ...this.content, text: newText };
-        updateContent(this.content).then(() => {
+        updateContent({ ...this.content, text: newText }).then(() => {
+          this.content.text = this.replaceUrl(newText);//更新现有视图数据
           this.isSaved = true;
           this.$modal.msgSuccess("修改成功");
         });

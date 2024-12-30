@@ -5,8 +5,8 @@
         增加<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="file">笔记</el-dropdown-item>
-        <el-dropdown-item command="dir">文件夹</el-dropdown-item>
+        <el-dropdown-item command="file"><i class='el-icon-document'/>笔记</el-dropdown-item>
+        <el-dropdown-item command="dir"><i class='el-icon-folder'/>文件夹</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <el-dialog
