@@ -35,7 +35,9 @@ export default {
   },
   methods: {
     onEditorBlur() {
-      this.$emit("blur", this.$refs.editorRef.invoke("getMarkdown"));
+      setTimeout(() => {
+        this.$emit("blur", this.$refs.editorRef.invoke("getMarkdown"));
+      }, 0);
     },
     onInput() {
       this.$emit("change");
