@@ -32,8 +32,8 @@ export default {
     openedNotes() {
       const openedNotes = this.$store.state.note.openedNotes;
       const entrys = [];
-      openedNotes.forEach((note) => {
-        entrys.push(note);
+      Object.keys(openedNotes).forEach((id) => {
+        entrys.push({ id, name: openedNotes[id] });
       });
       this.tabData = entrys;
     },
@@ -48,9 +48,8 @@ export default {
     handleTabsEdit(targetName, action) {
       const openedNoteId = this.$store.state.note.openedNote.id;
       if (action === "remove") {
-        const openedNotes = new Map(this.openedNotes);
-        openedNotes.delete(targetName);
-        this.$store.dispatch("note/setOpenedNotes", openedNotes);
+        delete this.openedNotes[targetName];
+        this.$store.dispatch("note/setOpenedNotes", this.openedNotes);
         if (openedNoteId == targetName) {
           const query = { ...this.$route.query };
           delete query.id;
