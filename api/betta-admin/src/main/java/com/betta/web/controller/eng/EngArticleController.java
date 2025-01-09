@@ -87,7 +87,7 @@ public class EngArticleController extends BaseController {
     @Log(title = "英语文章", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody EngArticle engArticle) {
-        return toAjax(engArticleService.insertEngArticle(engArticle));
+        return AjaxResult.success(engArticleService.insertEngArticle(engArticle));
     }
 
     /**

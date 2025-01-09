@@ -30,11 +30,11 @@ public interface IEngArticleService
 
     /**
      * 新增英语文章
-     * 
+     *
      * @param engArticle 英语文章
      * @return 结果
      */
-    public int insertEngArticle(EngArticle engArticle);
+    public EngArticle insertEngArticle(EngArticle engArticle);
 
     /**
      * 修改英语文章

@@ -68,9 +68,9 @@ public class EngArticleServiceImpl implements IEngArticleService {
      */
     @Transactional
     @Override
-    public int insertEngArticle(EngArticle engArticle) {
-        int rows = engArticleMapper.insertEngArticle(engArticle);
-        return rows;
+    public EngArticle insertEngArticle(EngArticle engArticle) {
+        engArticleMapper.insertEngArticle(engArticle);
+        return engArticle;
     }
 
     /**
