@@ -9,6 +9,7 @@ import com.betta.common.utils.DictUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.poi.ExcelUtil;
 import com.betta.other.domain.CardItem;
+import com.betta.other.domain.CardItemDto;
 import com.betta.other.service.ICardItemService;
 import com.betta.system.domain.SysHistory;
 import com.betta.system.service.ISysHistoryService;
@@ -82,7 +83,7 @@ public class CardItemController extends BaseController {
     @PreAuthorize("@ss.hasPermi('card:item:edit')")
     @Log(title = "卡片项明细", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody CardItem cardItem) {
+    public AjaxResult edit(@RequestBody CardItemDto cardItem) {
         CardItem old = cardItemService.selectCardItemById(cardItem.getId());
         cardItemService.updateCardItem(cardItem);
         //记录历史记录getDictValue
@@ -90,7 +91,8 @@ public class CardItemController extends BaseController {
         if (StringUtils.isBlank(dictLabel)) {//为空表示是加减卡 记录历史
             SysHistory history = new SysHistory();
             String type = DictUtils.getDictValue("history_type", "card");
-            history.setValue(cardItem.getName() + ": " + (cardItem.getValue() - old.getValue())+" 余: "+cardItem.getValue());
+            history.setValue(cardItem.getName() + ": " + (cardItem.getValue() - old.getValue())+" 余: "+cardItem.getValue() +
+            (StringUtils.isNotBlank(cardItem.getContent())?", [ "+cardItem.getContent()+" ]":""));
             history.setType(Integer.parseInt(type));
             sysHistoryService.insertSysHistory(history);
         }

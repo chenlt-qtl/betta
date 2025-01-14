@@ -40,17 +40,8 @@
         <el-button slot="append" icon="el-icon-check"></el-button>
       </el-input-number>
       <el-button round @click="onReset" type="text">清空</el-button>
-      <el-popconfirm
-        :title="
-          accountData[accountId].name +
-          (symbol == 1 ? ' + ' : ' - ') +
-          score +
-          ' ？'
-        "
-        @confirm="onSubmit"
-      >
-        <el-button slot="reference" round>提交</el-button>
-      </el-popconfirm>
+
+      <el-button slot="reference" @click="showConfirm" round>提交</el-button>
       <el-button type="text" @click="showHistory"
         ><i class="el-icon-time"></i
       ></el-button>
@@ -80,18 +71,39 @@
           :key="dict.value"
           :label="dict.label"
           :name="dict.value"
-          ><el-tag
-            class="item"
-            v-for="item in listData[dict.value]"
-            :key="item.id"
-            @click="() => addScore(item.value)"
-            :type="item.value > 0 ? 'success' : 'danger'"
-            >{{ item.name }} {{ item.value > 0 ? "+" : ""
-            }}{{ item.value }}</el-tag
-          ></el-tab-pane
         >
+          <div class="quick">
+            <span
+              :class="item.value > 0 ? 'green' : 'red'"
+              v-for="item in listData[dict.value]"
+              :key="item.id"
+              @click="() => addScore(item.value, item.name)"
+            >
+              {{ item.name }} {{ item.value > 0 ? "+" : "" }}{{ item.value }}
+            </span>
+          </div>
+        </el-tab-pane>
       </el-tabs>
     </div>
+
+    <!-- 加卡询问窗口-->
+    <el-dialog
+      :title="
+        accountData[accountId].name +
+        (symbol == 1 ? ' + ' : ' - ') +
+        score +
+        ' ？'
+      "
+      :visible.sync="openConfirm"
+      width="300px"
+      append-to-body
+    >
+      <el-input v-model="content" placeholder="请输入内容"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="() => (this.openConfirm = false)">取 消</el-button>
+        <el-button type="primary" @click="onSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
     <!-- 查看历史 -->
     <el-dialog
       title="历史记录"
@@ -120,7 +132,7 @@ export default {
   },
   data() {
     return {
-      data: [100, 50, 30, 20, 10, 5, 3, 1],
+      data: [50, 20, 10, 5, 3, 2, 1],
       //符号
       symbol: 1,
       accountId: 0,
@@ -129,6 +141,8 @@ export default {
       activeName: "1",
       listData: {},
       open: false,
+      openConfirm: false,
+      content: "",
       historyList: [],
       loading: false,
     };
@@ -166,8 +180,9 @@ export default {
     onReset() {
       this.score = 0;
       this.symbol = 1;
+      this.content = "";
     },
-    addScore(value) {
+    addScore(value, name) {
       const score = value + this.value;
       if (score < 0) {
         this.symbol = -1;
@@ -175,13 +190,22 @@ export default {
         this.symbol = 1;
       }
       this.score = Math.abs(score);
+      if (name) {
+        if (this.content) {
+          this.content += ",";
+        }
+        this.content += name;
+      }
+    },
+    showConfirm() {
+      this.openConfirm = true;
     },
     onSubmit() {
-      const oldNumber = this.accountData[this.accountId].value;
-      const newNumber = oldNumber * 1 + this.value;
-      this.accountData[this.accountId].value = newNumber;
-      updateItem(this.accountData[this.accountId]).then(() => {
+      const newData = this.accountData[this.accountId];
+      newData.value = newData.value * 1 + this.value;
+      updateItem({ ...newData, content: this.content }).then(() => {
         this.$modal.msgSuccess("操作成功");
+        this.openConfirm = false;
         this.onReset();
       });
     },
