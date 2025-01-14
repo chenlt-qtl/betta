@@ -12,7 +12,7 @@ import com.betta.common.constant.Constants;
 import com.betta.common.constant.UserConstants;
 import com.betta.common.core.domain.entity.SysUser;
 import com.betta.common.core.domain.model.LoginUser;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.exception.ApiException;
 import com.betta.common.exception.user.BlackListException;
 import com.betta.common.exception.user.CaptchaException;

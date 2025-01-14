@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.betta.common.constant.CacheConstants;
 import com.betta.common.core.domain.entity.SysUser;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.exception.user.UserPasswordNotMatchException;
 import com.betta.common.exception.user.UserPasswordRetryLimitExceedException;
 import com.betta.common.utils.SecurityUtils;

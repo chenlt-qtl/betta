@@ -5,7 +5,7 @@ import java.util.List;
 import com.alibaba.fastjson2.JSONArray;
 import com.betta.common.constant.CacheConstants;
 import com.betta.common.core.domain.entity.SysDictData;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.utils.spring.SpringUtils;
 
 /**

@@ -82,8 +82,10 @@ export default {
     return {
       logo: logoImg,
       loginForm: {
-        username: "admin",
-        password: "admin123",
+        // username: "admin",
+        // password: "admin123",
+        username: "",
+        password: "",
         rememberMe: false,
         code: "",
         uuid: "",
