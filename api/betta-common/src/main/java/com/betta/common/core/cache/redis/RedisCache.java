@@ -1,4 +1,4 @@
-package com.betta.common.core.redis;
+package com.betta.common.core.cache.redis;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  * @author ruoyi
  **/
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
-@Component
+//@Component
 public class RedisCache
 {
     @Autowired

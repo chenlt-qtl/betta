@@ -150,6 +150,10 @@ spring:
         wall:
           config:
             multi-statement-allow: true
+  mvc:
+    view:
+      suffix: .html
+      prefix: /ui/
 
 # token配置
 token:

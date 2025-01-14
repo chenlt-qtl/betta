@@ -17,7 +17,7 @@ import com.betta.common.core.controller.BaseController;
 import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.core.domain.model.LoginUser;
 import com.betta.common.core.page.TableDataInfo;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.enums.BusinessType;
 import com.betta.common.utils.StringUtils;
 import com.betta.system.domain.SysUserOnline;

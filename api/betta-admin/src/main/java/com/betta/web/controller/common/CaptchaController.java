@@ -15,7 +15,7 @@ import com.betta.common.config.BettaConfig;
 import com.betta.common.constant.CacheConstants;
 import com.betta.common.constant.Constants;
 import com.betta.common.core.domain.AjaxResult;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.utils.sign.Base64;
 import com.betta.common.utils.uuid.IdUtils;
 import com.betta.system.service.ISysConfigService;

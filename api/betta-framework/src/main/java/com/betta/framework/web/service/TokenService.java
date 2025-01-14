@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.betta.common.constant.CacheConstants;
 import com.betta.common.constant.Constants;
 import com.betta.common.core.domain.model.LoginUser;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.utils.ServletUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.ip.AddressUtils;

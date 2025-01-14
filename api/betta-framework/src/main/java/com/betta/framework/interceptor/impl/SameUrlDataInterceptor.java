@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson2.JSON;
 import com.betta.common.annotation.RepeatSubmit;
 import com.betta.common.constant.CacheConstants;
-import com.betta.common.core.redis.RedisCache;
+import com.betta.common.core.cache.redis.RedisCache;
 import com.betta.common.filter.RepeatedlyRequestWrapper;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.http.HttpHelper;
