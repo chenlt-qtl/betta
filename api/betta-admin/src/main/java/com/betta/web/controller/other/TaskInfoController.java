@@ -29,7 +29,7 @@ import com.betta.common.core.page.TableDataInfo;
  * @date 2025-01-10
  */
 @RestController
-@RequestMapping("/task/task")
+@RequestMapping("/other/task")
 public class TaskInfoController extends BaseController
 {
     @Autowired
@@ -38,7 +38,7 @@ public class TaskInfoController extends BaseController
     /**
      * 查询任务列表
      */
-    @PreAuthorize("@ss.hasPermi('task:task:list')")
+    @PreAuthorize("@ss.hasPermi('other:task:list')")
     @GetMapping("/list")
     public TableDataInfo list(TaskInfo taskInfo)
     {
@@ -50,7 +50,7 @@ public class TaskInfoController extends BaseController
     /**
      * 导出任务列表
      */
-    @PreAuthorize("@ss.hasPermi('task:task:export')")
+    @PreAuthorize("@ss.hasPermi('other:task:export')")
     @Log(title = "任务", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, TaskInfo taskInfo)
@@ -63,7 +63,7 @@ public class TaskInfoController extends BaseController
     /**
      * 获取任务详细信息
      */
-    @PreAuthorize("@ss.hasPermi('task:task:query')")
+    @PreAuthorize("@ss.hasPermi('other:task:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -73,7 +73,7 @@ public class TaskInfoController extends BaseController
     /**
      * 新增任务
      */
-    @PreAuthorize("@ss.hasPermi('task:task:add')")
+    @PreAuthorize("@ss.hasPermi('other:task:add')")
     @Log(title = "任务", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody TaskInfo taskInfo)
@@ -84,7 +84,7 @@ public class TaskInfoController extends BaseController
     /**
      * 修改任务
      */
-    @PreAuthorize("@ss.hasPermi('task:task:edit')")
+    @PreAuthorize("@ss.hasPermi('other:task:edit')")
     @Log(title = "任务", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody TaskInfo taskInfo)
@@ -95,7 +95,7 @@ public class TaskInfoController extends BaseController
     /**
      * 删除任务
      */
-    @PreAuthorize("@ss.hasPermi('task:task:remove')")
+    @PreAuthorize("@ss.hasPermi('other:task:remove')")
     @Log(title = "任务", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

@@ -1,5 +1,6 @@
 package com.betta.other.service.impl;
 
+import com.betta.common.annotation.CreateByScope;
 import com.betta.common.utils.DateUtils;
 import com.betta.other.domain.TaskInfo;
 import com.betta.other.mapper.TaskInfoMapper;
@@ -40,6 +41,7 @@ public class TaskInfoServiceImpl implements ITaskInfoService
      * @return 任务
      */
     @Override
+    @CreateByScope("")
     public List<TaskInfo> selectTaskInfoList(TaskInfo taskInfo)
     {
         return taskInfoMapper.selectTaskInfoList(taskInfo);

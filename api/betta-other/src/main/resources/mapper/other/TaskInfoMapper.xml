@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="type != null "> and type = #{type}</if>
             <if test="content != null  and content != ''"> and content = #{content}</if>
             <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+            ${params.createByScope}
         </where>
     </select>
     

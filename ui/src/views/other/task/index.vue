@@ -24,7 +24,7 @@
         <TaskList
           :selectedType="selectedType"
           :getTaskList="getList"
-          :listData="taskList"
+          :listData="listData"
         ></TaskList>
       </div>
     </el-row>
@@ -32,13 +32,7 @@
 </template>
 
 <script>
-import {
-  listTask,
-  getTask,
-  delTask,
-  addTask,
-  updateTask,
-} from "@/api/other/task";
+import { listTask } from "@/api/other/task";
 import AddTaskBar from "@/components/Task/addTaskBar.vue";
 import TaskList from "@/components/Task/taskList.vue";
 export default {
@@ -58,6 +52,11 @@ export default {
         pageSize: 1000,
       },
     };
+  },
+  computed: {
+    listData() {
+      return this.taskList.filter((t) => t.type == this.selectedType);
+    },
   },
   created() {
     this.getList();
@@ -80,6 +79,7 @@ export default {
 <style lang="scss" scoped>
 .app-container {
   height: calc(100vh - 85px);
+  overflow: auto;
   max-width: 800px;
   margin: 0 auto;
   display: flex;

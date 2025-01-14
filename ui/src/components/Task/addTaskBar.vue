@@ -3,10 +3,15 @@
     <div class="addBar" v-if="selectedType != 3">
       <i class="el-icon-plus"></i>
       <input
-        v-model="title"
+        v-model="content"
         placeholder="请输入任务内容"
         @keyup.enter="onAddTask"
       />
+      <el-button
+        type="text"
+        @click="onAddTask"
+        >保存</el-button
+      >
     </div>
     <div class="errorBar" :style="{ height: showMsg ? '36px' : 0 }">
       <el-alert title="任务名称不能为空" type="error" show-icon> </el-alert>
@@ -15,13 +20,7 @@
 </template>
 
 <script>
-import {
-  listTask,
-  getTask,
-  delTask,
-  addTask,
-  updateTask,
-} from "@/api/other/task";
+import { addTask } from "@/api/other/task";
 
 export default {
   name: "AddTaskBar",
@@ -32,26 +31,26 @@ export default {
       loading: true,
       showMsg: false,
       //增加的任务名称
-      title: "",
-      // 表单校验
-      rules: {
-        title1: [
-          { required: true, message: "任务不能为空", trigger: "change" },
-        ],
-      },
+      content: "",
     };
   },
   methods: {
     /** 增加任务 */
     onAddTask() {
-      console.log(111);
-      if (!this.title) {
+      if (!this.content) {
         this.showMsg = true;
         setTimeout(() => {
           this.showMsg = false;
         }, 2000);
       } else {
         this.showMsg = false;
+        addTask({ content: this.content, type: this.selectedType }).then(
+          (response) => {
+            this.$modal.msgSuccess("新增成功");
+            this.content = "";
+            this.getTaskList();
+          }
+        );
       }
     },
   },
@@ -60,12 +59,13 @@ export default {
 <style lang="scss" scoped>
 .container {
   .addBar {
-    padding: 25px 20px;
+    padding: 20px;
     display: flex;
     align-items: center;
     font-size: 20px;
     gap: 20px;
     border-bottom: solid 1px #ddd;
+    padding-right: 25px;
     input {
       flex: 1;
       border: none;
