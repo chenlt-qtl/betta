@@ -5,7 +5,7 @@
     width="400px"
     append-to-body
     top="50vh"
-    :title="title"
+    title=""
     :showClose="false"
   >
     <el-form ref="form" label-width="0" :model="form" @submit.native.prevent>
@@ -15,7 +15,7 @@
       >
         <el-input
           type="textarea"
-          :rows="4"
+          :rows="10"
           v-model="form.content"
           placeholder="请输入任务"
         />

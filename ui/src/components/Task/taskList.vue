@@ -69,12 +69,12 @@ export default {
   watch: {
     queryParams(value, oldVal) {
       let isChange = false;
-      Object.keys(value).map(key=>{
+      Object.keys(value).map((key) => {
         if (value[key] != oldVal[key]) {
           isChange = true;
           return;
         }
-      })
+      });
       if (isChange) {
         this.pageParams = { ...this.pageParams, pageNum: 1 };
       }
@@ -124,8 +124,10 @@ export default {
   .taskList {
     flex: 1;
     font-size: 14px;
-    padding: 0;
-    margin: 0;
+    ul {
+      padding: 0;
+      margin: 0;
+    }
     .taskItem {
       padding: 5px 10px;
       display: flex;

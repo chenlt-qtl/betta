@@ -78,7 +78,7 @@ export default {
         //没有nav
         if (isMobile) {
           //手机
-          return "calc(100vh - 2px)";
+          return "calc(100vh - 28px)";
         } else {
           //电脑
           return "calc(100vh - 36px)";
