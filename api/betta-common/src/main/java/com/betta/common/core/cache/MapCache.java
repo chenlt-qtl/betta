@@ -8,25 +8,38 @@ import java.util.Map;
 @Component
 public class MapCache implements CacheUtils{
 
-    private static final Map<String,Map> map = new HashMap<>();
+    private static final Map<String,Map<String,Object>> map = new HashMap<>();
 
     @Override
-    public <T> void setObject(String key, T value) {
-
+    public <T> void setObject(String group,String key, T value) {
+        Map<String,Object> subMap;
+        if(map.containsKey(group)){
+            subMap = map.get(group);
+        }else {
+            subMap = new HashMap<>();
+            map.put(group,subMap);
+        }
+        subMap.put(key,value);
     }
 
     @Override
-    public Boolean hasKey(String key) {
+    public Boolean hasKey(String group,String key) {
+        Map<String, Object> subMap = map.get(group);
+        return subMap.containsKey(key);
+    }
+
+    @Override
+    public <T> T getObject(String group,String key) {
         return null;
     }
 
     @Override
-    public <T> T getObject(String key) {
-        return null;
+    public boolean deleteObject(String group,String key) {
+        return false;
     }
 
     @Override
-    public boolean deleteObject(String key) {
+    public boolean deleteGroup(String group) {
         return false;
     }
 }
