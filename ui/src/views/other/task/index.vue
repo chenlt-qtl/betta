@@ -79,9 +79,9 @@ export default {
     longTermData() {
       return this.taskList.filter((t) => t.type == 2);
     },
-    timeType(){
+    timeType() {
       return this.queryParams.params.timeType;
-    }
+    },
   },
   watch: {
     queryParams() {
@@ -105,7 +105,10 @@ export default {
       this.open = true;
     },
     onTimeTypeChange(timeType) {
-      this.queryParams = { ...this.queryParams, params: { ...this.queryParams.params, timeType } };
+      this.queryParams = {
+        ...this.queryParams,
+        params: { ...this.queryParams.params, timeType },
+      };
     },
   },
 };
@@ -133,6 +136,7 @@ export default {
       border-radius: 5px;
       background: #fff;
       box-shadow: 1px 1px 2px #efefef, -1px -1px 2px #efefef;
+      border: solid 1px #eee;
       background-color: rgba(64, 158, 255, 0.02);
     }
   }
