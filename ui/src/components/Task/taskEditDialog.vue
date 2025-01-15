@@ -6,6 +6,7 @@
     append-to-body
     top="50vh"
     :title="title"
+    :showClose="false"
   >
     <el-form ref="form" label-width="0" :model="form" @submit.native.prevent>
       <el-form-item
@@ -13,9 +14,10 @@
         :rules="[{ required: true, message: '任务不能为空' }]"
       >
         <el-input
+          type="textarea"
+          :rows="4"
           v-model="form.content"
           placeholder="请输入任务"
-          @keyup.enter.native="onSaveTask"
         />
       </el-form-item>
       <el-checkbox v-model="form.isLongTerm">长期任务</el-checkbox>

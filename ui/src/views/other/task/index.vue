@@ -1,5 +1,8 @@
 <template>
-  <div class="app-container" v-loading="loading">
+  <div
+    class="app-container"
+    :style="{ height: containerHeight }"
+  >
     <TopBar
       :timeType="timeType"
       :changeTimeType="onTimeTypeChange"
@@ -13,24 +16,26 @@
       :changeStatus="
         (taskStatus) => (queryParams = { ...queryParams, taskStatus })
       "
-    ></TopBar>
-    <span class="cardName">普通任务</span>
-    <el-row class="content">
+    />
+    <!-- <span class="cardName">普通任务</span> -->
+    <el-row class="content" style="flex-basis: 66%">
       <div class="card">
         <TaskList
-          :getTaskList="getList"
-          :listData="normalData"
+          :type="1"
+          :queryParams="queryParams"
           :onEditTask="onEditTask"
+          :pageSize="12"
         ></TaskList>
       </div>
     </el-row>
-    <span class="cardName">长期任务</span>
-    <el-row class="content">
+    <!-- <span class="cardName">长期任务</span> -->
+    <el-row class="content" style="flex-basis: 33%">
       <div class="card">
         <TaskList
-          :getTaskList="getList"
-          :listData="longTermData"
+          :type="2"
+          :queryParams="queryParams"
           :onEditTask="onEditTask"
+          :pageSize="5"
         ></TaskList>
       </div>
     </el-row>
@@ -38,65 +43,60 @@
       :task="task"
       :open="open"
       :setOpen="(open) => (this.open = open)"
-      :getTaskList="getList"
+      :getTaskList="() => (queryParams = { ...queryParams })"
     ></TaskEditDialog>
   </div>
 </template>
 
 <script>
-import { listTask } from "@/api/other/task";
 import TopBar from "@/components/Task/topBar.vue";
 import TaskList from "@/components/Task/taskList.vue";
 import TaskEditDialog from "@/components/Task/taskEditDialog.vue";
 
+const isMobile = document.body.getBoundingClientRect().width < 800;
 export default {
   name: "Task",
   components: { TaskList, TopBar, TaskEditDialog },
   data() {
     return {
-      // 遮罩层
-      loading: true,
-      // 任务表格数据
-      taskList: [],
       open: false,
       task: {},
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 1000,
         taskStatus: 1,
         params: { timeType: 0 },
       },
     };
   },
   computed: {
-    normalData() {
-      return this.taskList.filter((t) => t.type == 1);
-    },
-    longTermData() {
-      return this.taskList.filter((t) => t.type == 2);
-    },
     timeType() {
       return this.queryParams.params.timeType;
     },
-  },
-  watch: {
-    queryParams() {
-      this.getList();
+    containerHeight() {
+      const noBar = (this.$route.query && this.$route.query.noBar) == 1;
+      if (noBar) {
+        //没有nav
+        if (isMobile) {
+          //手机
+          return "calc(100vh - 2px)";
+        } else {
+          //电脑
+          return "calc(100vh - 36px)";
+        }
+      } else {
+        //有nav
+        if (isMobile) {
+          //手机
+          return "calc(100vh - 52px)";
+        } else {
+          //电脑
+          return "calc(100vh - 85px)";
+        }
+      }
     },
   },
-  created() {
-    this.getList();
-  },
+
   methods: {
-    /** 查询任务列表 */
-    getList() {
-      this.loading = true;
-      listTask(this.queryParams).then((response) => {
-        this.taskList = response.rows;
-        this.loading = false;
-      });
-    },
     onEditTask(task) {
       this.task = task;
       this.open = true;
@@ -113,7 +113,6 @@ export default {
 <style lang="scss" scoped>
 .app-container {
   color: #666;
-  height: calc(100vh - 85px);
   overflow: auto;
   max-width: 800px;
   margin: 0 auto;
@@ -127,7 +126,6 @@ export default {
   }
 
   .content {
-    flex: 1;
     .card {
       height: 100%;
       border-radius: 5px;

@@ -1,46 +1,104 @@
 <template>
   <div class="taskDiv" v-loading="loading">
-    <ul v-for="o in listData" :key="o.id" class="taskList">
-      <li
-        :class="`taskItem ${o.taskStatus == 2 ? 'gray' : ''}`"
-        @click="() => onEditTask(o)"
-      >
-        <div class="taskName">
-          {{ o.content }}
-        </div>
-        <span>
-          <el-button
-            round
-            size="mini"
-            v-if="o.taskStatus == 1"
-            @click="(e) => onChangeStatus(o, 2, e)"
-            >完成</el-button
-          >
-          <el-button
-            round
-            size="mini"
-            v-if="o.taskStatus == 2"
-            @click="(e) => onChangeStatus(o, 1, e)"
-            >重启</el-button
-          >
-        </span>
-      </li>
-    </ul>
+    <span class="taskList">
+      <ul>
+        <li
+          v-for="o in listData"
+          :key="o.id"
+          :class="`taskItem ${o.taskStatus == 2 ? 'gray' : ''}`"
+          @click="() => onEditTask(o)"
+        >
+          <div class="taskName">
+            {{ o.content }}
+          </div>
+          <span>
+            <el-button
+              type="primary"
+              round
+              size="mini"
+              v-if="o.taskStatus == 1"
+              @click="(e) => onChangeStatus(o, 2, e)"
+              icon="el-icon-check"
+              title="完成"
+              plain
+            ></el-button>
+            <el-button
+              type="success"
+              round
+              plain
+              size="mini"
+              v-if="o.taskStatus == 2"
+              @click="(e) => onChangeStatus(o, 1, e)"
+              icon="el-icon-refresh"
+              title="重启"
+            ></el-button>
+          </span>
+        </li>
+      </ul>
+    </span>
+    <el-pagination
+      style="text-align: right"
+      :hide-on-single-page="total <= pageSize"
+      small
+      @current-change="handleCurrentChange"
+      :current-page.sync="pageParams.pageNum"
+      :page-size="pageSize"
+      layout="prev, pager, next"
+      :total="total"
+    >
+    </el-pagination>
   </div>
 </template>
 
 <script>
-import { updateTask } from "@/api/other/task";
+import { updateTask, listTask } from "@/api/other/task";
 export default {
   name: "TaskList",
-  props: ["getTaskList", "listData", "onEditTask"], 
+  props: ["queryParams", "onEditTask", "type", "pageSize"],
   data() {
     return {
       // 遮罩层
       loading: false,
+      listData: [],
+      total: 0,
+      pageParams: {
+        pageNum: 1,
+      },
     };
   },
+  watch: {
+    queryParams(value, oldVal) {
+      let isChange = false;
+      Object.keys(value).map(key=>{
+        if (value[key] != oldVal[key]) {
+          isChange = true;
+          return;
+        }
+      })
+      if (isChange) {
+        this.pageParams = { ...this.pageParams, pageNum: 1 };
+      }
+      this.getList();
+    },
+  },
+  created() {
+    this.getList();
+  },
   methods: {
+    getList() {
+      this.loading = true;
+      //普通任务
+      listTask({
+        ...this.queryParams,
+        ...this.pageParams,
+        type: this.type,
+        pageSize: this.pageSize,
+      }).then((response) => {
+        this.listData = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+    },
     onChangeStatus(task, taskStatus, e) {
       e.preventDefault();
       e.stopPropagation();
@@ -48,15 +106,23 @@ export default {
       updateTask({ ...task, taskStatus }).then((response) => {
         this.loading = false;
         this.$modal.msgSuccess("修改成功");
-        this.getTaskList();
+        this.getList();
       });
+    },
+    handleCurrentChange(current) {
+      this.pageParams = { ...this.pageParams, pageNum: current };
+      this.getList();
     },
   },
 };
 </script>
 <style lang="scss" scoped>
 .taskDiv {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .taskList {
+    flex: 1;
     font-size: 14px;
     padding: 0;
     margin: 0;
@@ -69,6 +135,9 @@ export default {
 
       .taskName {
         flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
     .gray {
