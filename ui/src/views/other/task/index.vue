@@ -9,13 +9,11 @@
           open = true;
         }
       "
-    ></TopBar>
-    <TaskTabs
       :taskStatus="queryParams.taskStatus"
       :changeStatus="
         (taskStatus) => (queryParams = { ...queryParams, taskStatus })
       "
-    ></TaskTabs>
+    ></TopBar>
     <span class="cardName">普通任务</span>
     <el-row class="content">
       <div class="card">
@@ -49,12 +47,11 @@
 import { listTask } from "@/api/other/task";
 import TopBar from "@/components/Task/topBar.vue";
 import TaskList from "@/components/Task/taskList.vue";
-import TaskTabs from "@/components/Task/taskTabs.vue";
 import TaskEditDialog from "@/components/Task/taskEditDialog.vue";
 
 export default {
   name: "Task",
-  components: { TaskList, TopBar, TaskTabs, TaskEditDialog },
+  components: { TaskList, TopBar, TaskEditDialog },
   data() {
     return {
       // 遮罩层

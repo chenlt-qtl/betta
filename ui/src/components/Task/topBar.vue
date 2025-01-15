@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <el-radio-group :value="taskStatus" size="mini" @input="changeStatus">
+      <el-radio-button label="0">所有</el-radio-button>
+      <el-radio-button label="1">进行中</el-radio-button>
+      <el-radio-button label="2">已完成</el-radio-button>
+    </el-radio-group>
     <el-radio-group :value="timeType" size="mini" @input="changeTimeType">
       <el-radio-button label="0">所有</el-radio-button>
       <el-radio-button label="1">本周</el-radio-button>
@@ -18,7 +23,7 @@
 <script>
 export default {
   name: "TopBar",
-  props: ["timeType", "changeTimeType", "openDialog"],
+  props: ["timeType", "changeTimeType", "openDialog","taskStatus", "changeStatus"],
   data() {
     return {};
   },
