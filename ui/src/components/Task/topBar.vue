@@ -7,8 +7,8 @@
     </el-radio-group>
     <el-radio-group :value="timeType" size="mini" @input="changeTimeType">
       <el-radio-button label="0">All</el-radio-button>
-      <el-radio-button label="1">本周</el-radio-button>
       <el-radio-button label="2">本月</el-radio-button>
+      <el-radio-button label="1">本周</el-radio-button>
     </el-radio-group>
     <el-button
       size="mini"
