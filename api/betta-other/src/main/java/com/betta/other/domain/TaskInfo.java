@@ -30,4 +30,7 @@ public class TaskInfo extends BaseEntity
     @Excel(name = "备注")
     private String comment;
 
+    //任务状态
+    private Long taskStatus;
+
 }

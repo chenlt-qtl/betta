@@ -1,61 +1,91 @@
 <template>
-  <div class="app-container">
-    <div class="topTitle">任务中心</div>
-    <div class="tabDiv">
-      <ul class="tabs">
-        <li
-          v-for="(o, index) in ['进行中', '待完成', '已完成']"
-          :key="o"
-          :class="`tab ${selectedType == index + 1 ? 'active' : ''}`"
-          @click="() => handleTabClick(index + 1)"
-        >
-          {{ o }}
-        </li>
-      </ul>
-      <span
-        class="line"
-        :style="{ left: 33 * (selectedType - 0.5) - 1 + '%' }"
-      ></span>
-    </div>
-
+  <div class="app-container" v-loading="loading">
+    <TopBar
+      :timeType="timeType"
+      :changeTimeType="onTimeTypeChange"
+      :openDialog="
+        () => {
+          task = {};
+          open = true;
+        }
+      "
+    ></TopBar>
+    <TaskTabs
+      :taskStatus="queryParams.taskStatus"
+      :changeStatus="
+        (taskStatus) => (queryParams = { ...queryParams, taskStatus })
+      "
+    ></TaskTabs>
+    <span class="cardName">普通任务</span>
     <el-row class="content">
       <div class="card">
-        <AddTaskBar :selectedType="selectedType" :getTaskList="getList" />
         <TaskList
-          :selectedType="selectedType"
           :getTaskList="getList"
-          :listData="listData"
+          :listData="normalData"
+          :onEditTask="onEditTask"
         ></TaskList>
       </div>
     </el-row>
+    <span class="cardName">长期任务</span>
+    <el-row class="content">
+      <div class="card">
+        <TaskList
+          :getTaskList="getList"
+          :listData="longTermData"
+          :onEditTask="onEditTask"
+        ></TaskList>
+      </div>
+    </el-row>
+    <TaskEditDialog
+      :task="task"
+      :open="open"
+      :setOpen="(open) => (this.open = open)"
+      :getTaskList="getList"
+    ></TaskEditDialog>
   </div>
 </template>
 
 <script>
 import { listTask } from "@/api/other/task";
-import AddTaskBar from "@/components/Task/addTaskBar.vue";
+import TopBar from "@/components/Task/topBar.vue";
 import TaskList from "@/components/Task/taskList.vue";
+import TaskTabs from "@/components/Task/taskTabs.vue";
+import TaskEditDialog from "@/components/Task/taskEditDialog.vue";
+
 export default {
   name: "Task",
-  components: { AddTaskBar, TaskList },
+  components: { TaskList, TopBar, TaskTabs, TaskEditDialog },
   data() {
     return {
-      //正在查看的类型 1进行中 2待完成 3已完成
-      selectedType: 1,
       // 遮罩层
       loading: true,
       // 任务表格数据
       taskList: [],
+      open: false,
+      task: {},
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 1000,
+        taskStatus: 1,
+        params: { timeType: 0 },
       },
     };
   },
   computed: {
-    listData() {
-      return this.taskList.filter((t) => t.type == this.selectedType);
+    normalData() {
+      return this.taskList.filter((t) => t.type == 1);
+    },
+    longTermData() {
+      return this.taskList.filter((t) => t.type == 2);
+    },
+    timeType(){
+      return this.queryParams.params.timeType;
+    }
+  },
+  watch: {
+    queryParams() {
+      this.getList();
     },
   },
   created() {
@@ -70,81 +100,40 @@ export default {
         this.loading = false;
       });
     },
-    handleTabClick(value) {
-      this.selectedType = value;
+    onEditTask(task) {
+      this.task = task;
+      this.open = true;
+    },
+    onTimeTypeChange(timeType) {
+      this.queryParams = { ...this.queryParams, params: { ...this.queryParams.params, timeType } };
     },
   },
 };
 </script>
 <style lang="scss" scoped>
 .app-container {
+  color: #666;
   height: calc(100vh - 85px);
   overflow: auto;
   max-width: 800px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 0;
-  .topTitle {
-    color: #fff;
-    text-align: center;
-    font-size: 24px;
-    font-weight: 600;
-    padding: 20px 0 30px 0;
-    background-color: rgba(64, 158, 255, 0.8);
+  gap: 10px;
+  padding: 10px 20px;
+
+  .cardName {
+    font-weight: 700;
   }
 
-  .tabDiv {
-    position: relative;
-    padding-top: 20px;
-    padding-bottom: 5px;
-    background-color: rgba(64, 158, 255, 0.8);
-    .tabs {
-      color: #fff;
-      padding: 0;
-      margin: 0;
-      list-style: none;
-      padding-bottom: 5px;
-      display: flex;
-      .tab {
-        cursor: pointer;
-        padding: 0;
-        margin: 0;
-        width: 33%;
-        text-align: center;
-        line-height: 30px;
-        font-weight: 100;
-      }
-      .active {
-        font-weight: 600;
-        transform: scale(1.2);
-      }
-      transition: all 0.5s;
-    }
-    .line {
-      position: absolute;
-      height: 3px;
-      width: 2%;
-      background-color: #fff;
-      border-radius: 10px;
-      transition: all 0.3s;
-    }
-  }
   .content {
-    background-image: linear-gradient(
-      0deg,
-      rgba(64, 158, 255, 0.05) 90%,
-      rgba(64, 158, 255, 0.6) 91%,
-      rgba(64, 158, 255, 0.8) 100%
-    );
     flex: 1;
-    padding: 10px;
-
     .card {
       height: 100%;
       border-radius: 5px;
       background: #fff;
       box-shadow: 1px 1px 2px #efefef, -1px -1px 2px #efefef;
+      background-color: rgba(64, 158, 255, 0.02);
     }
   }
 }
