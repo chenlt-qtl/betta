@@ -8,4 +8,6 @@ public interface CacheUtils {
     public <T> T getObject(final String group, final String key);
 
     public boolean deleteObject(final String group, final String key);
+
+    public boolean deleteGroup(final String group);
 }
