@@ -1,9 +1,12 @@
 package com.betta.framework.interceptor.impl;
 
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
+
+import com.betta.common.core.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -34,7 +37,7 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
     private String header;
 
     @Autowired
-    private RedisCache redisCache;
+    private CacheUtils cache;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -65,7 +68,7 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
         // 唯一标识（指定key + url + 消息头）
         String cacheRepeatKey = CacheConstants.REPEAT_SUBMIT_KEY + url + submitKey;
 
-        Object sessionObj = redisCache.getCacheObject(cacheRepeatKey);
+        Object sessionObj = cache.getObject(cacheRepeatKey);
         if (sessionObj != null)
         {
             Map<String, Object> sessionMap = (Map<String, Object>) sessionObj;
@@ -80,7 +83,7 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
         }
         Map<String, Object> cacheMap = new HashMap<String, Object>();
         cacheMap.put(url, nowDataMap);
-        redisCache.setCacheObject(cacheRepeatKey, cacheMap, annotation.interval(), TimeUnit.MILLISECONDS);
+        cache.setObject(cacheRepeatKey, cacheMap, annotation.interval(), ChronoUnit.MILLIS);
         return false;
     }
 

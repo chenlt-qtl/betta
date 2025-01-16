@@ -2,10 +2,13 @@ package com.betta.web.controller.common;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+
+import com.betta.common.core.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +38,7 @@ public class CaptchaController
     private Producer captchaProducerMath;
 
     @Autowired
-    private RedisCache redisCache;
+    private CacheUtils cache;
     
     @Autowired
     private ISysConfigService configService;
@@ -75,7 +78,7 @@ public class CaptchaController
             image = captchaProducer.createImage(capStr);
         }
 
-        redisCache.setCacheObject(verifyKey, code, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
+        cache.setObject(verifyKey, code, Constants.CAPTCHA_EXPIRATION, ChronoUnit.MINUTES);
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try

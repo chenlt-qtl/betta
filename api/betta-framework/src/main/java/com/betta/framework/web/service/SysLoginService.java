@@ -1,6 +1,8 @@
 package com.betta.framework.web.service;
 
 import javax.annotation.Resource;
+
+import com.betta.common.core.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,7 +46,7 @@ public class SysLoginService
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private RedisCache redisCache;
+    private CacheUtils cache;
     
     @Autowired
     private ISysUserService userService;
@@ -114,8 +116,8 @@ public class SysLoginService
         if (captchaEnabled)
         {
             String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
-            String captcha = redisCache.getCacheObject(verifyKey);
-            redisCache.deleteObject(verifyKey);
+            String captcha = cache.getObject(verifyKey);
+            cache.deleteObject(verifyKey);
             if (captcha == null)
             {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire")));

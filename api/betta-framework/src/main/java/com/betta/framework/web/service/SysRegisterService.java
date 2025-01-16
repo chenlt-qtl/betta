@@ -1,5 +1,6 @@
 package com.betta.framework.web.service;
 
+import com.betta.common.core.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.betta.common.constant.CacheConstants;
@@ -33,7 +34,7 @@ public class SysRegisterService
     private ISysConfigService configService;
 
     @Autowired
-    private RedisCache redisCache;
+    private CacheUtils cache;
 
     /**
      * 注册
@@ -101,8 +102,8 @@ public class SysRegisterService
     public void validateCaptcha(String username, String code, String uuid)
     {
         String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
-        String captcha = redisCache.getCacheObject(verifyKey);
-        redisCache.deleteObject(verifyKey);
+        String captcha = cache.getObject(verifyKey);
+        cache.deleteObject(verifyKey);
         if (captcha == null)
         {
             throw new CaptchaExpireException();

@@ -1,6 +1,9 @@
 package com.betta.framework.web.service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
+
+import com.betta.common.core.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -22,7 +25,7 @@ import com.betta.framework.security.context.AuthenticationContextHolder;
 public class SysPasswordService
 {
     @Autowired
-    private RedisCache redisCache;
+    private CacheUtils cache;
 
     @Value(value = "${user.password.maxRetryCount}")
     private int maxRetryCount;
@@ -47,7 +50,7 @@ public class SysPasswordService
         String username = usernamePasswordAuthenticationToken.getName();
         String password = usernamePasswordAuthenticationToken.getCredentials().toString();
 
-        Integer retryCount = redisCache.getCacheObject(getCacheKey(username));
+        Integer retryCount = cache.getObject(getCacheKey(username));
 
         if (retryCount == null)
         {
@@ -62,7 +65,7 @@ public class SysPasswordService
         if (!matches(user, password))
         {
             retryCount = retryCount + 1;
-            redisCache.setCacheObject(getCacheKey(username), retryCount, lockTime, TimeUnit.MINUTES);
+            cache.setObject(getCacheKey(username), retryCount, lockTime, ChronoUnit.MINUTES);
             throw new UserPasswordNotMatchException();
         }
         else
@@ -78,9 +81,9 @@ public class SysPasswordService
 
     public void clearLoginRecordCache(String loginName)
     {
-        if (redisCache.hasKey(getCacheKey(loginName)))
+        if (cache.hasKey(getCacheKey(loginName)))
         {
-            redisCache.deleteObject(getCacheKey(loginName));
+            cache.deleteObject(getCacheKey(loginName));
         }
     }
 }
