@@ -32,8 +32,6 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Autowired
     private CacheUtils cache;
 
-    private static final String GROUP = "config";
-
     /**
      * 项目启动时，初始化参数到缓存
      */
@@ -67,7 +65,7 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Override
     public String selectConfigByKey(String configKey)
     {
-        String configValue = Convert.toStr(cache.getObject(GROUP,getCacheKey(configKey)));
+        String configValue = Convert.toStr(cache.getObject(getCacheKey(configKey)));
         if (StringUtils.isNotEmpty(configValue))
         {
             return configValue;
@@ -77,7 +75,7 @@ public class SysConfigServiceImpl implements ISysConfigService
         SysConfig retConfig = configMapper.selectConfig(config);
         if (StringUtils.isNotNull(retConfig))
         {
-            cache.setObject(GROUP,getCacheKey(configKey), retConfig.getConfigValue());
+            cache.setObject(getCacheKey(configKey), retConfig.getConfigValue());
             return retConfig.getConfigValue();
         }
         return StringUtils.EMPTY;
@@ -123,7 +121,7 @@ public class SysConfigServiceImpl implements ISysConfigService
         int row = configMapper.insertConfig(config);
         if (row > 0)
         {
-            cache.setObject(GROUP,getCacheKey(config.getConfigKey()), config.getConfigValue());
+            cache.setObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
         }
         return row;
     }
@@ -140,13 +138,13 @@ public class SysConfigServiceImpl implements ISysConfigService
         SysConfig temp = configMapper.selectConfigById(config.getConfigId());
         if (!StringUtils.equals(temp.getConfigKey(), config.getConfigKey()))
         {
-            cache.deleteObject(GROUP,getCacheKey(temp.getConfigKey()));
+            cache.deleteObject(getCacheKey(temp.getConfigKey()));
         }
 
         int row = configMapper.updateConfig(config);
         if (row > 0)
         {
-            cache.setObject(GROUP,getCacheKey(config.getConfigKey()), config.getConfigValue());
+            cache.setObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
         }
         return row;
     }
@@ -167,7 +165,7 @@ public class SysConfigServiceImpl implements ISysConfigService
                 throw new ApiException(String.format("内置参数【%1$s】不能删除 ", config.getConfigKey()));
             }
             configMapper.deleteConfigById(configId);
-            cache.deleteObject(GROUP,getCacheKey(config.getConfigKey()));
+            cache.deleteObject(getCacheKey(config.getConfigKey()));
         }
     }
 
@@ -180,7 +178,7 @@ public class SysConfigServiceImpl implements ISysConfigService
         List<SysConfig> configsList = configMapper.selectConfigList(new SysConfig());
         for (SysConfig config : configsList)
         {
-            cache.setObject(GROUP,getCacheKey(config.getConfigKey()), config.getConfigValue());
+            cache.setObject(getCacheKey(config.getConfigKey()), config.getConfigValue());
         }
     }
 
@@ -190,7 +188,8 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Override
     public void clearConfigCache()
     {
-        cache.deleteGroup(GROUP);
+        Collection<String> keys = cache.keys(CacheConstants.SYS_CONFIG_KEY);
+        cache.deleteObject(keys);
     }
 
     /**

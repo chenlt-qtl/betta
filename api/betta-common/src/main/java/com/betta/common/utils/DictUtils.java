@@ -1,12 +1,12 @@
 package com.betta.common.utils;
 
+import com.betta.common.constant.CacheConstants;
+import com.betta.common.core.cache.CacheUtils;
+import com.betta.common.core.domain.entity.SysDictData;
+import com.betta.common.utils.spring.SpringUtils;
+
 import java.util.Collection;
 import java.util.List;
-import com.alibaba.fastjson2.JSONArray;
-import com.betta.common.constant.CacheConstants;
-import com.betta.common.core.domain.entity.SysDictData;
-import com.betta.common.core.cache.redis.RedisCache;
-import com.betta.common.utils.spring.SpringUtils;
 
 /**
  * 字典工具类
@@ -28,7 +28,7 @@ public class DictUtils
      */
     public static void setDictCache(String key, List<SysDictData> dictDatas)
     {
-        SpringUtils.getBean(RedisCache.class).setCacheObject(getCacheKey(key), dictDatas);
+        SpringUtils.getBean(CacheUtils.class).setObject(getCacheKey(key), dictDatas);
     }
 
     /**
@@ -39,10 +39,10 @@ public class DictUtils
      */
     public static List<SysDictData> getDictCache(String key)
     {
-        JSONArray arrayCache = SpringUtils.getBean(RedisCache.class).getCacheObject(getCacheKey(key));
+        List<SysDictData> arrayCache = SpringUtils.getBean(CacheUtils.class).getObject(getCacheKey(key));
         if (StringUtils.isNotNull(arrayCache))
         {
-            return arrayCache.toList(SysDictData.class);
+            return arrayCache;
         }
         return null;
     }
@@ -161,7 +161,7 @@ public class DictUtils
      */
     public static void removeDictCache(String key)
     {
-        SpringUtils.getBean(RedisCache.class).deleteObject(getCacheKey(key));
+        SpringUtils.getBean(CacheUtils.class).deleteObject(getCacheKey(key));
     }
 
     /**
@@ -169,8 +169,8 @@ public class DictUtils
      */
     public static void clearDictCache()
     {
-        Collection<String> keys = SpringUtils.getBean(RedisCache.class).keys(CacheConstants.SYS_DICT_KEY + "*");
-        SpringUtils.getBean(RedisCache.class).deleteObject(keys);
+        Collection<String> keys = SpringUtils.getBean(CacheUtils.class).keys(CacheConstants.SYS_DICT_KEY);
+        SpringUtils.getBean(CacheUtils.class).deleteObject(keys);
     }
 
     /**

@@ -1,13 +1,20 @@
 package com.betta.common.core.cache;
 
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+
 public interface CacheUtils {
-    public <T> void setObject(final String group, final String key, final T value);
+    public <T> void setObject(final String key, final T value);
 
-    public Boolean hasKey(final String group, String key);
+    public Boolean hasKey(String key);
 
-    public <T> T getObject(final String group, final String key);
+    public <T> T getObject(final String key);
 
-    public boolean deleteObject(final String group, final String key);
+    public void deleteObject(final String key);
 
-    public boolean deleteGroup(final String group);
+    public void deleteObject(Collection<String> keys);
+
+    public <T> void setObject(final String key, final T value, final Integer timeout, final ChronoUnit timeUnit);
+
+    public Collection<String> keys(final String pattern);
 }

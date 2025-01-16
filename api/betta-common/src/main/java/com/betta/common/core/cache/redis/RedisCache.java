@@ -1,11 +1,14 @@
 package com.betta.common.core.cache.redis;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import com.betta.common.core.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -20,7 +23,7 @@ import org.springframework.stereotype.Component;
  **/
 @SuppressWarnings(value = { "unchecked", "rawtypes" })
 //@Component
-public class RedisCache
+public class RedisCache implements CacheUtils
 {
     @Autowired
     public RedisTemplate redisTemplate;
@@ -31,7 +34,8 @@ public class RedisCache
      * @param key 缓存的键值
      * @param value 缓存的值
      */
-    public <T> void setCacheObject(final String key, final T value)
+    @Override
+    public <T> void setObject(final String key, final T value)
     {
         redisTemplate.opsForValue().set(key, value);
     }
@@ -44,9 +48,10 @@ public class RedisCache
      * @param timeout 时间
      * @param timeUnit 时间颗粒度
      */
-    public <T> void setCacheObject(final String key, final T value, final Integer timeout, final TimeUnit timeUnit)
+    @Override
+    public <T> void setObject(final String key, final T value, final Integer timeout, final ChronoUnit timeUnit)
     {
-        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+        redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.of(timeUnit));
     }
 
     /**
@@ -85,16 +90,19 @@ public class RedisCache
         return redisTemplate.getExpire(key);
     }
 
+
     /**
      * 判断 key是否存在
      *
      * @param key 键
      * @return true 存在 false不存在
      */
+    @Override
     public Boolean hasKey(String key)
     {
         return redisTemplate.hasKey(key);
     }
+
 
     /**
      * 获得缓存的基本对象。
@@ -102,7 +110,8 @@ public class RedisCache
      * @param key 缓存键值
      * @return 缓存键值对应的数据
      */
-    public <T> T getCacheObject(final String key)
+    @Override
+    public <T> T getObject(final String key)
     {
         ValueOperations<String, T> operation = redisTemplate.opsForValue();
         return operation.get(key);
@@ -113,10 +122,12 @@ public class RedisCache
      *
      * @param key
      */
-    public boolean deleteObject(final String key)
+    @Override
+    public void deleteObject(final String key)
     {
-        return redisTemplate.delete(key);
+        redisTemplate.delete(key);
     }
+
 
     /**
      * 删除集合对象
@@ -124,9 +135,10 @@ public class RedisCache
      * @param collection 多个对象
      * @return
      */
-    public boolean deleteObject(final Collection collection)
+    @Override
+    public void deleteObject(final Collection collection)
     {
-        return redisTemplate.delete(collection) > 0;
+        redisTemplate.delete(collection);
     }
 
     /**
@@ -261,8 +273,9 @@ public class RedisCache
      * @param pattern 字符串前缀
      * @return 对象列表
      */
+    @Override
     public Collection<String> keys(final String pattern)
     {
-        return redisTemplate.keys(pattern);
+        return redisTemplate.keys(pattern+"*");
     }
 }
