@@ -7,14 +7,18 @@
             type="danger"
             icon="el-icon-delete"
             size="mini"
-            @click="()=>handleDeleteRel(slotProps.relIds)"
-            :disabled="slotProps.relIds.length==0"
+            @click="() => handleDeleteRel(slotProps.relIds)"
+            :disabled="slotProps.relIds.length == 0"
             >删除</el-button
           >
         </el-col>
         <slot name="rightBar"></slot>
       </template>
       <template v-slot:tableBtn="slotProps">
+        <view-word-btn
+          :wordName="slotProps.word.wordName"
+          style="padding-right: 10px"
+        ></view-word-btn>
         <el-button
           size="mini"
           type="text"
@@ -30,10 +34,11 @@
 <script>
 import { delArticleWordRel } from "@/api/eng/articleWordRel";
 import WordTable from "./wordTable";
+import ViewWordBtn from "../btns/viewWordBtn";
 
 export default {
   props: ["listData", "loading", "articleId", "getWordList", "play"],
-  components: { WordTable },
+  components: { WordTable, ViewWordBtn },
   data() {
     return {};
   },

@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.betta.eng.mapper.EngSentenceMapper">
     
-    <resultMap type="EngSentence" id="EngSentenceResult">
+    <resultMap type="SentenceVo" id="EngSentenceResult">
         <result property="id"    column="id"    />
         <result property="articleId"    column="article_id"    />
         <result property="articleName"    column="article_name"    />
@@ -27,15 +27,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectByWordTop10" resultMap="EngSentenceResult">
-        <include refid="selectEngSentenceVo"/>
-        <where>
-            <if test="wordName != null  and wordName != ''"> and content like concat('%',#{wordName},'%')</if>
-            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
-        </where>
-        order by idx limit 10
+        select eng_sentence.id, content, acceptation, eng_sentence.mp3, eng_sentence.mp3_time,eng_article.title  as article_name
+        from eng_sentence join eng_article on eng_sentence.article_id = eng_article.id
+        ${ew.customSqlSegment}
     </select>
-
-
 
     <select id="selectPlayList" parameterType="EngSentence" resultMap="EngSentenceResult">
         select eng_sentence.id,content,eng_sentence.mp3,eng_article_group.name as group_name,eng_article.title  as article_name

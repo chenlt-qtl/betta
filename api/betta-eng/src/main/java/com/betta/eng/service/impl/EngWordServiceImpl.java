@@ -6,6 +6,7 @@ import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.*;
 import com.betta.eng.domain.vo.EngWordVo;
+import com.betta.eng.domain.vo.SentenceVo;
 import com.betta.eng.mapper.EngWordMapper;
 import com.betta.eng.service.*;
 import com.betta.eng.utils.dict.DictUtils;
@@ -101,7 +102,7 @@ public class EngWordServiceImpl implements IEngWordService {
         engWordVo.setIcibaSentenceList(icibaSentences);
 
         //查询自定义例句
-        List<EngSentence> sentences = sentenceService.selectByWordTop10(wordName);
+        List<SentenceVo> sentences = sentenceService.selectByWordTop10(wordName);
         engWordVo.setSentenceList(sentences);
 
         //查询是否已关联

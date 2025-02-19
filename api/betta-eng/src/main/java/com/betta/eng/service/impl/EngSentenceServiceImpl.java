@@ -9,6 +9,7 @@ import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngSentence;
 import com.betta.eng.domain.PlayList;
 import com.betta.eng.domain.dojo.BatchAddSentences;
+import com.betta.eng.domain.vo.SentenceVo;
 import com.betta.eng.mapper.EngSentenceMapper;
 import com.betta.eng.service.IEngSentenceService;
 import com.betta.eng.service.IPlayListService;
@@ -104,14 +105,14 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
     }
 
     @Override
-    public List<EngSentence> selectByWordTop10(String wordName) {
-        LambdaQueryWrapper<EngSentence> wrapper = new LambdaQueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(wordName),EngSentence::getContent,wordName);
-        wrapper.like(EngSentence::getCreateBy,SecurityUtils.getUsername());
-        wrapper.orderByAsc(EngSentence::getIdx);
+    public List<SentenceVo> selectByWordTop10(String wordName) {
+        QueryWrapper<EngSentence> wrapper = new QueryWrapper<>();
+        wrapper.like(StrUtil.isNotBlank(wordName),"content",wordName);
+        wrapper.like("eng_sentence.create_by",SecurityUtils.getUsername());
+        wrapper.orderByAsc("idx");
         wrapper.last("limit 10");
 
-        return engSentenceMapper.selectList (wrapper);
+        return engSentenceMapper.selectByWordTop10(wrapper);
     }
 
     /**

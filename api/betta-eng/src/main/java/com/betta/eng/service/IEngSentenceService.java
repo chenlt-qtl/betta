@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.betta.eng.domain.EngSentence;
 import com.betta.eng.domain.dojo.BatchAddSentences;
+import com.betta.eng.domain.vo.SentenceVo;
 
 /**
  * 文章句子Service接口
@@ -33,7 +34,7 @@ public interface IEngSentenceService extends IService<EngSentence> {
      * @param wordName
      * @return
      */
-    List<EngSentence> selectByWordTop10(String wordName);
+    List<SentenceVo> selectByWordTop10(String wordName);
 
     /**
      * 批量增加句子

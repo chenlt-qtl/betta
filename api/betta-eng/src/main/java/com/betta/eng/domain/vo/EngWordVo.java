@@ -29,6 +29,6 @@ public class EngWordVo extends EngWord
     /**
      * 自定义例句
      */
-    private List<EngSentence> sentenceList;
+    private List<SentenceVo> sentenceList;
 
 }
