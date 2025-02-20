@@ -1,6 +1,10 @@
 <template>
   <div class="timer-container">
     <div class="header">
+      <el-button size="mini" type="text" @click="() => setTime(30, 10)">30-10</el-button>
+      <el-button size="mini" type="text" @click="() => setTime(45, 12)">45-12</el-button>
+    </div>
+    <div class="header">
       <span
         >上课时长:
         <el-input-number
@@ -22,7 +26,11 @@
       <div>
         <el-button @click="startClass">开始上课</el-button>
         <el-button @click="stop">暂停/继续</el-button>
-        <el-popconfirm style="margin-left:10px" :disabled="!isRun" title="确认要重置?" @confirm="reset"
+        <el-popconfirm
+          style="margin-left: 10px"
+          :disabled="!isRun"
+          title="确认要重置?"
+          @confirm="reset"
           ><el-button :disabled="!isRun" slot="reference"
             >重置</el-button
           ></el-popconfirm
@@ -69,6 +77,10 @@ export default {
     clearInterval(intervalIndex);
   },
   methods: {
+    setTime(classDuration, afterClassDuration) {
+      this.classDuration = classDuration;
+      this.afterClassDuration = afterClassDuration;
+    },
     startClass() {
       clearInterval(intervalIndex);
       intervalIndex = null;
@@ -138,10 +150,10 @@ export default {
 .timer-container {
   max-width: 800px;
   margin: 20px auto;
-  
 
   .header {
     display: flex;
+    padding-bottom: 20px;
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
