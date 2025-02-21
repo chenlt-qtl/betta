@@ -22,9 +22,9 @@ public class EngUserScore extends EngWord
     @Excel(name = "单词内容")
     private String wordName;
 
-    /** 熟悉度越高越熟悉，0为最低 */
-    @Excel(name = "熟悉度越高越熟悉，0为最低")
-    private int familiarity = 0;
+    /** 熟悉度越高越熟悉 */
+    @Excel(name = "熟悉度越高越熟悉")
+    private Integer familiarity;
 
     /**  */
     @Excel(name = "")

@@ -30,7 +30,7 @@ export default {
       this.$emit("next");
     },
     back() {
-      this.$router.push("/eng/article");
+      this.$router.push("/eng/article/list");
     },
   },
 };
