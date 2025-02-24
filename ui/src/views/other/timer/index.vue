@@ -1,8 +1,12 @@
 <template>
   <div class="timer-container">
     <div class="header">
-      <el-button size="mini" type="text" @click="() => setTime(30, 10)">30-10</el-button>
-      <el-button size="mini" type="text" @click="() => setTime(45, 12)">45-12</el-button>
+      <el-button size="mini" type="text" @click="() => setTime(30, 10)"
+        >30-10</el-button
+      >
+      <el-button size="mini" type="text" @click="() => setTime(45, 12)"
+        >45-12</el-button
+      >
     </div>
     <div class="header">
       <span
@@ -57,6 +61,11 @@
 <script>
 import { play } from "@/utils/audio";
 
+const times = [
+  { start: { hour: 8, mins: 30 }, end: { hour: 12, mins: 0 } },
+  { start: { hour: 13, mins: 30 }, end: { hour: 21, mins: 30 } },
+];
+
 let intervalIndex, restTime;
 export default {
   data() {
@@ -88,15 +97,36 @@ export default {
       this.startInterval(true);
     },
     soundEffect(inClass) {
-      let mp3;
-      if (inClass) {
-        //上课
-        mp3 = "5c892db31ad7e23153.mp3";
-      } else {
-        //下课
-        mp3 = "5c892db3b1b9a62189.mp3";
+      if (this.checkTime()) {
+        let mp3;
+        if (inClass) {
+          //上课
+          mp3 = "5c892db31ad7e23153.mp3";
+        } else {
+          //下课
+          mp3 = "5c892db3b1b9a62189.mp3";
+        }
+        play("/profile/sys/mp3/" + mp3);
       }
-      play("/profile/sys/mp3/" + mp3);
+    },
+    //校验是否是有效时间
+    checkTime() {
+      const now = new Date();
+
+      let canPlay = false;
+      times.forEach(({ start, end }) => {
+        const startDate = new Date();
+        startDate.setHours(start.hour);
+        startDate.setMinutes(start.mins);
+        const endDate = new Date();
+        endDate.setHours(end.hour);
+        endDate.setMinutes(end.mins);
+        if (startDate <= now && now <= endDate) {
+          canPlay = true;
+          return;
+        }
+      });
+      return canPlay;
     },
     stop() {
       if (intervalIndex) {
