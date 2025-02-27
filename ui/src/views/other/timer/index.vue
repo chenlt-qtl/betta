@@ -125,7 +125,11 @@ export default {
         if (inClass) {
           //上课
           play("/profile/sys/mp3/5c892db31ad7e23153.mp3");
-          this.$refs.videoPlayer&&this.$refs.videoPlayer.removeEventListener("pause", this.playVideo);
+          if(this.$refs.videoPlayer){
+            this.$refs.videoPlayer.removeEventListener("pause", this.playVideo);
+            this.$refs.videoPlayer.pause();
+          }
+          this.open=false;
         } else {
           //下课
           play("/profile/sys/mp3/5c892db3b1b9a62189.mp3");
