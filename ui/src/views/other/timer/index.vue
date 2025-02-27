@@ -63,8 +63,11 @@ import { play } from "@/utils/audio";
 
 const times = [
   { start: { hour: 8, mins: 30 }, end: { hour: 12, mins: 0 } },
-  { start: { hour: 13, mins: 30 }, end: { hour: 21, mins: 30 } },
+  { start: { hour: 13, mins: 0 }, end: { hour: 21, mins: 30 } },
 ];
+
+const musics = ["music1.mp3","lonely.mp3","music1.mp3"]
+let musicIdx = 0;
 
 let intervalIndex, restTime;
 export default {
@@ -98,15 +101,23 @@ export default {
     },
     soundEffect(inClass) {
       if (this.checkTime()) {
-        let mp3;
         if (inClass) {
           //上课
-          mp3 = "5c892db31ad7e23153.mp3";
+          const player = play("/profile/sys/mp3/5c892db31ad7e23153.mp3");
+          player.removeEventListener("pause",this.playMusic)
         } else {
           //下课
-          mp3 = "5c892db3b1b9a62189.mp3";
+          const player = play("/profile/sys/mp3/5c892db3b1b9a62189.mp3");
+          player.addEventListener("pause", this.playMusic);
+ 
         }
-        play("/profile/sys/mp3/" + mp3);
+        
+      }
+    },
+    playMusic(){
+      play("/profile/sys/mp3/"+musics[musicIdx]);
+      if(++musicIdx>=musics.length){
+        musicIdx = 0;
       }
     },
     //校验是否是有效时间
@@ -130,12 +141,9 @@ export default {
     },
     stop() {
       if (intervalIndex) {
-        console.log("暂停");
-
         clearInterval(intervalIndex);
         intervalIndex = null;
       } else {
-        console.log("继续");
         intervalIndex = setInterval(() => {
           this.displayStr = this.displayTime(--restTime);
         }, 1000);
