@@ -56,6 +56,17 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      title=""
+      :visible.sync="open"
+      width="760px"
+      append-to-body
+    >
+      <video  ref="videoPlayer" width="720" height="480">
+        <source :src="videoSrc" type="video/mp4">
+        </source>
+      </video>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -66,8 +77,8 @@ const times = [
   { start: { hour: 13, mins: 0 }, end: { hour: 21, mins: 30 } },
 ];
 
-const musics = ["music1.mp3","lonely.mp3","music1.mp3"]
-let musicIdx = 0;
+const videos = ["lonely","wangzi","DaDaDa","DiDiDiDiWa","HotHotHot","India","mfsw","TocaToca","TheGreatest"]
+let videoIdx = 0;
 
 let intervalIndex, restTime;
 export default {
@@ -83,6 +94,8 @@ export default {
       displayStr: "00 : 00",
       //是否正在运行
       isRun: false,
+      open:false,
+      videoSrc:"",
     };
   },
   beforeDestroy() {
@@ -99,25 +112,31 @@ export default {
       this.isRun = true;
       this.startInterval(true);
     },
+    playVideo(){
+      this.videoSrc=process.env.VUE_APP_BASE_API + "/profile/sys/video/"+videos[videoIdx]+".mp4";
+      if(++videoIdx>=videos.length){
+        videoIdx = 0;
+      }
+      this.$refs.videoPlayer.load();
+      this.$refs.videoPlayer.play();
+    },
     soundEffect(inClass) {
       if (this.checkTime()) {
         if (inClass) {
           //上课
-          const player = play("/profile/sys/mp3/5c892db31ad7e23153.mp3");
-          player.removeEventListener("pause",this.playMusic)
+          play("/profile/sys/mp3/5c892db31ad7e23153.mp3");
+          this.$refs.videoPlayer&&this.$refs.videoPlayer.removeEventListener("pause", this.playVideo);
         } else {
           //下课
-          const player = play("/profile/sys/mp3/5c892db3b1b9a62189.mp3");
-          player.addEventListener("pause", this.playMusic);
- 
+          play("/profile/sys/mp3/5c892db3b1b9a62189.mp3");
+          this.open=true;
+          //videoIdx = 0;
+          this.$nextTick(() => {
+            this.playVideo();
+            this.$refs.videoPlayer.addEventListener("pause", this.playVideo);
+          })
         }
-        
-      }
-    },
-    playMusic(){
-      play("/profile/sys/mp3/"+musics[musicIdx]);
-      if(++musicIdx>=musics.length){
-        musicIdx = 0;
+
       }
     },
     //校验是否是有效时间
