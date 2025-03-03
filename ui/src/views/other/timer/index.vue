@@ -85,9 +85,9 @@ export default {
   data() {
     return {
       //上课时长
-      classDuration: 30,
+      classDuration: localStorage.getItem("classDuration")||30,
       //下课时长
-      afterClassDuration: 12,
+      afterClassDuration: localStorage.getItem("afterClassDuration")||12,
       //是否上课
       classStatus: false,
       //显示的剩余时间
@@ -107,6 +107,8 @@ export default {
       this.afterClassDuration = afterClassDuration;
     },
     startClass() {
+      localStorage.setItem("classDuration",this.classDuration)
+      localStorage.setItem("afterClassDuration",this.afterClassDuration)
       clearInterval(intervalIndex);
       intervalIndex = null;
       this.isRun = true;
