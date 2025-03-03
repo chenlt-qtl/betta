@@ -127,6 +127,9 @@ export default {
     ul {
       padding: 0;
       margin: 0;
+      li:hover{
+        background-color: #f5f5f5;
+      }
     }
     .taskItem {
       padding: 5px 10px;
