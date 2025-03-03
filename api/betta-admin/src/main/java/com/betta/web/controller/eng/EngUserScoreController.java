@@ -14,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 用户成绩Controller
@@ -78,7 +77,7 @@ public class EngUserScoreController extends BaseController {
     @Log(title = "用户成绩", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody EngUserScore engUserScore) {
-        return toAjax(engUserScoreService.insertEngUserScore(engUserScore));
+        return toAjax(engUserScoreService.save(engUserScore));
     }
 
     /**
@@ -88,7 +87,7 @@ public class EngUserScoreController extends BaseController {
     @Log(title = "用户成绩", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody EngUserScore engUserScore) {
-        return toAjax(engUserScoreService.updateEngUserScore(engUserScore));
+        return toAjax(engUserScoreService.updateById(engUserScore));
     }
 
     /**
@@ -109,6 +108,6 @@ public class EngUserScoreController extends BaseController {
     @Log(title = "用户成绩", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(engUserScoreService.deleteEngUserScoreByIds(ids));
+        return toAjax(engUserScoreService.removeBatchByIds(Arrays.asList(ids)));
     }
 }

@@ -1,6 +1,8 @@
 package com.betta.eng.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.betta.eng.domain.EngUserScore;
 import com.betta.eng.domain.vo.EngUserScoreVo;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +13,7 @@ import org.apache.ibatis.annotations.Param;
  * @author chenlt
  * @date 2024-07-13
  */
-public interface EngUserScoreMapper 
+public interface EngUserScoreMapper extends BaseMapper<EngUserScore>
 {
 
     /**
