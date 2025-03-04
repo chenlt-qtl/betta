@@ -9,6 +9,7 @@
     </el-dialog>
 </template>
 <script>
+let hasListener = false;
 export default {
     props: ["open", "onClose"],
     data() {
@@ -28,14 +29,10 @@ export default {
         { name: "Toca", src: "TocaToca" },
         { name: "The Greatest", src: "TheGreatest" }];
 
-        this.videoIdx = -1;
-
-        this.$nextTick(() => {
-            this.$refs.videoPlayer.addEventListener("ended", this.playVideo);
-        })
+        this.videoIdx = localStorage.getItem("videoIdx") || -1;
     },
     beforeDestroy() {
-        this.$refs.videoPlayer.removeEventListener("ended", this.playVideo);
+        hasListener && this.$refs.videoPlayer.removeEventListener("ended", this.playVideo);
     },
     watch: {
         open() {
@@ -45,6 +42,10 @@ export default {
                 //播放音乐
                 this.$nextTick(() => {
                     this.playVideo();
+                    if (!hasListener) {
+                        this.$refs.videoPlayer.addEventListener("ended", this.playVideo);
+                        hasListener = true;
+                    }
                 })
             } else {
                 //关闭窗口
@@ -66,6 +67,7 @@ export default {
             this.videoSrc = process.env.VUE_APP_BASE_API + "/profile/sys/video/" + this.videos[this.videoIdx].src + ".mp4";
             this.$refs.videoPlayer.load();
             this.$refs.videoPlayer.play();
+            localStorage.setItem("videoIdx",this.videoIdx);
         },
         //播放指定的音乐
         playSelect(index) {
