@@ -1,44 +1,21 @@
 <template>
   <div class="timer-container">
     <div class="header">
-      <el-button size="mini" type="text" @click="() => setTime(30, 10)"
-        >30-10</el-button
-      >
-      <el-button size="mini" type="text" @click="() => setTime(45, 12)"
-        >45-12</el-button
-      >
+      <el-button size="mini" type="text" @click="() => setTime(30, 10)">30-10</el-button>
+      <el-button size="mini" type="text" @click="() => setTime(45, 12)">45-12</el-button>
     </div>
     <div class="header">
-      <span
-        >上课时长:
-        <el-input-number
-          v-model="classDuration"
-          :disabled="isRun"
-          @change="(e) => (classDuration = e)"
-          style="width: 150px"
-        ></el-input-number
-      ></span>
-      <span
-        >下课时长:
-        <el-input-number
-          v-model="afterClassDuration"
-          :disabled="isRun"
-          @change="(e) => (afterClassDuration = e)"
-          style="width: 150px"
-        ></el-input-number
-      ></span>
+      <span>上课时长:
+        <el-input-number v-model="classDuration" :disabled="isRun" @change="(e) => (classDuration = e)"
+          style="width: 150px"></el-input-number></span>
+      <span>下课时长:
+        <el-input-number v-model="afterClassDuration" :disabled="isRun" @change="(e) => (afterClassDuration = e)"
+          style="width: 150px"></el-input-number></span>
       <div>
         <el-button @click="startClass">开始上课</el-button>
         <el-button @click="stop">暂停/继续</el-button>
-        <el-popconfirm
-          style="margin-left: 10px"
-          :disabled="!isRun"
-          title="确认要重置?"
-          @confirm="reset"
-          ><el-button :disabled="!isRun" slot="reference"
-            >重置</el-button
-          ></el-popconfirm
-        >
+        <el-popconfirm style="margin-left: 10px" :disabled="!isRun" title="确认要重置?" @confirm="reset"><el-button
+            :disabled="!isRun" slot="reference">重置</el-button></el-popconfirm>
       </div>
     </div>
 
@@ -49,53 +26,36 @@
           {{ classStatus ? "上课" : "下课" }}
         </div>
       </div>
-      <div>
-        剩余时间:
-        <div class="restTime">
-          <span>{{ displayStr }}</span>
-        </div>
-      </div>
+      <rest-time :restTime="restTime"></rest-time>
     </div>
-    <el-dialog
-      title=""
-      :visible.sync="open"
-      width="760px"
-      append-to-body
-    >
-      <video  ref="videoPlayer" width="720" height="480">
-        <source :src="videoSrc" type="video/mp4">
-        </source>
-      </video>
-    </el-dialog>
+    <video-dialog :open="open" :onClose="() => open = false" />
   </div>
 </template>
 <script>
 import { play } from "@/utils/audio";
+import VideoDialog from "@/components/other/timer/VideoDialog.vue";
+import RestTime from "@/components/other/timer/RestTime.vue";
 
 const times = [
   { start: { hour: 8, mins: 30 }, end: { hour: 12, mins: 0 } },
   { start: { hour: 13, mins: 0 }, end: { hour: 21, mins: 30 } },
 ];
 
-const videos = ["lonely","wangzi","DaDaDa","DiDiDiDiWa","HotHotHot","India","mfsw","TocaToca","TheGreatest"]
-let videoIdx = 0;
-
-let intervalIndex, restTime;
+let intervalIndex;
 export default {
+  components: { VideoDialog, RestTime },
   data() {
     return {
       //上课时长
-      classDuration: localStorage.getItem("classDuration")||30,
+      classDuration: localStorage.getItem("classDuration") || 30,
       //下课时长
-      afterClassDuration: localStorage.getItem("afterClassDuration")||12,
+      afterClassDuration: localStorage.getItem("afterClassDuration") || 12,
       //是否上课
       classStatus: false,
-      //显示的剩余时间
-      displayStr: "00 : 00",
       //是否正在运行
       isRun: false,
-      open:false,
-      videoSrc:"",
+      open: false,
+      restTime: 0,
     };
   },
   beforeDestroy() {
@@ -107,40 +67,23 @@ export default {
       this.afterClassDuration = afterClassDuration;
     },
     startClass() {
-      localStorage.setItem("classDuration",this.classDuration)
-      localStorage.setItem("afterClassDuration",this.afterClassDuration)
+      localStorage.setItem("classDuration", this.classDuration)
+      localStorage.setItem("afterClassDuration", this.afterClassDuration)
       clearInterval(intervalIndex);
       intervalIndex = null;
       this.isRun = true;
       this.startInterval(true);
-    },
-    playVideo(){
-      this.videoSrc=process.env.VUE_APP_BASE_API + "/profile/sys/video/"+videos[videoIdx]+".mp4";
-      if(++videoIdx>=videos.length){
-        videoIdx = 0;
-      }
-      this.$refs.videoPlayer.load();
-      this.$refs.videoPlayer.play();
     },
     soundEffect(inClass) {
       if (this.checkTime()) {
         if (inClass) {
           //上课
           play("/profile/sys/mp3/5c892db31ad7e23153.mp3");
-          if(this.$refs.videoPlayer){
-            this.$refs.videoPlayer.removeEventListener("pause", this.playVideo);
-            this.$refs.videoPlayer.pause();
-          }
-          this.open=false;
+          this.open = false;
         } else {
           //下课
           play("/profile/sys/mp3/5c892db3b1b9a62189.mp3");
-          this.open=true;
-          //videoIdx = 0;
-          this.$nextTick(() => {
-            this.playVideo();
-            this.$refs.videoPlayer.addEventListener("pause", this.playVideo);
-          })
+          this.open = true;
         }
 
       }
@@ -170,41 +113,29 @@ export default {
         intervalIndex = null;
       } else {
         intervalIndex = setInterval(() => {
-          this.displayStr = this.displayTime(--restTime);
+          this.restTime = --this.restTime;
         }, 1000);
       }
     },
     startInterval(inClass) {
       this.soundEffect(inClass);
-      restTime = (inClass ? this.classDuration : this.afterClassDuration) * 60;
+      this.restTime = (inClass ? this.classDuration : this.afterClassDuration) * 60;
       this.classStatus = inClass;
-      this.displayStr = this.displayTime(restTime);
       intervalIndex = setInterval(() => {
-        if (restTime <= 0) {
+        if (this.restTime <= 0) {
           clearInterval(intervalIndex);
           intervalIndex = null;
           this.startInterval(!inClass);
         } else {
-          this.displayStr = this.displayTime(--restTime);
+          this.restTime = --this.restTime;
         }
       }, 1000);
     },
     reset() {
       this.classStatus = false;
-      this.displayStr = this.displayTime(0);
+      this.restTime = 0;
       clearInterval(intervalIndex);
       this.isRun = false;
-    },
-    displayTime(restTime) {
-      let str = "";
-      const restMin = Math.floor(restTime / 60);
-      str += restMin < 10 ? "0" : "";
-      str += restMin;
-
-      const restSec = restTime % 60;
-      str += restSec < 10 ? " : 0" : " : ";
-      str += restSec;
-      return str;
     },
   },
 };
@@ -221,7 +152,8 @@ export default {
     gap: 10px;
     align-items: center;
     justify-content: center;
-    > span {
+
+    >span {
       display: flex;
       align-items: center;
       gap: 5px;
@@ -239,12 +171,6 @@ export default {
       font-size: 50px;
     }
 
-    .restTime {
-      padding-left: 100px;
-      font-size: 80px;
-      display: flex;
-      gap: 10px;
-    }
     .inClass {
       color: chocolate;
     }
