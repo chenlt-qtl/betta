@@ -67,7 +67,7 @@ public class IcibaUtils {
         if (!pron.isEmpty()) {
             String relativePath = DictUtils.getWordMp3RelativePath(word.getWordName());
             FileUtils.writeBytes(pron.get(pron.size() - 1), relativePath);
-            word.setPhMp3(Constants.RESOURCE_PREFIX + relativePath);
+            word.setPhMp3(relativePath);
         }
 
         List<String> pos = dict.getPos();//词性

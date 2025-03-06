@@ -64,7 +64,7 @@ export default {
             if (++this.videoIdx >= this.videos.length) {
                 this.videoIdx = 0;
             }
-            this.videoSrc = process.env.VUE_APP_BASE_API + "/profile/sys/video/" + this.videos[this.videoIdx].src + ".mp4";
+            this.videoSrc = process.env.VUE_APP_RESOURCE + "/sys/video/" + this.videos[this.videoIdx].src + ".mp4";
             this.$refs.videoPlayer.load();
             this.$refs.videoPlayer.play();
             localStorage.setItem("videoIdx",this.videoIdx);

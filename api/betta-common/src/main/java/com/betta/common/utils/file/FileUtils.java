@@ -29,7 +29,7 @@ public class FileUtils {
      */
     public static String writeImportBytes(byte[] data) throws IOException {
         String extension = getFileExtendName(data);
-        String fileUri = Constants.IMPORT_PATH + File.separator + genDateFileName(extension);
+        String fileUri = Constants.IMPORT_PATH + "/" + genDateFileName(extension);
 
         File file = getFile(fileUri);
 

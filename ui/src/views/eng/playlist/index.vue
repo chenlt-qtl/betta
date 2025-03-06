@@ -14,7 +14,7 @@
 
         <div class="cover">
           <img
-            :src="`${baseUrl}/profile/sys/img/18159534045164927.jpg`"
+            :src="`${process.env.VUE_APP_RESOURCE}/sys/img/18159534045164927.jpg`"
             alt="Sober Up"
           />
         </div>
@@ -63,7 +63,7 @@ let player, intervalIndex, startTime;
 export default {
   data() {
     return {
-      baseUrl: process.env.VUE_APP_BASE_API,
+      baseUrl: process.env.VUE_APP_RESOURCE,
       playIndex: -1, //正在播放第几首，从0开始
       isPlaying: false, //是否正在播放
       listData: [],

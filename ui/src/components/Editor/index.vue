@@ -190,7 +190,7 @@ export default {
         quill.insertEmbed(
           length,
           "image",
-          process.env.VUE_APP_BASE_API + res.fileName
+          process.env.VUE_APP_RESOURCE + res.fileName
         );
         // 调整光标到最后
         quill.setSelection(length + 1);

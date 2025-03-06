@@ -6,8 +6,6 @@ import com.betta.common.core.domain.AjaxResult;
 import com.betta.common.exception.ApiException;
 import com.betta.common.utils.StringUtils;
 import com.betta.common.utils.file.*;
-import com.betta.framework.config.ServerConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,8 +25,6 @@ import java.util.regex.Matcher;
 @RequestMapping("/common")
 public class CommonController {
 
-    @Autowired
-    private ServerConfig serverConfig;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -54,7 +50,7 @@ public class CommonController {
 
                 Base64Utils.saveBase64Image(imgData, type, absolutePath);
                 //返回相对路径
-                return AjaxResult.success("操作成功", Constants.RESOURCE_PREFIX + relativePath);
+                return AjaxResult.success("操作成功", relativePath);
             }
         }
         return AjaxResult.error("没有找到图片信息");
@@ -110,8 +106,7 @@ public class CommonController {
             for (MultipartFile file : files) {
                 // 上传并返回相对路径
                 String relativePath = FileUploadUtils.upload(filePath, file);
-                String url = Constants.RESOURCE_PREFIX+relativePath;
-                urls.add(url);
+                urls.add(relativePath);
                 fileNames.add(file.getName());
                 newFileNames.add(FileUtils.getFileName(relativePath));
                 originalFilenames.add(file.getOriginalFilename());
@@ -135,7 +130,7 @@ public class CommonController {
         try {
             DownloadUtils.checkAllowDownload(fileName);//检查是否允许下载
             // 数据库资源地址
-            String downloadPath = BettaConfig.getProfile() + StringUtils.substringAfter(fileName, Constants.RESOURCE_PREFIX);
+            String downloadPath = BettaConfig.getProfile() + fileName;
             DownloadUtils.downloadFile(downloadPath, response);
         } catch (Exception e) {
             throw new ApiException("下载文件失败");

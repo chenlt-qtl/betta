@@ -198,7 +198,7 @@ export default {
   },
   methods: {
     playMp3(name) {
-      play("/profile/word/" + name.substring(0, 1) + "/" + name + ".mp3");
+      play("/word/" + name.substring(0, 1) + "/" + name + ".mp3");
     },
   },
 };

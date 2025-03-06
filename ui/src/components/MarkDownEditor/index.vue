@@ -51,7 +51,7 @@ export default {
         uploadNoteImg(reader.result).then((res) => {
           if (res.data) {
             this.$emit("change");
-            callback(process.env.VUE_APP_BASE_API + res.data);
+            callback(process.env.VUE_APP_RESOURCE + res.data);
           }
         });
       };

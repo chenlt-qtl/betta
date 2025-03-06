@@ -39,7 +39,7 @@ export default {
       if (isExternal(real_src)) {
         return real_src;
       }
-      return process.env.VUE_APP_BASE_API + real_src;
+      return process.env.VUE_APP_RESOURCE + real_src;
     },
     realSrcList() {
       if (!this.src) {
@@ -51,7 +51,7 @@ export default {
         if (isExternal(item)) {
           return srcList.push(item);
         }
-        return srcList.push(process.env.VUE_APP_BASE_API + item);
+        return srcList.push(process.env.VUE_APP_RESOURCE + item);
       });
       return srcList;
     },

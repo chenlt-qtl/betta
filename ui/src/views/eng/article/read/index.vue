@@ -171,7 +171,7 @@ export default {
     return {
       articleId: 0,
       article: {},
-      baseUrl: process.env.VUE_APP_BASE_API,
+      baseUrl: process.env.VUE_APP_RESOURCE,
       // 遮罩层
       loading: true,
       type: "sentence",

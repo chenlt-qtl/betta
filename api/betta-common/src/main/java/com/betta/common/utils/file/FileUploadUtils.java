@@ -92,11 +92,11 @@ public class FileUploadUtils {
 
         assertAllowed(file, allowedExtension);
 
-        String relativePath = prePath + File.separator + FileUtils.genDateFileName(getExtension(file));
+        String relativePath = prePath + "/" + FileUtils.genDateFileName(getExtension(file));
 
         String absolutePath = FileUtils.getAbsoluteProfilePath(relativePath);
         file.transferTo(Paths.get(absolutePath));
-        return Constants.RESOURCE_PREFIX + relativePath;
+        return relativePath;
     }
 
     /**
@@ -203,8 +203,8 @@ public class FileUploadUtils {
             extension = "m4a";
         }
 
-        String relativePath = getDir(type) + File.separator + FileUtils.genDateFileName(extension);
+        String relativePath = getDir(type) + "/" + FileUtils.genDateFileName(extension);
         FileUtils.writeBytes(url, relativePath);
-        return Constants.RESOURCE_PREFIX + relativePath;
+        return relativePath;
     }
 }

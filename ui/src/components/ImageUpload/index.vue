@@ -85,7 +85,7 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       hideUpload: false,
-      baseUrl: process.env.VUE_APP_BASE_API,
+      baseUrl: process.env.VUE_APP_RESOURCE,
       uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload/" + this.uploadType, // 上传的图片服务器地址
       headers: {
         Authorization: "Bearer " + getToken(),

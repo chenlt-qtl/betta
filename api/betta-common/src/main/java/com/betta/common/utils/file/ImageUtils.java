@@ -85,7 +85,7 @@ public class ImageUtils
             {
                 // 本机地址
                 String localPath = BettaConfig.getProfile();
-                String downloadPath = localPath + StringUtils.substringAfter(url, Constants.RESOURCE_PREFIX);
+                String downloadPath = localPath + url;
                 in = new FileInputStream(downloadPath);
             }
             return IOUtils.toByteArray(in);

@@ -9,10 +9,10 @@
           placeholder="请选择打卡日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="${comment}" prop="value">
+      <el-form-item label="值" prop="value">
         <el-input
           v-model="queryParams.value"
-          placeholder="请输入${comment}"
+          placeholder="请输入值"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -71,13 +71,13 @@
 
     <el-table v-loading="loading" :data="clockInDataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
+      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="打卡日期" align="center" prop="time" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="${comment}" align="center" prop="value" />
+      <el-table-column label="值" align="center" prop="value" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -117,8 +117,8 @@
             placeholder="请选择打卡日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="${comment}" prop="value">
-          <el-input v-model="form.value" placeholder="请输入${comment}" />
+        <el-form-item label="值" prop="value">
+          <el-input v-model="form.value" placeholder="请输入值" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -169,7 +169,7 @@ export default {
           { required: true, message: "打卡日期不能为空", trigger: "blur" }
         ],
         value: [
-          { required: true, message: "$comment不能为空", trigger: "blur" }
+          { required: true, message: "值不能为空", trigger: "blur" }
         ],
       }
     };

@@ -89,7 +89,7 @@ public class YouDaoUtils {
         if (StringUtils.isNotBlank(temp_audio)) {
             String relativePath = DictUtils.getWordMp3RelativePath(word.getWordName());
             FileUtils.writeBytes(temp_audio, relativePath);
-            word.setPhMp3(Constants.RESOURCE_PREFIX + relativePath);
+            word.setPhMp3(relativePath);
         }
     }
 

@@ -15,7 +15,7 @@ spring:
 #    password: 823adf@#!
 
 betta:
-  profile: E:/betta/uploadPath
+  profile: E:/betta/upload
   vueAppBaseApi: /dev-api
 server:
   port: 8081

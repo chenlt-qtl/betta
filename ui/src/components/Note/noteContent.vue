@@ -3,30 +3,12 @@
     <OpenedTab></OpenedTab>
     <div v-if="openedNote.id">
       <div class="toolbar">
-        <input
-          ref="title"
-          maxLength="100"
-          v-model="title"
-          @input="onChange"
-          @blur="updateTitle"
-        />
+        <input ref="title" maxLength="100" v-model="title" @input="onChange" @blur="updateTitle" />
         <NoteHistoryListBtn></NoteHistoryListBtn>
         <NoteHistorySaveBtn :text="content.text"></NoteHistorySaveBtn>
-        <i
-          v-if="!isFav"
-          @click="() => updateFav(true)"
-          class="el-icon-star-off orange"
-        ></i>
-        <i
-          v-if="isFav"
-          @click="() => updateFav(false)"
-          class="el-icon-star-on orange"
-        ></i>
-        <i
-          v-if="isSaved"
-          style="color: #78e08f"
-          class="el-icon-circle-check icon"
-        ></i>
+        <i v-if="!isFav" @click="() => updateFav(true)" class="el-icon-star-off orange"></i>
+        <i v-if="isFav" @click="() => updateFav(false)" class="el-icon-star-on orange"></i>
+        <i v-if="isSaved" style="color: #78e08f" class="el-icon-circle-check icon"></i>
         <i v-if="!isSaved" class="el-icon-warning-outline orange icon"></i>
       </div>
 
@@ -34,11 +16,7 @@
         <i style="color: gray; font-size: 80px" class="el-icon-monitor"></i>
       </div>
       <div :style="{ display: content.id == null ? 'none' : 'block' }">
-        <MdEditor
-          :value="content.text"
-          @blur="updateText"
-          @change="onChange"
-        ></MdEditor>
+        <MdEditor :value="content.text" @blur="updateText" @change="onChange"></MdEditor>
       </div>
     </div>
     <el-empty v-if="!openedNote.id" description=""></el-empty>
@@ -101,6 +79,7 @@ export default {
           this.content = res.data;
           if (this.content && this.content.text) {
             this.content.text = this.replaceUrl(this.content.text);
+            console.log(this.content.text);
           }
         });
       } else {
@@ -109,8 +88,8 @@ export default {
     },
     //替换URL前缀
     replaceUrl(text) {
-      const reg = new RegExp("(?<=\\]\\()/profile(?=\\/note)", "g");
-      return text.replaceAll(reg, process.env.VUE_APP_BASE_API + "/profile");
+      const reg = new RegExp("(?<=\\]\\()(\\/profile)?(?=\\/note)", "g");
+      return text.replaceAll(reg, process.env.VUE_APP_RESOURCE);
     },
     getFav() {
       getFavorite().then(({ data }) => {
@@ -146,17 +125,16 @@ export default {
     updateText(text) {
       //如果有改动，才保存
       if (!this.isSaved) {
-        process.env.VUE_APP_BASE_API;
         let newText = "";
         if (text) {
           newText = text.replaceAll(
             new RegExp(
               "(?<=\\]\\()" +
-                process.env.VUE_APP_BASE_API +
-                "/profile(?=\\/note)",
+              process.env.VUE_APP_RESOURCE +
+              "(?=\\/note)",
               "g"
             ),
-            "/profile"
+            ""
           );
         }
 
@@ -197,6 +175,7 @@ export default {
     display: flex;
     gap: 10px;
     align-items: center;
+
     i {
       cursor: pointer;
     }
@@ -208,6 +187,7 @@ export default {
     .icon {
       cursor: default;
     }
+
     input {
       flex: 1;
       border: none;
@@ -221,6 +201,7 @@ export default {
       }
     }
   }
+
   .blank {
     height: 400px;
     display: flex;

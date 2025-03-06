@@ -95,7 +95,7 @@ export default {
     return {
       number: 0,
       uploadList: [],
-      baseUrl: process.env.VUE_APP_BASE_API,
+      baseUrl: process.env.VUE_APP_RESOURCE,
       uploadFileUrl:
         process.env.VUE_APP_BASE_API + "/common/upload/" + this.uploadType, // 上传文件服务器地址
       headers: {

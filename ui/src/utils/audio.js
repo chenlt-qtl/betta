@@ -4,7 +4,7 @@ let timer;
 /**播放MP3 */
 export const play = (url, timeStr, onError = () => {}) => {
 
-  player.src = process.env.VUE_APP_BASE_API + url;
+  player.src = process.env.VUE_APP_RESOURCE + url;
   player.load();
 
   //先重置

@@ -54,10 +54,6 @@ public class BettaConfig {
         return profile;
     }
 
-    public static String getVueResourcePath() {
-        return vueAppBaseApi+ Constants.RESOURCE_PREFIX;
-    }
-
     public void setProfile(String profile) {
         BettaConfig.profile = profile;
     }
