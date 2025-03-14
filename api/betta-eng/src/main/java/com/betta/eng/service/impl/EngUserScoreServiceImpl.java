@@ -11,8 +11,7 @@ import com.betta.eng.service.IEngUserScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 用户成绩Service业务层处理
@@ -30,19 +29,32 @@ public class EngUserScoreServiceImpl extends ServiceImpl<EngUserScoreMapper, Eng
 
     @Override
     public void batchUpdate(List<EngUserScore> engUserScoreList) {
+
+        List<String> wordNames = new ArrayList<>(engUserScoreList.size());
+        //取出所有word name
+        for (EngUserScore engUserScore : engUserScoreList) {
+            wordNames.add(engUserScore.getWordName());
+        }
+        //去数据库里查
         LambdaQueryWrapper<EngUserScore> wrapper = new LambdaQueryWrapper<>();
 
         //只查询当前用户的
         wrapper.eq(EngUserScore::getUser,SecurityUtils.getUsername());
+        wrapper.in(EngUserScore::getWordName,wordNames);
+        List<EngUserScore> engUserScores = list(wrapper);
+
+        //迭代查询结果放到MAP中
+        Map<String,EngUserScore> dbMap = new HashMap<>(engUserScores.size());
+        for (EngUserScore engUserScore : engUserScores) {
+            dbMap.put(engUserScore.getWordName(),engUserScore);
+        }
 
         engUserScoreList.forEach(score -> {
-            wrapper.eq(EngUserScore::getWordName,score.getWordName());
-            List<EngUserScore> engUserScores = list(wrapper);
-            if (!engUserScores.isEmpty()) {
+            EngUserScore dbScore = dbMap.get(score.getWordName());
+            if (!Objects.isNull(dbScore)) {
                 //更新分数
-                EngUserScore engUserScore = engUserScores.get(0);
-                engUserScore.setFamiliarity(score.getFamiliarity());
-                updateById(engUserScore);
+                dbScore.setFamiliarity(score.getFamiliarity()+dbScore.getFamiliarity());
+                updateById(dbScore);
             } else {
                 //新增
                 EngUserScore engUserScore = new EngUserScore();

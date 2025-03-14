@@ -1,5 +1,6 @@
 package com.betta.eng.domain;
 
+import com.betta.common.core.domain.BaseEntity;
 import lombok.Data;
 import com.betta.common.annotation.Excel;
 
@@ -10,7 +11,7 @@ import com.betta.common.annotation.Excel;
  * @date 2024-07-13
  */
 @Data
-public class EngUserScore extends EngWord
+public class EngUserScore extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

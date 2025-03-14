@@ -23,4 +23,19 @@ public class EngUserScoreVo extends EngUserScore
     private String sentence;
 
     private String sentenceAcceptation;
+
+    /** 音频位置 */
+    private String phMp3;
+
+    /** 音标 */
+    private String phonetics;
+
+    /** 解释 */
+    private String acceptation;
+
+    /** 手动注释 */
+    private String exchange;
+
+    /** $column.columnComment */
+    private String parts;
 }
