@@ -1,25 +1,26 @@
 package com.betta.web.controller.system;
 
-import java.util.List;
-import java.util.Set;
-
+import com.betta.common.constant.Constants;
+import com.betta.common.core.domain.AjaxResult;
+import com.betta.common.core.domain.entity.SysMenu;
+import com.betta.common.core.domain.entity.SysUser;
+import com.betta.common.core.domain.model.LoginBody;
+import com.betta.common.core.domain.model.LoginUser;
+import com.betta.common.utils.SecurityUtils;
+import com.betta.framework.web.service.SysLoginService;
+import com.betta.framework.web.service.SysPermissionService;
+import com.betta.system.service.ISysDataService;
+import com.betta.system.service.ISysMenuService;
 import io.swagger.annotations.Api;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.betta.common.constant.Constants;
-import com.betta.common.core.domain.AjaxResult;
-import com.betta.common.core.domain.entity.SysMenu;
-import com.betta.common.core.domain.entity.SysUser;
-import com.betta.common.core.domain.model.LoginBody;
-import com.betta.common.utils.SecurityUtils;
-import com.betta.framework.web.service.SysLoginService;
-import com.betta.framework.web.service.SysPermissionService;
-import com.betta.system.service.ISysMenuService;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 登录验证
@@ -66,7 +67,8 @@ public class SysLoginController
     public AjaxResult getInfo()
     {
         log.info("-----getInfo-----");
-        SysUser user = SecurityUtils.getLoginUser().getUser();
+        LoginUser loginUser = SecurityUtils.getLoginUser();
+        SysUser user = loginUser.getUser();
         // 角色集合
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合
@@ -75,6 +77,7 @@ public class SysLoginController
         ajax.put("user", user);
         ajax.put("roles", roles);
         ajax.put("permissions", permissions);
+        ajax.put("roleHome",loginUser.getRoleHome() );
         return ajax;
     }
 

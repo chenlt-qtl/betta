@@ -2,6 +2,7 @@ package com.betta.common.core.domain.model;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.betta.common.core.domain.entity.SysUser;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.Set;
  * 
  * @author ruoyi
  */
+@Data
 public class LoginUser implements UserDetails
 {
     private static final long serialVersionUID = 1L;
@@ -35,6 +37,11 @@ public class LoginUser implements UserDetails
      * 登录时间
      */
     private Long loginTime;
+
+    /**
+     * 角色主页
+     */
+    private String roleHome;
 
     /**
      * 过期时间
