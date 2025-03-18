@@ -16,7 +16,6 @@
           <a :href="'eng/article/test/' + article.id" class="btn">
             <img src="@/assets/shortcuts/youxi.svg" />
             开始测试
-
           </a>
           <el-divider direction="vertical"></el-divider>
           <a :href="'eng/article-detail/' + article.id" class="btn">
