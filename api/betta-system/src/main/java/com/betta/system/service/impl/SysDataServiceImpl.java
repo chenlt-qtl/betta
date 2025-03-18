@@ -14,7 +14,7 @@ import com.betta.system.mapper.SysDataMapper;
 import com.betta.system.domain.SysData;
 import com.betta.system.service.ISysDataService;
 
-import static com.betta.common.constant.UserConstants.ROLE_HOME_DATA_TYPE;
+import static com.betta.common.constant.Constants.ROLE_HOME_DATA_TYPE;
 
 /**
  * 系统数据Service业务层处理

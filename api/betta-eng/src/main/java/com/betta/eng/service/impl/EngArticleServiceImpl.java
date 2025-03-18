@@ -1,6 +1,8 @@
 package com.betta.eng.service.impl;
 
 import com.betta.common.annotation.CreateByScope;
+import com.betta.common.constant.Constants;
+import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngSentence;
@@ -36,6 +38,7 @@ public class EngArticleServiceImpl implements IEngArticleService {
 
     @Autowired
     private IEngArticleWordRelService articleWordRel;
+
 
     /**
      * 查询英语文章
@@ -118,5 +121,10 @@ public class EngArticleServiceImpl implements IEngArticleService {
         }
         engArticle.setCreateBy(username);
         return engArticleMapper.selectPlayList(engArticle);
+    }
+
+    @Override
+    public EngArticle getCurrent() {
+        return engArticleMapper.getCurrentArticle(SecurityUtils.getUsername(), Constants.CURRENT_ARTICLE_DATA_TYPE);
     }
 }

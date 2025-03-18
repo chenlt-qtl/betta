@@ -62,15 +62,18 @@ export const constantRoutes = [
     hidden: true,
   },
   {
-    name: "shortcuts",
-    path: "/shortcuts",
-    component: () => import("@/views/shortcuts/index"),
-    hidden: true,
-  },
-  {
-      path: '',
-      component: Layout,
-      redirect: 'index',
+    path: "",
+    component: Layout,
+    redirect: "index",
+    children: [
+      {
+        name: "shortcuts",
+        path: "/shortcuts",
+        component: () => import("@/views/shortcuts/index"),
+        hidden: true,
+        meta: { title: '首页', icon: 'dashboard', affix: true }
+      },
+    ],
   },
   // {
   //   path: '',

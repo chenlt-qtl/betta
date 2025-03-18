@@ -24,8 +24,6 @@ public class UserConstants
     /** 角色封禁状态 */
     public static final String ROLE_DISABLE = "1";
 
-    public static final int ROLE_HOME_DATA_TYPE = 1;
-
     /** 部门正常状态 */
     public static final String DEPT_NORMAL = "0";
 

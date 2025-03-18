@@ -60,3 +60,12 @@ export function exportArticle(articleId) {
     method: 'get',
   })
 }
+
+
+// 查询播放列表相关的数据
+export function getCurrentArticle() {
+  return request({
+    url: '/eng/article/current',
+    method: 'get',
+  })
+}

@@ -109,5 +109,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by group_name,title
     </select>
+    <select id="getCurrentArticle" resultType="com.betta.eng.domain.EngArticle">
+        select id,title
+        from eng_article where exists(select * from sys_data
+        where data_type= #{dataType} and data_key= #{username}
+          and eng_article.id = sys_data.data_value)
+    </select>
 
 </mapper>

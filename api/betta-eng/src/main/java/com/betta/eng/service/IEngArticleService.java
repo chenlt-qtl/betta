@@ -54,4 +54,6 @@ public interface IEngArticleService
     public int deleteEngArticleById(Long id);
 
     List<EngSentence> selectPlayList(EngArticle engArticle, boolean inPlayList, String username);
+
+    EngArticle getCurrent();
 }

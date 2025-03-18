@@ -3,6 +3,7 @@ package com.betta.eng.mapper;
 import java.util.List;
 import com.betta.eng.domain.EngArticle;
 import com.betta.eng.domain.EngSentence;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 英语文章Mapper接口
@@ -61,4 +62,6 @@ public interface EngArticleMapper
     public int deleteEngArticleByIds(Long[] ids);
 
     List<EngSentence> selectPlayList(EngArticle engArticle);
+
+    EngArticle getCurrentArticle(@Param("username")String username, @Param("dataType")int dataType);
 }

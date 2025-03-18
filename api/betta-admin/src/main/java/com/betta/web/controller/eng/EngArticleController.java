@@ -143,4 +143,14 @@ public class EngArticleController extends BaseController {
         engWords.forEach(w->result.add(w.getWordName()));
         return AjaxResult.success(result);
     }
+
+    /**
+     * 查询正在学习的文章
+     */
+    @PreAuthorize("@ss.hasPermi('eng:article:list')")
+    @GetMapping("/current")
+    public AjaxResult getCurrent() {
+        EngArticle article = engArticleService.getCurrent();
+        return AjaxResult.success(article);
+    }
 }

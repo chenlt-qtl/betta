@@ -1,347 +1,198 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="字典名称" prop="dictName">
-        <el-input
-          v-model="queryParams.dictName"
-          placeholder="请输入字典名称"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="字典类型" prop="dictType">
-        <el-input
-          v-model="queryParams.dictType"
-          placeholder="请输入字典类型"
-          clearable
-          style="width: 240px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="字典状态"
-          clearable
-          style="width: 240px"
-        >
-          <el-option
-            v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:dict:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:dict:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:dict:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:dict:export']"
-        >导出</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-refresh"
-          size="mini"
-          @click="handleRefreshCache"
-          v-hasPermi="['system:dict:remove']"
-        >刷新缓存</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-
-    <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="字典编号" align="center" prop="dictId" />
-      <el-table-column label="字典名称" align="center" prop="dictName" :show-overflow-tooltip="true" />
-      <el-table-column label="字典类型" align="center" :show-overflow-tooltip="true">
-        <template slot-scope="scope">
-          <router-link :to="'/system/dict-data/index/' + scope.row.dictId" class="link-type">
-            <span>{{ scope.row.dictType }}</span>
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" align="center" prop="status">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:dict:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:dict:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
-    <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="字典名称" prop="dictName">
-          <el-input v-model="form.dictName" placeholder="请输入字典名称" />
-        </el-form-item>
-        <el-form-item label="字典类型" prop="dictType">
-          <el-input v-model="form.dictType" placeholder="请输入字典类型" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in dict.type.sys_normal_disable"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+    <div class="container">
+      <div class="title">
+        正在学习
       </div>
-    </el-dialog>
+      <div class="title-btn">
+        <el-button>更换词书</el-button>
+      </div>
+      <div v-if="article.id" class="text article">
+        <div class="article-title">
+          <img src="@/assets/shortcuts/书.svg" />{{ article.title }}
+        </div>
+        <div class="toolbar">
+          <a :href="'eng/article/test/' + article.id" class="btn">
+            <img src="@/assets/shortcuts/youxi.svg" />
+            开始测试
+
+          </a>
+          <el-divider direction="vertical"></el-divider>
+          <a :href="'eng/article-detail/' + article.id" class="btn">
+            <img src="@/assets/shortcuts/编辑.svg" />
+            编辑内容
+          </a>
+          <el-divider direction="vertical"></el-divider>
+          <a :href="'eng/article-detail/' + article.id" class="btn">
+            <img src="@/assets/shortcuts/编辑.svg" />
+            跟读
+          </a>
+          <el-divider direction="vertical"></el-divider>
+          <a :href="'eng/article-detail/' + article.id" class="btn">
+            <img src="@/assets/shortcuts/播放.svg" />
+            播放
+          </a>
+        </div>
+      </div>
+      <div v-if="!article.id" class="text no-article">
+        没有正在学习的文章哦
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="other">
+        <a href="other/timer" class="item">
+          <img src="@/assets/shortcuts/通知.svg" />
+          上课
+        </a>
+        <a href="card/plus" class="item">
+          <img src="@/assets/shortcuts/积分.svg" />
+          加卡
+        </a>
+        <a href="n/note" class="item">
+          <img src="@/assets/shortcuts/档案.svg" />
+          笔记
+        </a>
+        <a href="eng/word" class="item">
+          <img src="@/assets/shortcuts/查看搜索.svg" />
+          查单词
+        </a>
+        <a href="video" class="item">
+          <img src="@/assets/shortcuts/播放.svg" />
+          视频
+        </a>
+        <a href="other/task" class="item">
+          <img src="@/assets/shortcuts/打卡.svg" />
+          任务
+        </a>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
-import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/system/dict/type";
+
+import { getCurrentArticle } from '@/api/eng/article';
 
 export default {
-  name: "Dict",
-  dicts: ['sys_normal_disable'],
+  name: "Shortcuts",
   data() {
     return {
-      // 遮罩层
-      loading: true,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 字典表格数据
-      typeList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
-      // 日期范围
-      dateRange: [],
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        dictName: undefined,
-        dictType: undefined,
-        status: undefined
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        dictName: [
-          { required: true, message: "字典名称不能为空", trigger: "blur" }
-        ],
-        dictType: [
-          { required: true, message: "字典类型不能为空", trigger: "blur" }
-        ]
-      }
+      article: {}
     };
   },
   created() {
-    this.getList();
+    getCurrentArticle().then((res) => {
+      if (res.data) {
+        this.article = res.data
+      }
+    })
   },
   methods: {
-    /** 查询字典类型列表 */
-    getList() {
-      this.loading = true;
-      listType(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.typeList = response.rows;
-          this.total = response.total;
-          this.loading = false;
-        }
-      );
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        dictId: undefined,
-        dictName: undefined,
-        dictType: undefined,
-        status: "0",
-        remark: undefined
-      };
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.dateRange = [];
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加字典类型";
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.dictId)
-      this.single = selection.length!=1
-      this.multiple = !selection.length
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const dictId = row.dictId || this.ids
-      getType(dictId).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改字典类型";
-      });
-    },
-    /** 提交按钮 */
-    submitForm: function() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.dictId != undefined) {
-            updateType(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addType(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const dictIds = row.dictId || this.ids;
-      this.$modal.confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？').then(function() {
-        return delType(dictIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('system/dict/type/export', {
-        ...this.queryParams
-      }, `type_${new Date().getTime()}.xlsx`)
-    },
-    /** 刷新缓存按钮操作 */
-    handleRefreshCache() {
-      refreshCache().then(() => {
-        this.$modal.msgSuccess("刷新成功");
-        this.$store.dispatch('dict/cleanDict');
-      });
-    }
   }
 };
 </script>
+<style scoped lang="scss">
+.app-container {
+
+  background-color: #f4f4f4;
+  color: #a2a2a2;
+  font-family: "MicroSoft Yahei";
+  position: relative;
+  height: calc(100vh - 84px);
+  padding: 10;
+
+  .container {
+    padding: 20px 40px;
+    min-height: 188px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 3px 3px 6px #bebebe, -3px -3px 6px #ffffff;
+
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto 20px auto;
+    position: relative;
+    color: #8d96a8;
+
+    .title {
+      color: #555f76;
+      font-size: 22px;
+      padding: 20px 0 10px;
+      text-align: start;
+    }
+
+    .title-btn {
+      position: absolute;
+      right: 40px;
+      top: 42px;
+    }
+
+    .text {
+      padding: 0 0 10px;
+      text-align: start;
+      color: #8d96a8;
+    }
+
+    .small-img {
+      width: 30px;
+    }
+
+    .no-article {
+      padding: 30px 0;
+    }
+
+    .article {
+      .article-title {
+        img {
+          width: 80px;
+        }
+
+        padding: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 5px;
+
+        .btn {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 14px;
+
+          img {
+            width: 22px;
+          }
+        }
+      }
+    }
+
+    .other {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 20px;
+
+      .item {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        width: 22%;
+
+        img {
+          width: 50px;
+        }
+      }
+    }
+  }
+}
+</style>

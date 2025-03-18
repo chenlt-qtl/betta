@@ -192,4 +192,11 @@ public class Constants
      */
     public static final String[] JOB_ERROR_STR = { "java.net.URL", "javax.naming.InitialContext", "org.yaml.snakeyaml",
             "org.springframework", "org.apache", "com.betta.common.utils.file", "com.betta.common.config", "com.betta.generator" };
+
+    /**
+     *  系统数据类型
+     */
+    public static final int ROLE_HOME_DATA_TYPE = 1;
+
+    public static final int CURRENT_ARTICLE_DATA_TYPE = 2;
 }
