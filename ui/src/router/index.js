@@ -73,6 +73,13 @@ export const constantRoutes = [
         hidden: true,
         meta: { title: '首页', icon: 'dashboard', affix: true }
       },
+      {
+        name: "dance",
+        path: "/dance",
+        component: () => import("@/components/other/timer/VideoPlayer"),
+        hidden: true,
+        meta: { title: '跳舞', icon: 'dashboard'}
+      },
     ],
   },
   // {

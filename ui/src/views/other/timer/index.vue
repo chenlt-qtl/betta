@@ -16,6 +16,8 @@
         <el-button @click="stop">暂停/继续</el-button>
         <el-popconfirm style="margin-left: 10px" :disabled="!isRun" title="确认要重置?" @confirm="reset"><el-button
             :disabled="!isRun" slot="reference">重置</el-button></el-popconfirm>
+        <el-divider direction="vertical"></el-divider>
+        <el-button @click="dance">跳舞</el-button>
       </div>
     </div>
 
@@ -73,6 +75,9 @@ export default {
       intervalIndex = null;
       this.isRun = true;
       this.startInterval(true);
+    },
+    dance() {
+      this.open = true;
     },
     soundEffect(inClass) {
       if (this.checkTime()) {

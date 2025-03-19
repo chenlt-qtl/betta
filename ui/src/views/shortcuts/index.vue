@@ -45,6 +45,10 @@
           <img src="@/assets/shortcuts/通知.svg" />
           上课
         </a>
+        <a href="dance" class="item">
+          <img src="@/assets/shortcuts/运动.svg" />
+          跳舞
+        </a>
         <a href="card/plus" class="item">
           <img src="@/assets/shortcuts/积分.svg" />
           加卡
