@@ -150,13 +150,13 @@ export default {
     .article {
       .article-title {
         img {
-          width: 80px;
+          width: 60px;
         }
 
         padding: 20px 0;
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 30px;
       }
 
       .toolbar {

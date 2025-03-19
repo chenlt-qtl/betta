@@ -1,5 +1,5 @@
 <template>
-    <el-dialog title="" :visible.sync="openWin" @close="onClose" width="760px" append-to-body>
+    <el-dialog title="" :visible.sync="openWin" @close="onClose" width="888px" append-to-body>
         <video-player :start="openWin"></video-player>
     </el-dialog>
 </template>

@@ -4,7 +4,7 @@
             <el-button v-for="video, index in videos" :key="video.src" size="mini"
                 :type="index == videoIdx ? '' : 'text'" @click="() => playSelect(index)">{{ video.name }}</el-button>
         </div>
-        <video ref="videoPlayer" width="720" height="480" controls>
+        <video class="video" ref="videoPlayer" controls>
             <source :src="videoSrc" type="video/mp4">
             </source>
         </video>
@@ -96,6 +96,15 @@ export default {
     .video-list {
         display: flex;
         justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
     }
+
+    @media screen and (max-height: 500px) {
+        .video{
+            width: 600px;
+        }
+    }
+
 }
 </style>
