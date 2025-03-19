@@ -24,7 +24,7 @@
           </a>
           <el-divider direction="vertical"></el-divider>
           <a :href="'eng/article-detail/' + article.id" class="btn">
-            <img src="@/assets/shortcuts/编辑.svg" />
+            <img src="@/assets/shortcuts/评论.svg" />
             跟读
           </a>
           <el-divider direction="vertical"></el-divider>
