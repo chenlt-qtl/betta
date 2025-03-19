@@ -100,9 +100,9 @@ export default {
         margin-bottom: 10px;
     }
 
-    @media screen and (max-height: 500px) {
+    @media screen and (max-width: 450px) {
         .video{
-            width: 600px;
+            max-width: 100%;
         }
     }
 
