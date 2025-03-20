@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.betta.common.utils.SecurityUtils;
 import com.betta.common.utils.StringUtils;
 import com.betta.eng.domain.EngSentence;
+import com.betta.eng.domain.EngWord;
 import com.betta.eng.domain.PlayList;
 import com.betta.eng.domain.dojo.BatchAddSentences;
 import com.betta.eng.domain.vo.SentenceVo;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * @date 2024-06-02
  */
 @Service
-public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSentence>  implements IEngSentenceService{
+public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSentence> implements IEngSentenceService {
     @Autowired
     private EngSentenceMapper engSentenceMapper;
 
@@ -49,13 +50,13 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
     public List<EngSentence> selectEngSentenceList(EngSentence sentence) {
         LambdaQueryWrapper<EngSentence> wrapper = new LambdaQueryWrapper<>();
         //过滤文章ID
-        wrapper.eq(sentence.getArticleId()!=null,EngSentence::getArticleId,sentence.getArticleId());
+        wrapper.eq(sentence.getArticleId() != null, EngSentence::getArticleId, sentence.getArticleId());
         //过滤内容
-        wrapper.like(StrUtil.isNotBlank(sentence.getContent()),EngSentence::getContent,sentence.getContent());
+        wrapper.like(StrUtil.isNotBlank(sentence.getContent()), EngSentence::getContent, sentence.getContent());
         //过滤解释
-        wrapper.like(StrUtil.isNotBlank(sentence.getAcceptation()),EngSentence::getAcceptation,sentence.getAcceptation());
+        wrapper.like(StrUtil.isNotBlank(sentence.getAcceptation()), EngSentence::getAcceptation, sentence.getAcceptation());
         //过滤创建者
-        wrapper.like(EngSentence::getCreateBy,SecurityUtils.getUsername());
+        wrapper.like(EngSentence::getCreateBy, SecurityUtils.getUsername());
 
         return engSentenceMapper.selectList(wrapper);
     }
@@ -69,7 +70,7 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
     @Override
     public int deleteByArticle(Long articleId) {
         LambdaQueryWrapper<EngSentence> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(EngSentence::getArticleId,articleId);
+        wrapper.eq(EngSentence::getArticleId, articleId);
         return engSentenceMapper.delete(wrapper);
     }
 
@@ -83,7 +84,7 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
             sentenceIds = playLists.get(0).getSentenceIds();
         }
 
-        if(StrUtil.isBlank(sentenceIds) && inPlayList){
+        if (StrUtil.isBlank(sentenceIds) && inPlayList) {
             return new ArrayList<>();
         }
 
@@ -96,19 +97,21 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
                 queryWrapper.notIn("eng_article_group.id", sentenceIds);
             }
         }
-        queryWrapper.eq("create_by",username);
+        queryWrapper.eq("create_by", username);
         queryWrapper.isNotNull("eng_sentence.mp3");
-        queryWrapper.like(StrUtil.isNotBlank(engSentence.getContent()),"content",engSentence.getContent());
-        queryWrapper.orderByAsc("group_name","article_name","idx");
+        queryWrapper.like(StrUtil.isNotBlank(engSentence.getContent()), "content", engSentence.getContent());
+        queryWrapper.orderByAsc("group_name", "article_name", "idx");
 
         return engSentenceMapper.selectPlayList(queryWrapper);
     }
 
     @Override
-    public List<SentenceVo> selectByWordTop10(String wordName) {
+    public List<SentenceVo> selectByWordTop10(EngWord word) {
         QueryWrapper<EngSentence> wrapper = new QueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(wordName),"content",wordName);
-        wrapper.like("eng_sentence.create_by",SecurityUtils.getUsername());
+
+        wrapper.and(j -> j.like(StrUtil.isNotBlank(word.getWordName()), "content", word.getWordName())
+                .or(StrUtil.isNotBlank(word.getPrototype()),i -> i.like("content", word.getPrototype()))
+                .eq("eng_sentence.create_by", SecurityUtils.getUsername()));
         wrapper.orderByAsc("idx");
         wrapper.last("limit 10");
 
@@ -117,6 +120,7 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
 
     /**
      * 批量保存文章句子
+     *
      * @param batchAddSentences
      * @return
      */
@@ -126,7 +130,7 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
         //1.获取目前数据库里的总条数 idx需要用到
         QueryWrapper<EngSentence> wrapper = new QueryWrapper<>();
         wrapper.select("count(*) as total");
-        wrapper.eq("article_id",batchAddSentences.getArticleId());
+        wrapper.eq("article_id", batchAddSentences.getArticleId());
         Map<String, Object> map = getMap(wrapper);
         long total = (long) map.get("total");
 
@@ -138,7 +142,7 @@ public class EngSentenceServiceImpl extends ServiceImpl<EngSentenceMapper, EngSe
             engSentence.setArticleId(batchAddSentences.getArticleId());
             engSentence.setContent(sentenceStrs.get(i));
             EngUtils.genMp3Time(engSentence);
-            engSentence.setIdx(total + 1 + i );
+            engSentence.setIdx(total + 1 + i);
             sentences.add(engSentence);
         }
 

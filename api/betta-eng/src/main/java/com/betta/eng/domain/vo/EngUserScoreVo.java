@@ -20,6 +20,8 @@ public class EngUserScoreVo extends EngUserScore
 
     private Long articleId;//文章ID
 
+    private String prototype;
+
     private String sentence;
 
     private String sentenceAcceptation;

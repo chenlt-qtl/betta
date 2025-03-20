@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="relId"    column="rel_id"    />
         <result property="wordName"    column="word_name"    />
+        <result property="prototype"    column="prototype"    />
         <result property="phonetics"    column="phonetics"    />
         <result property="acceptation"    column="acceptation"    />
         <result property="exchange"    column="exchange"    />
@@ -21,15 +22,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectEngWordVo">
-        select id, word_name, phonetics, acceptation, exchange, parts,  ph_mp3, status, create_time, create_by, update_time, update_by from eng_word
+        select id, word_name,prototype, phonetics, acceptation, exchange, parts,  ph_mp3, status, create_time, create_by, update_time, update_by from eng_word
     </sql>
 
     <select id="selectEngWordList" parameterType="EngWord" resultMap="EngWordResult">
         <include refid="selectEngWordVo"/>
-        <where>  
-            <if test="wordName != null  and wordName != ''"> and word_name like concat('%', #{wordName}, '%')</if>
-            <if test="acceptation != null  and acceptation != ''"> and acceptation like concat('%', #{acceptation}, '%')</if>
-            <if test="exchange != null  and exchange != ''"> and exchange like concat('%', #{exchange}, '%')</if>
+        <where>
+            <if test="wordName != null  and wordName != ''">
+                and (word_name like concat('%', #{wordName}, '%')
+                or prototype like concat('%', #{wordName}, '%'))
+            </if>
+            <if test="acceptation != null  and acceptation != ''">and acceptation like concat('%', #{acceptation},
+                '%')
+            </if>
+            <if test="exchange != null  and exchange != ''">and exchange like concat('%', #{exchange}, '%')</if>
         </where>
         order by word_name
     </select>
@@ -54,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into eng_word
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="wordName != null and wordName != ''">word_name,</if>
+            <if test="prototype != null and prototype != ''">prototype,</if>
             <if test="phonetics != null">phonetics,</if>
             <if test="acceptation != null">acceptation,</if>
             <if test="exchange != null">exchange,</if>
@@ -67,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="wordName != null and wordName != ''">#{wordName},</if>
+            <if test="prototype != null and prototype != ''">#{prototype},</if>
             <if test="phonetics != null">#{phonetics},</if>
             <if test="acceptation != null">#{acceptation},</if>
             <if test="exchange != null">#{exchange},</if>
@@ -84,6 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update eng_word
         <trim prefix="SET" suffixOverrides=",">
             <if test="wordName != null and wordName != ''">word_name = #{wordName},</if>
+            prototype = #{prototype},
             <if test="phonetics != null">phonetics = #{phonetics},</if>
             <if test="acceptation != null">acceptation = #{acceptation},</if>
             <if test="exchange != null">exchange = #{exchange},</if>

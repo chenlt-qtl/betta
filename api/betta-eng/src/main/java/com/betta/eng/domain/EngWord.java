@@ -25,6 +25,8 @@ public class EngWord extends BaseEntity
     @Excel(name = "单词内容")
     private String wordName;
 
+    private String prototype;
+
     /** 音频位置 */
     @Excel(name = "音频位置")
     private String phMp3;

@@ -56,7 +56,6 @@
 </template>
 
 <script>
-import { delWord } from "@/api/eng/word";
 import { listByUser } from "@/api/eng/score";
 import { play } from "@/utils/audio";
 import ArticleWordList from "@/components/Eng/wordList/articleWordList.vue";

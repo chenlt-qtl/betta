@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="articleId"    column="article_id"    />
         <result property="user"    column="user"    />
         <result property="wordName"    column="word_name"    />
+        <result property="prototype"    column="prototype"    />
         <result property="familiarity"    column="familiarity"    />
         <result property="status"    column="status"    />
         <result property="createTime"    column="create_time"    />
@@ -32,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectEngUserScoreVo" parameterType="EngUserScore" resultMap="EngUserScoreVoResult">
         select c.id as rel_id,c.article_id, d.* from
-        (select b.familiarity,a.id as word_id, a.word_name ,a.phonetics,a.acceptation,a.exchange, a.ph_mp3,b.user
+        (select b.familiarity,a.id as word_id, a.word_name,a.prototype ,a.phonetics,a.acceptation,a.exchange, a.ph_mp3,b.user
         from eng_word a left join eng_user_score b on a.word_name = b.word_name) d inner join eng_article_word_rel c
         on d.word_name = c.word_name and (d.user = c.create_by or d.user is null)
         <where>

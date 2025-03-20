@@ -94,7 +94,7 @@ public class EngWordServiceImpl implements IEngWordService {
         EngWord word = getWord(wordName);
         //构建engWordVo并将word的内容复制过来
         EngWordVo engWordVo = new EngWordVo();
-        BeanUtils.copyProperties(word,engWordVo);
+        BeanUtils.copyProperties(word, engWordVo);
         //查询爱词霸例句
         EngIcibaSentence icibaSentence = new EngIcibaSentence();
         icibaSentence.setWordId(word.getId());
@@ -102,7 +102,7 @@ public class EngWordServiceImpl implements IEngWordService {
         engWordVo.setIcibaSentenceList(icibaSentences);
 
         //查询自定义例句
-        List<SentenceVo> sentences = sentenceService.selectByWordTop10(wordName);
+        List<SentenceVo> sentences = sentenceService.selectByWordTop10(word);
         engWordVo.setSentenceList(sentences);
 
         //查询是否已关联
@@ -133,9 +133,19 @@ public class EngWordServiceImpl implements IEngWordService {
         //查API
         if (getFromApi) {
             EngWordVo wordVo = dictUtils.getWord(lowerCase);
-            word = wordVo;
             if (!Objects.isNull(wordVo)) {
-                engWordMapper.insertEngWord(word);
+
+                if (word == null) {
+                    //新增
+                    word = wordVo;
+                    engWordMapper.insertEngWord(word);
+                } else {
+                    //修改
+                    word.setPhonetics(wordVo.getPhonetics());
+                    word.setPhMp3(wordVo.getPhMp3());
+                    word.setAcceptation(wordVo.getAcceptation());
+                    engWordMapper.updateEngWord(word);
+                }
                 if (!Objects.isNull(wordVo.getIcibaSentenceList())) {//例句
                     for (EngIcibaSentence icibaSentence : wordVo.getIcibaSentenceList()) {
                         icibaSentence.setWordId(word.getId());
@@ -202,6 +212,7 @@ public class EngWordServiceImpl implements IEngWordService {
     @Override
     public int updateEngWord(EngWord engWord) {
         EngWord db = getWord(engWord.getWordName());
+        db.setPrototype(engWord.getPrototype());
         db.setPhonetics(engWord.getPhonetics());
         db.setPhMp3(engWord.getPhMp3());
         db.setAcceptation(engWord.getAcceptation());
