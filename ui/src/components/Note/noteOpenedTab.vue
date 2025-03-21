@@ -30,12 +30,7 @@ export default {
   },
   watch: {
     openedNotes() {
-      const openedNotes = this.$store.state.note.openedNotes;
-      const entrys = [];
-      Object.keys(openedNotes).forEach((id) => {
-        entrys.push({ id, name: openedNotes[id] });
-      });
-      this.tabData = entrys;
+      this.tabData = this.$store.state.note.openedNotes;
     },
   },
   methods: {
@@ -48,7 +43,7 @@ export default {
     handleTabsEdit(targetName, action) {
       const openedNoteId = this.$store.state.note.openedNote.id;
       if (action === "remove") {
-        delete this.openedNotes[targetName];
+        this.openedNotes = this.openedNotes.filter(i=>i.id!=targetName)
         this.$store.dispatch("note/setOpenedNotes", this.openedNotes);
         if (openedNoteId == targetName) {
           const query = { ...this.$route.query };

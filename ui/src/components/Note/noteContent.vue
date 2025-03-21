@@ -115,8 +115,14 @@ export default {
         this.isSaved = true;
 
         //更新openedNotes
-        const data = new Map(this.$store.state.note.openedNotes);
-        data.set(String(this.openedNote.id), note);
+        const { id, name } = note;
+        const data = this.$store.state.note.openedNotes;
+        data.forEach(data => {
+          if (data.id == id) {
+            data.name = name;
+            return;
+          }
+        })
         this.$store.dispatch("note/setOpenedNotes", data);
         //更新列表
         this.$store.dispatch("note/getListData");

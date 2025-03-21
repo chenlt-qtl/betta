@@ -7,6 +7,8 @@ import {
 } from "@/api/note/noteInfo";
 import { listFavorite } from "@/api/note/favorite";
 
+const MAX_OPENED_NUM = 10; //最多能打开多少TAB
+
 const state = {
   //树节点数据
   treeData: new Array(),
@@ -19,7 +21,7 @@ const state = {
   //打开的笔记
   openedNote: {},
   //打开的笔记TAB集合
-  openedNotes: JSON.parse(localStorage.getItem("opened_notes")) || {},
+  openedNotes: JSON.parse(localStorage.getItem("opened_notes_b")) || [],
   //列表类型
   listType: "",
   //搜索内容
@@ -41,8 +43,11 @@ const mutations = {
     state.openedNote = note;
   },
   SET_OPENED_NOTES: (state, notes) => {
-    state.openedNotes = notes;
-    localStorage.setItem("opened_notes", JSON.stringify(notes));
+    if (notes.length > MAX_OPENED_NUM) {
+      notes.splice(0, notes.length - MAX_OPENED_NUM - 1);
+    }
+    state.openedNotes = [...notes];
+    localStorage.setItem("opened_notes_b", JSON.stringify(notes));
   },
   SET_LIST_NOTE: (state, notes) => {
     state.listNote = notes;
@@ -120,7 +125,7 @@ const actions = {
   },
   // 打开note
   openNote({ commit, state, dispatch }, id) {
-    const openedNotes = { ...state.openedNotes };
+    const openedNotes = [...state.openedNotes];
     const search = state.search;
     return new Promise((resolve, reject) => {
       if (id) {
@@ -128,7 +133,19 @@ const actions = {
           .then((res) => {
             const openedNote = res.data;
             commit("SET_OPENED_NOTE", openedNote);
-            openedNotes[id] = openedNote.name;
+
+            //加到openedNotes中
+            let exists = false;
+            openedNotes.forEach((data) => {
+              if (data.id == id) {
+                data.name = openedNote.name;
+                exists = true;
+                return;
+              }
+            });
+            if (!exists) {
+              openedNotes.push({ id, name: openedNote.name });
+            }
             commit("SET_OPENED_NOTES", openedNotes);
             if (!search) {
               if (openedNote.isLeaf) {
@@ -150,15 +167,13 @@ const actions = {
     });
   },
   delNotes({ commit, state, dispatch }, ids) {
-    const openedNotes = { ...state.openedNotes };
-
     return new Promise((resolve, reject) => {
       if (ids) {
         delNoteInfo(ids)
           .then((res) => {
-            ids.forEach((id) => {
-              delete openedNotes[id];
-            });
+            const openedNotes = state.openedNotes.filter(
+              (i) => !ids.includes(i)
+            );
             commit("SET_OPENED_NOTES", openedNotes);
             dispatch("getTreeData");
             dispatch("getListData");
