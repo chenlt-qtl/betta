@@ -43,8 +43,8 @@ export default {
     handleTabsEdit(targetName, action) {
       const openedNoteId = this.$store.state.note.openedNote.id;
       if (action === "remove") {
-        this.openedNotes = this.openedNotes.filter(i=>i.id!=targetName)
-        this.$store.dispatch("note/setOpenedNotes", this.openedNotes);
+        this.tabData = this.tabData.filter(i=>i.id!=targetName)
+        this.$store.dispatch("note/setOpenedNotes", this.tabData);
         if (openedNoteId == targetName) {
           const query = { ...this.$route.query };
           delete query.id;
