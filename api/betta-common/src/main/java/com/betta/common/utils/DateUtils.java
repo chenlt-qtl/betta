@@ -145,6 +145,14 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
     /**
+     * 计算相差分钟数
+     */
+    public static int differentMinsByMillisecond(Date date1, Date date2)
+    {
+        return Math.abs((int) ((date2.getTime() - date1.getTime()) / (1000 * 60)));
+    }
+
+    /**
      * 计算时间差
      *
      * @param endDate 最后时间

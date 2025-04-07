@@ -2,7 +2,7 @@ package com.betta.note.service;
 
 import java.util.List;
 
-import com.betta.common.annotation.CreateByScope;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.note.domain.NoteInfo;
 import com.betta.note.domain.NoteVo;
@@ -13,7 +13,7 @@ import com.betta.note.domain.NoteVo;
  * @author ruoyi
  * @date 2024-06-06
  */
-public interface INoteInfoService 
+public interface INoteInfoService extends IService<NoteInfo>
 {
     /**
      * 查询文件夹
@@ -67,4 +67,6 @@ public interface INoteInfoService
     List<NoteInfo> selectNoteInfoByIds(String[] noteIds);
 
     List<NoteInfo> selectLast(int limit);
+
+    NoteInfo selectNoteByContent(Long contentId);
 }

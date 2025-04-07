@@ -3,6 +3,7 @@ package com.betta.note.mapper;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.note.domain.NoteInfo;
 import com.betta.note.domain.NoteVo;
@@ -14,7 +15,7 @@ import org.apache.ibatis.annotations.Param;
  * @author ruoyi
  * @date 2024-06-06
  */
-public interface NoteInfoMapper 
+public interface NoteInfoMapper extends BaseMapper<NoteInfo>
 {
     /**
      * 查询文件夹

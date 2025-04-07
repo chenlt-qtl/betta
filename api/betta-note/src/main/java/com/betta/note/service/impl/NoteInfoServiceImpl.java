@@ -1,5 +1,7 @@
 package com.betta.note.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.betta.common.annotation.CreateByScope;
 import com.betta.common.core.domain.TreeSelect;
 import com.betta.common.exception.ApiException;
@@ -29,7 +31,7 @@ import java.util.Objects;
  * @date 2024-06-06
  */
 @Service
-public class NoteInfoServiceImpl implements INoteInfoService {
+public class NoteInfoServiceImpl extends ServiceImpl<NoteInfoMapper,NoteInfo> implements INoteInfoService {
     @Autowired
     private NoteInfoMapper noteInfoMapper;
 
@@ -179,6 +181,22 @@ public class NoteInfoServiceImpl implements INoteInfoService {
         param.put("limit",limit);
         param.put("params",new HashMap<>());
         return noteInfoMapper.selectLast(param);
+    }
+
+    /**
+     * 根据contentId查询笔记
+     * @param contentId
+     * @return
+     */
+    @Override
+    public NoteInfo selectNoteByContent(Long contentId) {
+        LambdaQueryWrapper<NoteInfo> wrapper = new LambdaQueryWrapper<>();
+        //过滤文章ID
+        wrapper.eq(NoteInfo::getContentId, contentId);
+        //过滤创建者
+        wrapper.like(NoteInfo::getCreateBy, SecurityUtils.getUsername());
+
+        return noteInfoMapper.selectOne(wrapper);
     }
 
 
