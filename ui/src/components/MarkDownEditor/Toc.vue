@@ -40,7 +40,6 @@
   }
   
   .toc-title {
-    font-size: 14px;
     font-weight: 600;
     margin-bottom: 6px;
     color: #333;
