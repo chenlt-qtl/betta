@@ -1,42 +1,57 @@
 <template>
-  <editor
-    ref="editorRef"
-    :options="editorOptions"
-    height="500px"
-    previewStyle="vertical"
-    @blur="onEditorBlur"
-    @keyup="onInput"
-  />
+  <div>
+    <editor :style="{ 'display': isViewer ? 'none' : 'block' }" ref="editor" :options="editorOptions" height="500px"
+      previewStyle="vertical" @blur="onEditorBlur" @keyup="onInput" />
+
+    <div class="viewer-container">
+      <!-- 左侧目录 -->
+      <div class="toc-wrapper">
+        <toc :headings="headings" />
+      </div>
+      <viewer :style="{ 'display': isViewer ? 'block' : 'none' }" ref="viewRef" height="500px" />
+    </div>
+
+  </div>
 </template>
 
 
 <script>
-import { Editor } from "@toast-ui/vue-editor";
+import { Editor, Viewer } from "@toast-ui/vue-editor";
 import "@toast-ui/editor/dist/toastui-editor.css"; // Editor's Style
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import "codemirror/lib/codemirror.css";
 import { uploadNoteImg } from "@/api/common";
+import Toc from './Toc.vue';
 
 export default {
-  props: ["value"],
+  props: ["value", "isViewer"],
   components: {
     editor: Editor,
+    viewer: Viewer,
+    toc: Toc,
   },
   watch: {
     value() {
-      this.$refs.editorRef.invoke("setMarkdown", this.value || "", false);
-    },
+      this.$refs.viewRef && this.$refs.viewRef.invoke("setMarkdown", this.value || "", false);
+      this.$refs.editor && this.$refs.editor.invoke("setMarkdown", this.value || "", false);
+      this.$nextTick(() => {
+        this.parseHeadings();
+      })
+    }
   },
   data() {
     return {
       editorOptions: {
         hooks: { addImageBlobHook: this.uploadImg },
       },
+      updateEditor: false,
+      headings: [],
     };
   },
   methods: {
     onEditorBlur() {
       setTimeout(() => {
-        this.$emit("blur", this.$refs.editorRef.invoke("getMarkdown"));
+        this.$emit("blur", this.$refs.editor.invoke("getMarkdown"));
       }, 0);
     },
     onInput() {
@@ -76,7 +91,69 @@ export default {
       }
       return true;
     },
-  },
+    parseHeadings() {
+      const html = this.$refs.editor.invoke('getHTML');
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      const headings = [];
+      let index = 0;
+
+      doc.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((element) => {
+        const level = parseInt(element.tagName.slice(1), 10);
+        const text = element.textContent;
+        const id = this.slugify(text, index++);
+
+        // 添加锚点ID到编辑器内容
+        element.id = id;
+
+        headings.push({
+          level,
+          text,
+          id
+        });
+      });
+
+      // 更新编辑器内容（添加ID后的HTML）
+      this.$refs.viewRef.invoke('setHTML', doc.body.innerHTML);
+
+      this.headings = headings;
+    },
+    slugify(text, index) {
+      const baseSlug = text
+        .toLowerCase()
+        .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+
+      return `${baseSlug}-${index}`;
+    }
+  }
 };
 </script>
 
+<style lang="scss">
+.viewer-container {
+  display: flex;
+  >div{
+    padding: 5px;
+  }
+
+  .toc-wrapper {
+    width: 300px;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+  }
+
+  .toastui-editor-contents {
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      scroll-margin-top: 20px;
+      /* 滚动定位偏移量 */
+    }
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="note-content">
+  <div class="note-content" v-loading="loading" >
     <OpenedTab></OpenedTab>
     <div v-if="openedNote.id">
       <div class="toolbar">
@@ -10,13 +10,15 @@
         <i v-if="isFav" @click="() => updateFav(false)" class="el-icon-star-on orange"></i>
         <i v-if="isSaved" style="color: #78e08f" class="el-icon-circle-check icon"></i>
         <i v-if="!isSaved" class="el-icon-warning-outline orange icon"></i>
+        <el-button v-if="!isViewer" @click="() => isViewer = true" icon="el-icon-view" type="text"></el-button>
+        <el-button v-if="isViewer" @click="() => isViewer = false" icon="el-icon-edit" type="text"></el-button>
       </div>
 
       <div v-if="content.id == null" class="blank">
         <i style="color: gray; font-size: 80px" class="el-icon-monitor"></i>
       </div>
       <div :style="{ display: content.id == null ? 'none' : 'block' }">
-        <MdEditor :value="content.text" @blur="updateText" @change="onChange"></MdEditor>
+        <MdEditor :isViewer="isViewer" :value="content.text" @blur="updateText" @change="onChange"></MdEditor>
       </div>
     </div>
     <el-empty v-if="!openedNote.id" description=""></el-empty>
@@ -50,6 +52,7 @@ export default {
       isFav: false,
       //是否已经保存到数据库
       isSaved: true,
+      isViewer:true,//是否是预览状态
     };
   },
   created() {
@@ -72,6 +75,7 @@ export default {
   methods: {
     /** 查询笔记内容 */
     getContent() {
+      this.loading = true;
       const { name, contentId } = this.openedNote;
       this.title = name;
       if (contentId) {
@@ -79,8 +83,9 @@ export default {
           this.content = res.data;
           if (this.content && this.content.text) {
             this.content.text = this.replaceUrl(this.content.text);
-            console.log(this.content.text);
           }
+          this.loading = false;
+          this.isViewer = true;
         });
       } else {
         this.content = {};
