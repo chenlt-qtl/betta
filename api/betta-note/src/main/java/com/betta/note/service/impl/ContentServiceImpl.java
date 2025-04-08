@@ -77,7 +77,7 @@ public class ContentServiceImpl implements IContentService {
         Content content_db = contentMapper.selectcontentById(content.getId());
 
         //如果内容跟原来差超过100个字符或者时间超过10分钟，则自动保存历史记录
-        if (Math.abs(content.getText().length() - content_db.getText().length()) >= 100
+        if (content_db.getText() == null || Math.abs(content.getText().length() - content_db.getText().length()) >= 100
                 || content_db.getUpdateTime() == null
                 || DateUtils.differentMinsByMillisecond(content_db.getUpdateTime(), new Date()) > 10) {
             //查出对应的note
