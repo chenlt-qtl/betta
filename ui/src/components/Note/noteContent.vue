@@ -45,7 +45,7 @@ export default {
     return {
       title: "",
       // 遮罩层
-      loading: true,
+      loading: false,
       content: {},
       fav: {},
       //是否已收藏
@@ -75,26 +75,18 @@ export default {
   methods: {
     /** 查询笔记内容 */
     getContent() {
-      this.loading = true;
       const { name, contentId } = this.openedNote;
       this.title = name;
       if (contentId) {
+        this.loading = true;
         getContent(contentId).then((res) => {
           this.content = res.data;
-          if (this.content && this.content.text) {
-            this.content.text = this.replaceUrl(this.content.text);
-          }
           this.loading = false;
           this.isViewer = true;
         });
       } else {
         this.content = {};
       }
-    },
-    //替换URL前缀
-    replaceUrl(text) {
-      const reg = new RegExp("(?<=\\]\\()(\\/profile)?(?=\\/note)", "g");
-      return text.replaceAll(reg, process.env.VUE_APP_RESOURCE);
     },
     getFav() {
       getFavorite().then(({ data }) => {
@@ -136,21 +128,7 @@ export default {
     updateText(text) {
       //如果有改动，才保存
       if (!this.isSaved) {
-        let newText = "";
-        if (text) {
-          newText = text.replaceAll(
-            new RegExp(
-              "(?<=\\]\\()" +
-              process.env.VUE_APP_RESOURCE +
-              "(?=\\/note)",
-              "g"
-            ),
-            ""
-          );
-        }
-
-        updateContent({ ...this.content, text: newText }).then(() => {
-          this.content.text = this.replaceUrl(newText);//更新现有视图数据
+        updateContent({ ...this.content, text }).then(() => {
           this.isSaved = true;
           this.$modal.msgSuccess("修改成功");
         });
