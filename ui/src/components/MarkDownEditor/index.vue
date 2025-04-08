@@ -3,12 +3,12 @@
     <editor :style="{ 'display': isViewer ? 'none' : 'block' }" ref="editor" :options="editorOptions" height="500px"
       previewStyle="vertical" @blur="onEditorBlur" @keyup="onInput" />
 
-    <div class="viewer-container">
+    <div class="viewer-container" :style="{ 'display': isViewer ? 'flex' : 'none' }">
       <!-- 左侧目录 -->
       <div class="toc-wrapper">
         <toc :headings="headings" />
       </div>
-      <viewer :style="{ 'display': isViewer ? 'block' : 'none' }" ref="viewRef" height="500px" />
+      <viewer class="viewer" ref="viewRef" height="500px" />
     </div>
 
   </div>
@@ -134,15 +134,15 @@ export default {
 
 <style lang="scss">
 .viewer-container {
-  display: flex;
   >div{
     padding: 5px;
   }
 
   .toc-wrapper {
-    width: 300px;
+    width: 200px;
     border-right: 1px solid #e0e0e0;
     overflow-y: auto;
+    flex-shrink: 0;
   }
 
   .toastui-editor-contents {
