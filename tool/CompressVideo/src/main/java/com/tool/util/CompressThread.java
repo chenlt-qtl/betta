@@ -21,12 +21,6 @@ public class CompressThread implements Runnable {
         String prefix = Thread.currentThread().getName() + "---" + this.source.getName() + "---";
         System.out.println(prefix + "开始压缩文件:" + source.getName() + "-----------------------------");
 
-        // 创建临时文件夹
-        File tmpDir = new File(targetPath + "\\tmp");
-        if (!tmpDir.exists()) {
-            tmpDir.mkdirs();
-        }
-        
         // 压缩后的文件临时路径
         File tempTarget = new File(targetPath + "\\tmp\\" + source.getName());
         
@@ -50,33 +44,12 @@ public class CompressThread implements Runnable {
             
             if (tempTarget.renameTo(finalTarget)) {
                 System.out.println(prefix + "文件移动成功: " + finalTarget.getAbsolutePath());
-                // 删除临时文件夹（如果为空）
-                deleteEmptyDirectory(tmpDir);
             } else {
                 System.out.println(prefix + "文件移动失败，保留在临时位置: " + tempTarget.getAbsolutePath());
                 App.FAIL_LIST.add(source.getAbsolutePath() + " (移动失败)");
             }
         } else {
             System.out.println(prefix + "压缩失败");
-        }
-    }
-    
-    /**
-     * 递归删除空目录
-     */
-    private void deleteEmptyDirectory(File directory) {
-        if (directory.exists() && directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files == null || files.length == 0) {
-                if (directory.delete()) {
-                    System.out.println("删除空目录: " + directory.getAbsolutePath());
-                    // 递归删除父目录（如果也为空）
-                    File parent = directory.getParentFile();
-                    if (parent != null && parent.getName().equals("tmp")) {
-                        deleteEmptyDirectory(parent);
-                    }
-                }
-            }
         }
     }
 

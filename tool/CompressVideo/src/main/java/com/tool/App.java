@@ -34,6 +34,10 @@ public class App {
     public static void main(String[] args) throws InterruptedException {
         long time = System.currentTimeMillis();
         FAIL_LIST.clear();
+        
+        // 在开始压缩前创建全局tmp文件夹
+        createGlobalTmpFolder();
+        
         ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 16, 120, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(1000), Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy());
@@ -47,6 +51,10 @@ public class App {
         }
         pool.shutdown(); // 停止接受新任务
         pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS); // 等待所有任务完成
+        
+        // 所有压缩完成后删除tmp文件夹
+        deleteGlobalTmpFolder();
+        
         System.out.println("转换完成, 共耗时：" + (double) (System.currentTimeMillis() - time) / 1000 + "秒");
         System.out.println("共转换：" + second.intValue() / 60 + "分钟的视频");
         //打印转换失败的文件名
@@ -75,6 +83,56 @@ public class App {
             String target = TARGET_PATH + source.getParent().substring(PATH.length());
             pool.execute(new CompressThread(source, target));
         }
+    }
+
+    /**
+     * 创建全局tmp文件夹
+     */
+    private static void createGlobalTmpFolder() {
+        File tmpDir = new File(TARGET_PATH + "\\tmp");
+        if (!tmpDir.exists()) {
+            if (tmpDir.mkdirs()) {
+                System.out.println("创建临时文件夹: " + tmpDir.getAbsolutePath());
+            } else {
+                System.out.println("创建临时文件夹失败: " + tmpDir.getAbsolutePath());
+            }
+        } else {
+            System.out.println("临时文件夹已存在: " + tmpDir.getAbsolutePath());
+        }
+    }
+
+    /**
+     * 递归删除全局tmp文件夹及其内容
+     */
+    private static void deleteGlobalTmpFolder() {
+        File tmpDir = new File(TARGET_PATH + "\\tmp");
+        if (tmpDir.exists() && tmpDir.isDirectory()) {
+            if (deleteDirectory(tmpDir)) {
+                System.out.println("删除临时文件夹成功: " + tmpDir.getAbsolutePath());
+            } else {
+                System.out.println("删除临时文件夹失败: " + tmpDir.getAbsolutePath());
+            }
+        }
+    }
+
+    /**
+     * 递归删除目录及其所有内容
+     */
+    private static boolean deleteDirectory(File directory) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    if (!file.delete()) {
+                        System.out.println("删除文件失败: " + file.getAbsolutePath());
+                        return false;
+                    }
+                }
+            }
+        }
+        return directory.delete();
     }
 
 
