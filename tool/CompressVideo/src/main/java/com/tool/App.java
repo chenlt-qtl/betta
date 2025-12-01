@@ -38,9 +38,12 @@ public class App {
         // 在开始压缩前创建全局tmp文件夹
         createGlobalTmpFolder();
         
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 16, 120, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000), Executors.defaultThreadFactory(),
-                new ThreadPoolExecutor.AbortPolicy());
+        // 优化线程池配置：根据CPU核心数动态设置
+        int corePoolSize = Math.max(4, Runtime.getRuntime().availableProcessors());
+        int maximumPoolSize = corePoolSize * 2;
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(200), Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.CallerRunsPolicy());
         // 压缩前文件路径
         File dir = new File(PATH);
         File[] files = dir.listFiles();
@@ -76,11 +79,19 @@ public class App {
     private static void compress(File source, ThreadPoolExecutor pool) {
         if (source.isDirectory()) {
             File[] files = source.listFiles();
-            for (File file : files) {
-                compress(file, pool);
+            if (files != null) {
+                for (File file : files) {
+                    compress(file, pool);
+                }
             }
         } else if (source.getName().matches("^[\\w\\W]+\\.(?i)(mp4|avi)$")) {
             String target = TARGET_PATH + source.getParent().substring(PATH.length());
+            // 检查目标文件是否已存在，避免重复压缩
+            File targetFile = new File(target + "\\" + source.getName());
+            if (targetFile.exists()) {
+                System.out.println("文件已存在，跳过: " + source.getName());
+                return;
+            }
             pool.execute(new CompressThread(source, target));
         }
     }

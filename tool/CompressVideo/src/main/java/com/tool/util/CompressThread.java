@@ -27,12 +27,6 @@ public class CompressThread implements Runnable {
         // 最终目标路径
         File finalTarget = new File(targetPath + "\\" + source.getName());
         
-        // 检查最终目标文件是否已存在
-        if (finalTarget.exists()) {
-            System.out.println(prefix + "文件已存在，跳过");
-            return;
-        }
-        
         // 压缩到临时文件
         File result = CompressionVideoUtil.compressionVideo(source, tempTarget, prefix);
         
