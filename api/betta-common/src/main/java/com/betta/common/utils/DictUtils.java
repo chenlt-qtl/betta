@@ -4,6 +4,8 @@ import com.betta.common.constant.CacheConstants;
 import com.betta.common.core.cache.CacheUtils;
 import com.betta.common.core.domain.entity.SysDictData;
 import com.betta.common.utils.spring.SpringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,12 +15,14 @@ import java.util.List;
  * 
  * @author ruoyi
  */
+
 public class DictUtils
 {
     /**
      * 分隔符
      */
     public static final String SEPARATOR = ",";
+    private static final Logger log = LoggerFactory.getLogger(DictUtils.class);
 
     /**
      * 设置字典缓存
@@ -124,9 +128,12 @@ public class DictUtils
      */
     public static String getDictValue(String dictType, String dictLabel, String separator)
     {
+        log.info("dictType:{},dictLabel:{}",dictType,dictLabel);
         StringBuilder propertyString = new StringBuilder();
         List<SysDictData> datas = getDictCache(dictType);
 
+        log.info("datas:{}",datas);
+        SpringUtils.getBean(CacheUtils.class).keys(CacheConstants.SYS_DICT_KEY).forEach(System.out::println);
         if (StringUtils.containsAny(separator, dictLabel) && StringUtils.isNotEmpty(datas))
         {
             for (SysDictData dict : datas)
