@@ -22,6 +22,8 @@ export default {
     created() {
         this.videos = [{ name: "Lonely", src: "lonely" },
         { name: "小丸子", src: "wangzi" },
+        { name: "tabata1", src: "tabata1" },
+        { name: "tabata2", src: "tabata2" },
         { name: "Da Da Da", src: "DaDaDa" },
         { name: "嘀嘀哇", src: "DiDiDiDiWa" },
         { name: "Hot", src: "HotHotHot" },
