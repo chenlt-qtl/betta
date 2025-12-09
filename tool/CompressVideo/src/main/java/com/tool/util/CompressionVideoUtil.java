@@ -11,6 +11,7 @@ import ws.schild.jave.info.AudioInfo;
 import ws.schild.jave.info.VideoSize;
 
 import java.io.File;
+import java.util.Date;
 
 /**
  * 视频压缩工具类
@@ -39,7 +40,7 @@ public class CompressionVideoUtil {
             App.second.addAndGet(second);
 
             // 优化：只输出关键信息，减少日志
-            System.out.println(prefix + "开始压缩: " + source.getName() + " (大小:" + String.format("%.1f", videoSizeMB) + "MB, 时长:" + second + "s)");
+            System.out.println(new Date() + "开始压缩: " + prefix + source.getName() + " (大小:" + String.format("%.1f", videoSizeMB) + "MB, 时长:" + second + "s)");
 
             long time = System.currentTimeMillis();
             
@@ -48,7 +49,7 @@ public class CompressionVideoUtil {
             int maxSamplingRate = 22050;  // 降低采样率
             int bitRate = 128000;  // 降低视频比特率
             int maxFrameRate = 8;  // 适当提高帧率，平衡质量和速度
-            int maxWidth = 1280;
+            int maxWidth = 1920;
 
             AudioAttributes audio = new AudioAttributes();
             audio.setCodec("aac");
@@ -80,8 +81,6 @@ public class CompressionVideoUtil {
             }
 
             // 视频帧率：15 f / s  帧率越低，效果越差
-            // 设置视频帧率（帧率越低，视频会出现断层，越高让人感觉越连续），视频帧率（Frame rate）是用于测量显示帧数的量度。所谓的测量单位为每秒显示帧数(Frames per Second，简：FPS）或“赫兹”（Hz）。
-            System.out.println(prefix + "原始视频帧率：" + videoInfo.getFrameRate() + "---" + maxFrameRate);
             if (videoInfo.getFrameRate() > maxFrameRate) {
                 video.setFrameRate(maxFrameRate);
             }
@@ -89,7 +88,9 @@ public class CompressionVideoUtil {
             // 限制视频宽高
             int width = videoInfo.getSize().getWidth();
             int height = videoInfo.getSize().getHeight();
-            System.out.println(prefix + "原始视频宽度：" + width + "---" + maxWidth);
+
+            // 设置视频帧率（帧率越低，视频会出现断层，越高让人感觉越连续），视频帧率（Frame rate）是用于测量显示帧数的量度。所谓的测量单位为每秒显示帧数(Frames per Second，简：FPS）或“赫兹”（Hz）。
+            System.out.println(prefix + "原始视频帧率：" + videoInfo.getFrameRate() + "---" + maxFrameRate+ "，原始视频宽度：" + width + "---" + maxWidth);
             if (width > maxWidth) {
                 // height 不能整除2会报错 Exit code of ffmpeg encoding run is 1
                 float rat = (float) width / maxWidth;

@@ -20,10 +20,10 @@ public class App {
 
     public static AtomicInteger second = new AtomicInteger(0);
 
-    private static final String PATH = "I:\\【4.0】前端入门到精通";
+    private static final List<String> PATHS = List.of("C:\\Users\\Administrator\\Videos\\新建文件夹");
     //转换后存放位置
     //String targetPath = path+ "\\after\\";
-    private static final String TARGET_PATH = "I:\\【4.0】前端入门到精通1";
+    public static final List<String> TARGET_PATHS = List.of("C:\\Users\\Administrator\\Videos\\新建文件夹1");
 
     //存放处理失败的文件的全路径文件名
     public static final List<String> FAIL_LIST = new ArrayList<>();
@@ -35,30 +35,36 @@ public class App {
         long time = System.currentTimeMillis();
         FAIL_LIST.clear();
         
-        // 在开始压缩前创建全局tmp文件夹
-        createGlobalTmpFolder();
-        
         // 优化线程池配置：根据CPU核心数动态设置
         int corePoolSize = Math.max(4, Runtime.getRuntime().availableProcessors());
         int maximumPoolSize = corePoolSize * 2;
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(200), Executors.defaultThreadFactory(),
-                new ThreadPoolExecutor.CallerRunsPolicy());
-        // 压缩前文件路径
-        File dir = new File(PATH);
-        File[] files = dir.listFiles();
-        if (files.length > 0) {
-            for (File source : files) {
-                compress(source, pool);
+
+        for (int i = 0; i < PATHS.size(); i++) {
+            String path = PATHS.get(i);
+            String targetPath = TARGET_PATHS.get(i);
+            System.out.println("path:"+path+"\ntargetPath:"+targetPath);
+
+            ThreadPoolExecutor pool = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS,
+                    new ArrayBlockingQueue<>(500), Executors.defaultThreadFactory(),
+                    new ThreadPoolExecutor.CallerRunsPolicy());
+            // 压缩前文件路径
+            File dir = new File(path);
+            // 在开始压缩前创建全局tmp文件夹
+            createGlobalTmpFolder(targetPath);
+
+            File[] files = dir.listFiles();
+            if (files.length > 0) {
+                for (File source : files) {
+                    compress(source, pool,targetPath,path);
+                }
             }
+            pool.shutdown(); // 停止接受新任务
+            pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS); // 等待所有任务完成
+
+            // 所有压缩完成后删除tmp文件夹
+            deleteGlobalTmpFolder(targetPath);
         }
-        pool.shutdown(); // 停止接受新任务
-        pool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS); // 等待所有任务完成
-        
-        // 所有压缩完成后删除tmp文件夹
-        deleteGlobalTmpFolder();
-        
-        System.out.println("转换完成, 共耗时：" + (double) (System.currentTimeMillis() - time) / 1000 + "秒");
+        System.out.println("转换完成, 共耗时：" + (double) (System.currentTimeMillis() - time) / 1000/60.00 + "分钟");
         System.out.println("共转换：" + second.intValue() / 60 + "分钟的视频");
         //打印转换失败的文件名
         System.out.println("-----------转换失败的文件"+FAIL_LIST.size()+"个--------");
@@ -76,31 +82,35 @@ public class App {
 
     }
 
-    private static void compress(File source, ThreadPoolExecutor pool) {
+    private static void compress(File source, ThreadPoolExecutor pool,String targetPath,String path) {
         if (source.isDirectory()) {
             File[] files = source.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    compress(file, pool);
+                    compress(file, pool, targetPath, path);
                 }
             }
-        } else if (source.getName().matches("^[\\w\\W]+\\.(?i)(mp4|avi)$")) {
-            String target = TARGET_PATH + source.getParent().substring(PATH.length());
+        } else if (source.getName().matches("^[\\w\\W]+\\.(?i)(mp4|avi|mov|wmv|rmvb|rm|flv|mkv|mpeg|mpg|m4v|3gp|3g2|m2ts|mts|m2v|m2t|m2a|m2p|m2ts|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t|m2a|m2p|m2v|m2p|m2t)$")) {
+            String target = targetPath + source.getParent().substring(path.length());
             // 检查目标文件是否已存在，避免重复压缩
             File targetFile = new File(target + "\\" + source.getName());
             if (targetFile.exists()) {
                 System.out.println("文件已存在，跳过: " + source.getName());
                 return;
             }
-            pool.execute(new CompressThread(source, target));
+            pool.execute(new CompressThread(source, target,getTmpPath(targetPath)));
         }
+    }
+
+    public static String getTmpPath(String targetPath) {
+        return targetPath + "\\tmp\\";
     }
 
     /**
      * 创建全局tmp文件夹
      */
-    private static void createGlobalTmpFolder() {
-        File tmpDir = new File(TARGET_PATH + "\\tmp");
+    private static void createGlobalTmpFolder(String targetPath) {
+        File tmpDir = new File(getTmpPath(targetPath));
         if (!tmpDir.exists()) {
             if (tmpDir.mkdirs()) {
                 System.out.println("创建临时文件夹: " + tmpDir.getAbsolutePath());
@@ -115,8 +125,8 @@ public class App {
     /**
      * 递归删除全局tmp文件夹及其内容
      */
-    private static void deleteGlobalTmpFolder() {
-        File tmpDir = new File(TARGET_PATH + "\\tmp");
+    private static void deleteGlobalTmpFolder(String targetPath) {
+        File tmpDir = new File(getTmpPath(targetPath));
         if (tmpDir.exists() && tmpDir.isDirectory()) {
             if (deleteDirectory(tmpDir)) {
                 System.out.println("删除临时文件夹成功: " + tmpDir.getAbsolutePath());
