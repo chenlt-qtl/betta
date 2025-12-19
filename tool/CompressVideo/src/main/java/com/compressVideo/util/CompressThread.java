@@ -1,6 +1,6 @@
-package com.tool.util;
+package com.compressVideo.util;
 
-import com.tool.App;
+import com.compressVideo.App;
 
 import java.io.File;
 import java.io.FileInputStream;

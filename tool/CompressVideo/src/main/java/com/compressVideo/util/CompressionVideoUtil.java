@@ -1,7 +1,7 @@
 
-package com.tool.util;
+package com.compressVideo.util;
 
-import com.tool.App;
+import com.compressVideo.App;
 import ws.schild.jave.Encoder;
 import ws.schild.jave.MultimediaObject;
 import ws.schild.jave.encode.AudioAttributes;
