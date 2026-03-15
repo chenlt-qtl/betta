@@ -52,6 +52,7 @@ export default {
     onEditorBlur() {
       setTimeout(() => {
         this.$emit("blur", this.$refs.editor.invoke("getMarkdown"));
+        this.parseHeadings();
       }, 0);
     },
     onInput() {

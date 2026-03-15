@@ -198,6 +198,13 @@
                 <artifactId>betta-other</artifactId>
                 <version>1.0.0</version>
             </dependency>
+
+            <!-- 消息通道模块（飞书/微信）-->
+            <dependency>
+                <groupId>com.betta</groupId>
+                <artifactId>betta-message</artifactId>
+                <version>1.0.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -213,6 +220,7 @@
         <module>betta-video</module>
 <!--        <module>betta-es</module>-->
         <module>betta-other</module>
+        <module>betta-message</module>
     </modules>
     <packaging>pom</packaging>
 

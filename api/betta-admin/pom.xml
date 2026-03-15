@@ -72,6 +72,12 @@
             <artifactId>betta-generator</artifactId>
         </dependency>
 
+        <!-- 消息通道（飞书/微信）-->
+        <dependency>
+            <groupId>com.betta</groupId>
+            <artifactId>betta-message</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
