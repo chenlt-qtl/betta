@@ -44,6 +44,7 @@ public class FeishuCallbackController {
      */
     @PostMapping("/callback")
     public Object callback(@RequestBody String body) {
+        log.info("飞书Callback:{}", body);
         if (StringUtils.isBlank(body)) {
             return new JSONObject();
         }
@@ -59,7 +60,7 @@ public class FeishuCallbackController {
             return new JSONObject();
         }
         String eventType = header.getString("event_type");
-        if (!"im.message.receive_v1".equals(eventType)) {
+        if (StringUtils.isBlank(eventType) || !eventType.startsWith("im:message")) {
             return new JSONObject();
         }
         JSONObject message = event.getJSONObject("message");
