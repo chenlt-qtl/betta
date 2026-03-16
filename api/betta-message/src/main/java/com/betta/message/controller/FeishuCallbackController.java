@@ -60,7 +60,7 @@ public class FeishuCallbackController {
             return new JSONObject();
         }
         String eventType = header.getString("event_type");
-        if (StringUtils.isBlank(eventType) || !eventType.startsWith("im:message")) {
+        if (!"im.message.receive_v1".equals(eventType)) {
             return new JSONObject();
         }
         JSONObject message = event.getJSONObject("message");
